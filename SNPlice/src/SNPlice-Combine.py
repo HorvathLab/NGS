@@ -5,7 +5,8 @@ sys.path.append(os.path.join(os.path.split(os.path.abspath(__file__))[0],'..','.
 from optparse_gui import OptionParser, OptionGroup, GUI, \
      		  	 UserCancelledError, ProgressText
 
-from version import *
+from version import VERSION                                                                                       
+VERSION='1.0.1(%s)'%(VERSION,)                                                                                    
 
 def excepthook(etype,value,tb):
     traceback.print_exception(etype,value,tb)
@@ -23,10 +24,10 @@ atexit.register(cleanup)
 
 if GUI() and len(sys.argv) == 1:
     from optparse_gui import OptionParserGUI
-    parser = OptionParserGUI(version=VERSION_SNPliceCombine)
+    parser = OptionParserGUI(version=VERSION)
     error_kwargs = {'exit': False}
 else:
-    parser = OptionParser(version=VERSION_SNPliceCombine)
+    parser = OptionParser(version=VERSION)
     error_kwargs = {}
 
 parser.add_option("-c","--counts",type="files",dest="counts",default=None,

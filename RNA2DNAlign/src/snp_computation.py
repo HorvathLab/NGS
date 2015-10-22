@@ -1,5 +1,5 @@
 #!/bin/env python27
-import sys,os,csv
+import sys,os,csv,os.path,gzip
 import collections
 from collections import defaultdict 
 
@@ -16,19 +16,33 @@ def chrorder(chr):
       if chr == "Y":
         return 24
 
-darned = sys.argv[1]
-cosmic = sys.argv[2]
-data = sys.argv[3]
-base = data.rsplit('.',1)[0]
+from version import VERSION
+VERSION='1.0.0 (%s)'%(VERSION,)
+
+from optparse_gui import OptionParser
+parser = OptionParser(version=VERSION)
+
+parser.add_option("--counts",type="file",dest="counts",default=None,
+	          help="Output file from readCounts. Required.",notNone=True,
+                  filetypes=[("readCount Output","*.tsv")])
+parser.add_option("--cosmic",type="file",dest="cosmic",default=None,
+	          help="COSMIC Mutants.",
+                  filetypes=[("COSMIC Annotations","*.tsv;*.tsv.gz")])
+parser.add_option("--darned",type="file",dest="darned",default=None,
+	          help="DARNED annotations.",
+                  filetypes=[("DARNED Annotations","*.txt")])
+
+opt,args = parser.parse_args()
+
+base = os.path.split(os.path.abspath(opt.counts))[0] + os.sep
 header 	= []																	
 									
-f = open(data,'r')
-reader=csv.reader((f),delimiter='\t')
+f = open(opt.counts,'r')
+reader=csv.reader(f,delimiter='\t')
 for i,row in enumerate(reader):
                 if "CHROM" in row[0]:
 		   header.append(row)
-		else:			
-					
+		else:								
 		   if 'SRNA'in row[4] or 'TPtr'in row[4]:
 			   key1=str(row[0])+":"+row[1]
 			   SRNA_d[key1].append(row)
@@ -51,12 +65,16 @@ keys = set(SRNA_d.keys()) | set(NRNA_d.keys()) | set(NDNA_d.keys()) | set(SDNA_d
 		
 keys_exome = set(NDNA_d.keys()) | set(SDNA_d.keys())
 cosmic_Mut =[]
-f = open(cosmic,'r')
-reader=csv.reader((f),delimiter='\t')
-for i in reader:
+if opt.cosmic:
+  if opt.cosmic.endswith('.gz'):
+    f = gzip.open(opt.cosmic,'r')
+  else:
+    f = open(opt.cosmic,'r')
+  reader=csv.reader(f,delimiter='\t')
+  for i in reader:
        if 'Gene' not in i[0] and i[17] != '':
         cosmic_Mut.append(i)
-f.close()
+  f.close()
 
 def events(SRNA_d,NRNA_d,NDNA_d,SDNA_d):	
 	   VSE(SRNA_d,NRNA_d,NDNA_d,SDNA_d)
@@ -71,7 +89,7 @@ def events(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
 def Som(NDNA_d,SDNA_d):
   cosmic_dic = defaultdict(list)
   					
-  with open(base+'_Events_TSS.vcf','w') as outpt_TSS:
+  with open(base+'Events_TSS.tsv','w') as outpt_TSS:
         outpt_TSS.write('\t'.join(header_up) + '\t'+'Gene'+ '\t'+'Site'+'\t'+ 'Sub_Site'+ '\t'+'Cancer_Type'+'\n')
         for cos in cosmic_Mut:
            coord = cos[17].split(':')
@@ -107,7 +125,7 @@ def Som(NDNA_d,SDNA_d):
 
 def TSS_event(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
   cosmic_dic = defaultdict(list)
-  with open(base+'_Events_TSS.vcf','w') as outpt_TSS:
+  with open(base+'Events_TSS.tsv','w') as outpt_TSS:
 	outpt_TSS.write('\t'.join(header_up) + '\t'+'Gene'+ '\t'+'Site'+'\t'+ 'Sub_Site'+ '\t'+'Cancer_Type'+'\n')
 	for cos in cosmic_Mut:
            coord = cos[17].split(':')
@@ -147,7 +165,8 @@ def TSS_event(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
 		writefile_TSS(colum_NDNA, colum_SDNA, colum_NRNA, colum_SRNA, Gene, site, sub_site,cancer_ty,outpt_TSS)
 
 darn_l = []
-with open(darned,'r') as f:
+if opt.darned:
+   with open(opt.darned,'r') as f:
       reader=csv.reader((f),delimiter='\t')
       for i in reader:
         if 'chrom' not in i[0]:
@@ -155,7 +174,7 @@ with open(darned,'r') as f:
 
 def RNA_Ed(NDNA_d,NRNA_d):
   darn_dict = defaultdict(list)
-  with open(base+'_Events_RNA_Edit.vcf','w') as outpt_RNA:
+  with open(base+'Events_RNA_Edit.tsv','w') as outpt_RNA:
         outpt_RNA.write('\t'.join(header_up) + 'Cancer_Type'+'\n')
         for darn in darn_l:
           key_darn = darn[0]+":"+ darn[1]
@@ -181,7 +200,7 @@ def RNA_Ed(NDNA_d,NRNA_d):
 
 def RNA_edit(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
   darn_dict = defaultdict(list)
-  with open(base+'_Events_RNA_Edit.vcf','w') as outpt_RNA:
+  with open(base+'Events_RNA_Edit.tsv','w') as outpt_RNA:
 	outpt_RNA.write('\t'.join(header_up) + 'Cancer_Type'+'\n')
 	for darn in darn_l:
           key_darn = darn[0]+":"+ darn[1]
@@ -212,7 +231,7 @@ def RNA_edit(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
 	
 def T_RNA_Ed( NRNA_d, SRNA_d):
   darn_dict = defaultdict(list)
-  with open(base+'_Events_Tum_RNA_Edit.vcf','w') as outpt_tRNA:
+  with open(base+'Events_Tum_RNA_Edit.tsv','w') as outpt_tRNA:
         outpt_tRNA.write('\t'.join(header_up) + 'Cancer_Type'+'\n')
         for darn in darn_l:
           key_darn = darn[0]+":"+ darn[1]
@@ -238,7 +257,7 @@ def T_RNA_Ed( NRNA_d, SRNA_d):
 
 def Tum_RNA_edit(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
   darn_dict = defaultdict(list)
-  with open(base+'_Events_Tum_RNA_Edit.vcf','w') as outpt_tRNA:
+  with open(base+'Events_Tum_RNA_Edit.tsv','w') as outpt_tRNA:
 	outpt_tRNA.write('\t'.join(header_up) + 'Cancer_Type'+'\n')
 	for darn in darn_l:
           key_darn = darn[0]+":"+ darn[1]
@@ -270,7 +289,7 @@ def Tum_RNA_edit(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
 		writefile_RNA_Edit(colum_NDNA, colum_SDNA, colum_NRNA, colum_SRNA,cancer_ty,outpt_tRNA)
 						
 def VSE(NDNA_d,NRNA_d):
-   with open(base+'_Events_VSE.vcf','w') as outpt:
+   with open(base+'Events_VSE.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
         keys = SRNA_d.keys()
         for k in sorted(keys):
@@ -289,7 +308,7 @@ def VSE(NDNA_d,NRNA_d):
 																					
 
 def VSE(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
-  with open(base+'_Events_VSE.vcf','w') as outpt:
+  with open(base+'_Events_VSE.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
 	keys = SRNA_d.keys()
         for k in sorted(keys):
@@ -320,7 +339,7 @@ def VSE(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
 
 def TS_VSE( NRNA_d, SRNA_d):
 			
-   with open(base+'_Events_Tum_VSE.vcf','w') as outpt:
+   with open(base+'Events_Tum_VSE.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
         keys = SRNA_d.keys()
         for k in sorted(keys):
@@ -335,7 +354,7 @@ def TS_VSE( NRNA_d, SRNA_d):
             outpt.write('\n')
 
 def Tum_VSE(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
-  with open(base+'_Events_Tum_VSE.vcf','w') as outpt:
+  with open(base+'Events_Tum_VSE.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
 	keys = SRNA_d.keys()
         for k in sorted(keys):
@@ -352,7 +371,7 @@ def Tum_VSE(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
 	    writefile(colum_NDNA, colum_SDNA, colum_NRNA, colum_SRNA,outpt)
 			
 def VSL(NDNA_d,NRNA_d):
-    with open(base+'_Events_VSL.vcf','w') as outpt:
+    with open(base+'Events_VSL.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
         keys = NRNA_d.keys()
 	for k in sorted(keys):
@@ -368,7 +387,7 @@ def VSL(NDNA_d,NRNA_d):
 
 			
 def VSL(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
-  with open(base+'_Events_VSL.vcf','w') as outpt:
+  with open(base+'Events_VSL.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
 	keys = SRNA_d.keys()
         for k in sorted(keys):
@@ -385,7 +404,7 @@ def VSL(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
 
 				
 def TS_VSL( NRNA_d, SRNA_d):
-  with open(base+'_Events_Tum_VSL.vcf','w') as outpt:
+  with open(base+'Events_Tum_VSL.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
         keys = SRNA_d.keys()
         for k in sorted(keys):
@@ -400,7 +419,7 @@ def TS_VSL( NRNA_d, SRNA_d):
 	    outpt.write('\n')
 
 def Tum_VSL(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
-  with open(base+'_Events_Tum_VSL.vcf','w') as outpt:
+  with open(base+'Events_Tum_VSL.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
 	keys = SRNA_d.keys()
         for k in sorted(keys):
@@ -417,7 +436,7 @@ def Tum_VSL(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
 
 
 def LOH_exome(NDNA_d,SDNA_d):
-    with open(base+'_Events_LOH.vcf','w') as outpt:
+    with open(base+'Events_LOH.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
         keys = SDNA_d.keys()
         for k in sorted(keys):
@@ -431,7 +450,7 @@ def LOH_exome(NDNA_d,SDNA_d):
         	outpt.write('\t'.join(colum_SDNA)+  '\n')
 	
 def LOH(SRNA_d,NRNA_d,NDNA_d,SDNA_d):
-  with open(base+'_Events_LOH.vcf','w') as outpt:
+  with open(base+'Events_LOH.tsv','w') as outpt:
         outpt.write('\t'.join(header_up) +'\n')
 	keys = SRNA_d.keys()
         for k in sorted(keys):

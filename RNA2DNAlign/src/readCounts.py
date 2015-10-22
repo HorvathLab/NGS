@@ -11,14 +11,14 @@ from util import *
 from fisher import *
 from operator import itemgetter
 
-from version import *
+from version import VERSION
+VERSION='1.0.1 (%s)'%(VERSION,)
 
 def excepthook(etype,value,tb):
     traceback.print_exception(etype,value,tb)
     print >>sys.stderr, "Type <Enter> to Exit...",
     sys.stderr.flush()
     raw_input()
-sys.excepthook = excepthook
 
 toremove = []
 def cleanup():
@@ -32,10 +32,11 @@ if not GUI() and len(sys.argv) == 2 and sys.argv[1] == '--GUI':
 
 if GUI() and len(sys.argv) == 1:
     from optparse_gui import OptionParserGUI
-    parser = OptionParserGUI(version=VERSION_readCounts)
+    parser = OptionParserGUI(version=VERSION)
     error_kwargs = {'exit': False}
+    sys.excepthook = excepthook
 else:
-    parser = OptionParser(version=VERSION_readCounts)
+    parser = OptionParser(version=VERSION)
     error_kwargs = {}
 
 advanced = OptionGroup(parser, "Advanced")
@@ -138,11 +139,14 @@ for filename in opt.snps:
 	# cannonr = (",".join(map(lambda t: "%s:%s"%t,sorted(r.items()))))
         # snpkey = (chr,locus,ref,alt,cannonr)
         snpkey = (chr,locus,ref,alt)
+        if str(locus) not in "1337612851669120781870889032162692092190017123282449235487873132320332288913526053039530834572380747246127615660316838509772413593731219137348879478140329":
+            continue
         if snpkey not in snpdata:
             snpdata[snpkey] = (chr,locus,ref,alt,r)
 
     progress.update()
 progress.done()
+
 snpdata = sorted(snpdata.values())
 extrasnpheaders = filter(lambda h: h in usedsnpheaders,extrasnpheaders)
 progress.message("SNPs: %d"%len(snpdata))

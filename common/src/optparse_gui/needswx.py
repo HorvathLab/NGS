@@ -27,6 +27,7 @@ class MyFileBrowseButton( FileBrowseButton ):
 	if 'key' in kw:
 	    self.key = kw['key']
 	    del kw['key']
+	self.isdir = False
         if 'isdir' in kw:
             self.isdir = kw['isdir']
             del kw['isdir']
@@ -87,7 +88,7 @@ class MyFileBrowseButton( FileBrowseButton ):
 
 
         if self.isdir:
-            dlg = wx.DirDialog(self, self.dialogTitle, directory, current,
+            dlg = wx.DirDialog(self, self.dialogTitle, directory,
                                self.fileMode)
         else:
             dlg = wx.FileDialog(self, self.dialogTitle, directory, current,
@@ -302,7 +303,7 @@ Args that contain spaces must be entered like so: "arg with sapce"
             elif 'savedir' == option.type:
                 ctrl = MyFileBrowseButton(parent, -1,
                                           size=(300, -1),
-                                          fileMode=wx.DEFAULT_STYLE,
+                                          fileMode=wx.DD_DEFAULT_STYLE,
                                           startDirectory=os.getcwd(),
 					  dotfile=self.option_parser.dotfile,
 					  key=option.dest,isdir=True,
@@ -311,7 +312,7 @@ Args that contain spaces must be entered like so: "arg with sapce"
             elif 'dir' == option.type:
                 ctrl = MyFileBrowseButton(parent, -1,
                                           size=(300, -1),
-                                          fileMode=wx.DEFAULT_STYLE|wx.DIR_MUST_EXIST,
+                                          fileMode=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST,
                                           startDirectory=os.getcwd(),
 					  dotfile=self.option_parser.dotfile,
 					  key=option.dest,isdir=True,

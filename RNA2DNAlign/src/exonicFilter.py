@@ -5,7 +5,25 @@ import operator
 d = {}
 header_dict= {}
 header1 = []; header2 = []; header3 = []; header4 = []
-		
+
+from version import VERSION
+VERSION='1.0.0 (%s)'%(VERSION,)
+
+from optparse_gui import OptionParser
+parser = OptionParser(version=VERSION)
+
+parser.add_option("--exons",type="file",dest="exons",default=None,
+	          help="Exonic coordinates (sored). Required.",notNone=True,
+                  filetypes=[("Exonic Coordinates","*.txt")])
+parser.add_option("--input",type="file",dest="input",default=None,
+	          help="Input SNPs in VCF format. Required",
+                  filetypes=[("Input SNP File","*.vcf")])
+parser.add_option("--output",type="savefile",dest="output",default=None,
+	          help="Output file. Required",
+                  filetypes=[("Output SNP File","*.vcf")])
+
+opt,args = parser.parse_args()
+
 def ReadVCF(file_name):
 	d[file_name]=[]
 	header_dict = []
@@ -29,10 +47,12 @@ def ReadVCF(file_name):
 		if row[0] != 'MT':
 	   		d[file_name].append(row)
 		
-exoncoords = sys.argv[1]
-folder_input = sys.argv[2]
-outfile = sys.argv[3]
+exoncoords = opt.exons
+folder_input = opt.input
+outfile = opt.output
 l_pathname = []
+
+
 
 file =folder_input
 print "the file", file

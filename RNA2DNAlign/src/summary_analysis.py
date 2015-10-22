@@ -60,9 +60,15 @@ def read_events(file):
                 		out.write("\n")
                 		out.write("#Number of Total SNPs:"+ " "+ str(count))
                 		out.write("\n")
-                		out.write("#Most Frequent Chromosome:"+ " chr"+ " " +str(max(total.iteritems(), key=itemgetter(1))[0]))
+				try:
+					out.write("#Most Frequent Chromosome:"+ " chr"+ " " +str(max(total.iteritems(), key=itemgetter(1))[0]))
+				except ValueError:
+					out.write("#Most Frequent Chromosome:")
                		        out.write("\n")
-                		out.write("#Least Frequent Chromosome:"+ " chr"+ " " +str(min(total.iteritems(), key=itemgetter(1))[0]))
+				try:	 
+					out.write("#Least Frequent Chromosome:"+ " chr"+ " " +str(min(total.iteritems(), key=itemgetter(1))[0]))
+				except ValueError:
+					out.write("#Least Frequent Chromosome:")
                 		out.write("\n")
                 		out.write("#Change A > T: " + str(count_A_T) + "\t" + "#Change A > G: " + str(count_A_G) + "\t" + "#Change A > C: " + str(count_A_C))
                 		out.write("\n")

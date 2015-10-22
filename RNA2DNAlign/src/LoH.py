@@ -9,7 +9,8 @@ except NameError:
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText
 from util import *
 
-from version import *
+from version import VERSION
+VERSION='1.0.0 (%s)'%(VERSION,)
 
 def excepthook(etype,value,tb):
     traceback.print_exception(etype,value,tb)
@@ -30,10 +31,10 @@ if not GUI() and len(sys.argv) == 2 and sys.argv[1] == '--GUI':
 
 if GUI() and len(sys.argv) == 1:
     from optparse_gui import OptionParserGUI
-    parser = OptionParserGUI(version=VERSION_LoH)
+    parser = OptionParserGUI(version=VERSION)
     error_kwargs = {'exit': False}
 else:
-    parser = OptionParser(version=VERSION_LoH)
+    parser = OptionParser(version=VERSION)
     error_kwargs = {}
 
 advanced = OptionGroup(parser, "Advanced")
