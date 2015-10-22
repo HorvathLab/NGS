@@ -1,1 +1,1 @@
-## [[wiki|HorvathLabTools]]
+## [HorvathLabTools](https://github.com/edwardsnj/HorvathLabTools/wiki)
