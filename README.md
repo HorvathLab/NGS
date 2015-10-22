@@ -1,1 +1,1 @@
-# HorvathLabTools
+## [[wiki|HorvathLabTools]]
