@@ -1,1 +1,1 @@
-## [HorvathLabTools](https://github.com/edwardsnj/HorvathLabTools/wiki)
+### [Documentation](https://github.com/edwardsnj/HorvathLabTools/wiki)
