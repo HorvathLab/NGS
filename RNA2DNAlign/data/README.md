@@ -4,9 +4,10 @@ Supporing datafiles required for filtering or annotation of SNP loci
 
 ## RefSeq (Human) exon coordinates from UCSC
 
-0. The human RefSeq exon coordinates (hg19) from UCSC are provided in
-the RNA2DNAlign/data directory and can be ussed as provided. Steps 1 and
-2 can be used to recreate this file or for another organism or assembly.
+0. The human RefSeq exon coordinates (hg19) from UCSC are provided
+in the RNA2DNAlign/data directory and can be ussed as provided. The
+following steps can be used to recreate this file or for another organism
+or assembly.
 
 1. Download BED format RefSeq human coordinates (hg19) from UCSC:
 
