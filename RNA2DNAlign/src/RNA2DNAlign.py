@@ -36,7 +36,7 @@ from fisher import *
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '1.0.0 (%s)' % (VERSION,)
+VERSION = '1.0.1 (%s)' % (VERSION,)
 
 
 def excepthook(etype, value, tb):

@@ -13,7 +13,7 @@ except NameError:
 sys.path.append(join(scriptdir, '..', '..', 'common', 'src'))
 
 from version import VERSION
-VERSION = '1.0.1 (%s)' % (VERSION,)
+VERSION = '1.0.2 (%s)' % (VERSION,)
 
 from optparse_gui import OptionParser
 parser = OptionParser(version=VERSION)

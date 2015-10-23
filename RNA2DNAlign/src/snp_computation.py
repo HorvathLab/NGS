@@ -24,7 +24,7 @@ def chrorder(chr):
         return 24
 
 from version import VERSION
-VERSION = '1.0.1 (%s)' % (VERSION,)
+VERSION = '1.0.2 (%s)' % (VERSION,)
 
 from optparse_gui import OptionParser, OptionGroup
 parser = OptionParser(version=VERSION)
