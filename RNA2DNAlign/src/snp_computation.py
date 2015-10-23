@@ -4,14 +4,13 @@ import os
 import csv
 import os.path
 import gzip
-import collections
+import re
 from collections import defaultdict
 
 SRNA_d = defaultdict(list)
 NRNA_d = defaultdict(list)
 NDNA_d = defaultdict(list)
 SDNA_d = defaultdict(list)
-
 
 def chrorder(chr):
     the_chr_split = chr.split(':')
@@ -25,10 +24,11 @@ def chrorder(chr):
         return 24
 
 from version import VERSION
-VERSION = '1.0.0 (%s)' % (VERSION,)
+VERSION = '1.0.1 (%s)' % (VERSION,)
 
-from optparse_gui import OptionParser
+from optparse_gui import OptionParser, OptionGroup
 parser = OptionParser(version=VERSION)
+regexs = OptionGroup(parser, "Filename Matching")
 
 parser.add_option("--counts", type="file", dest="counts", default=None,
                   help="Output file from readCounts. Required.", notNone=True,
@@ -39,30 +39,52 @@ parser.add_option("--cosmic", type="file", dest="cosmic", default=None,
 parser.add_option("--darned", type="file", dest="darned", default=None,
                   help="DARNED annotations.",
                   filetypes=[("DARNED Annotations", "*.txt")])
+regexs.add_option("--normalexomere", type="str", dest="normalexomere", default=r'NDNA',
+                  help="Normal exome filename regular expression. Default: NDNA.",
+                  remember=True, name="Normal Exome RE")
+regexs.add_option("--normaltransre", type="str", dest="normaltransre", default=r'NRNA',
+                  help="Normal transcriptome filename regular expression. Default: NRNA.",
+                  remember=True, name="Normal Transcr. RE")
+regexs.add_option("--tumorexomere", type="str", dest="tumorexomere", default=r'TDNA',
+                  help="Tumor exome filename regular expression. Default: TDNA.",
+                  remember=True, name="Tumor Exome RE")
+regexs.add_option("--tumortransre", type="str", dest="tumortransre", default=r'TRNA',
+                  help="Tumor transcriptome filename regular expression. Default: TRNA.",
+                  remember=True, name="Tumor Transcr. RE")
+parser.add_option_group(regexs)                 
 
 opt, args = parser.parse_args()
+opt.normalexomere = re.compile(opt.normalexomere)
+opt.normaltransre = re.compile(opt.normaltransre)
+opt.tumorexomere = re.compile(opt.tumorexomere)
+opt.tumortransre = re.compile(opt.tumortransre)
 
 base = os.path.split(os.path.abspath(opt.counts))[0] + os.sep
 header = []
 
 f = open(opt.counts, 'r')
 reader = csv.reader(f, delimiter='\t')
+priorwarnings = set()
 for i, row in enumerate(reader):
     if "CHROM" in row[0]:
         header.append(row)
     else:
-        if 'SRNA'in row[4] or 'TPtr'in row[4]:
-            key1 = str(row[0]) + ":" + row[1]
-            SRNA_d[key1].append(row)
-        if 'NRNA' in row[4] or 'NTtr' in row[4]:
-            key2 = str(row[0]) + ":" + row[1]
-            NRNA_d[key2].append(row)
-        if 'NDNA'in row[4] or 'NTex'in row[4]:
-            key3 = str(row[0]) + ":" + row[1]
-            NDNA_d[key3].append(row)
-        if 'SDNA'in row[4] or 'TPex' in row[4]:
-            key4 = str(row[0]) + ":" + row[1]
-            SDNA_d[key4].append(row)
+        key = str(row[0]) + ":" + row[1]
+        filename = row[4]
+        matched = 0
+        if opt.normalexomere.search(filename):
+            NDNA_d[key].append(row); matched += 1
+        if opt.normaltransre.search(filename):
+            NRNA_d[key].append(row); matched += 1
+        if opt.tumorexomere.search(filename):
+            SDNA_d[key].append(row); matched += 1
+        if opt.tumortransre.search(filename):
+            SRNA_d[key].append(row); matched += 1
+        if matched != 1 and filename not in priorwarnings:
+            print >>sys.stderr, "WARNING: Filename %s matched %d regular expressions"%(filename,matched)
+            priorwarnings.add(filename)
+        # assert matched == 1, "Filename %s matched %d regular expressions"%(filename,matched)
+
 f.close()
 
 range_column = [4, 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 13, 14,

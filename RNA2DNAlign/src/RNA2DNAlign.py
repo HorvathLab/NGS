@@ -69,6 +69,7 @@ else:
 exfilt = OptionGroup(parser, "SNP Filtering")
 readcounts = OptionGroup(parser, "Read Counting")
 # advanced = OptionGroup(parser, "Advanced")
+regexs = OptionGroup(parser, "Filename Matching")
 snpannot = OptionGroup(parser, "SNP Annotation")
 parser.add_option("-s", "--snps", type="files", dest="snps", default=None,
                   help="Single-Nucleotide-Polymophisms. Required.", name="SNPs",
@@ -82,6 +83,18 @@ exfilt.add_option("-e", "--exoncoords", type="file", dest="exoncoords", default=
                   help="Exon coordinates for SNP filtering. Optional.", name="Exon Coords.",
                   remember=True,
                   filetypes=[("Exonic Coordinates", "*.txt")])
+regexs.add_option("--normalexomere", type="str", dest="normalexomere", default='NDNA',
+                  help="Normal exome filename regular expression. Default: NDNA.",
+                  remember=True, name="Normal Exome RE")
+regexs.add_option("--normaltransre", type="str", dest="normaltransre", default='NRNA',
+                  help="Normal transcriptome filename regular expression. Default: NRNA.",
+                  remember=True, name="Normal Transcr. RE")
+regexs.add_option("--tumorexomere", type="str", dest="tumorexomere", default='TDNA',
+                  help="Tumor exome filename regular expression. Default: TDNA.",
+                  remember=True, name="Tumor Exome RE")
+regexs.add_option("--tumortransre", type="str", dest="tumortransre", default='TRNA',
+                  help="Tumor transcriptome filename regular expression. Default: TRNA.",
+                  remember=True, name="Tumor Transcr. RE")
 snpannot.add_option("-d", "--darned", type="file", dest="darned", default="",
                     help="DARNED Annotations. Optional.", remember=True,
                     filetypes=[("DARNED Annotations", "*.txt")])
@@ -103,6 +116,7 @@ parser.add_option("-o", "--output", type="savedir", dest="output", remember=True
 
 parser.add_option_group(exfilt)
 parser.add_option_group(readcounts)
+parser.add_option_group(regexs)                 
 parser.add_option_group(snpannot)
 
 opt = None
@@ -133,58 +147,61 @@ def execprog(prog, *args, **kw):
         print >>sys.stderr, "Executing:\n  %s %s" % (prog + scriptextn, argstr)
     if progpath.endswith('.py'):
         sys.argv = [progpath] + list(args)
-        execfile(progpath, globals())
+        execfile(progpath,{})
     else:
         status = subprocess.call([progpath] + list(args))
         assert(status == 0)
     return True
 
-mainopt = copy.deepcopy(opt)
-
 # Apply exonic filter on SNPs if desired...
 snpfiles = []
-for snpfile in mainopt.snps:
-    if mainopt.exoncoords:
+for snpfile in opt.snps:
+    if opt.exoncoords:
         base, extn = snpfile.rsplit('.', 1)
         basedir, basename = split(base)
-        outfile = join(mainopt.output, basename + '.filtered.' + extn)
+        outfile = join(opt.output, basename + '.filtered.' + extn)
         if not os.path.exists(outfile):
-            makedirs(mainopt.output)
-            execprog("exonicFilter", "--exons", mainopt.exoncoords,
+            makedirs(opt.output)
+            execprog("exonicFilter", "--exons", opt.exoncoords,
                      "--input", snpfile, "--output", outfile)
         snpfiles.append(outfile)
     else:
         snpfiles.append(snpfile)
 
-# Apply readCounts to SNPs and aligned reads. Pass on mainoptions as needed...
-outfile = join(mainopt.output, "readCounts.tsv")
+# Apply readCounts to SNPs and aligned reads. Pass on options as needed...
+outfile = join(opt.output, "readCounts.tsv")
 if not os.path.exists(outfile):
 
     args = ["-F",
-            "-r", " ".join(mainopt.alignments),
+            "-r", " ".join(opt.alignments),
             "-s", " ".join(snpfiles),
             "-o", outfile]
-    args.extend(["-m", str(mainopt.minreads)])
-    if not mainopt.filter:
+    args.extend(["-m", str(opt.minreads)])
+    if not opt.filter:
         args.append("-f")
-    if mainopt.unique:
+    if opt.unique:
         args.append("-U")
-    if mainopt.quiet:
+    if opt.quiet:
         args.append("-q")
 
-    makedirs(mainopt.output)
+    makedirs(opt.output)
     execprog("readCounts", *args)
 
 # Set up and apply snp_computation.py
 args = ["--counts", outfile]
-if mainopt.darned:
-    args.extend(["--darned", mainopt.darned])
-if mainopt.cosmic:
-    args.extend(["--cosmic", mainopt.cosmic])
+if opt.darned:
+    args.extend(["--darned", opt.darned])
+if opt.cosmic:
+    args.extend(["--cosmic", opt.cosmic])
+args.extend(["--normalexomere",opt.normalexomere])
+args.extend(["--normaltransre",opt.normaltransre])
+args.extend(["--tumorexomere",opt.tumorexomere])
+args.extend(["--tumortransre",opt.tumortransre])
+
 execprog("snp_computation", *args)
 
 # Summarize events
-if os.path.exists(join(mainopt.output, "summary_result.txt")):
-    os.unlink(join(mainopt.output, "summary_result.txt"))
-for f in glob.glob(join(mainopt.output, "Events*.tsv")):
+if os.path.exists(join(opt.output, "summary_result.txt")):
+    os.unlink(join(opt.output, "summary_result.txt"))
+for f in glob.glob(join(opt.output, "Events*.tsv")):
     summary_analysis.read_events(f)
