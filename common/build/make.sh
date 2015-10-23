@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+# set -x
 PACKAGE="$1"
 BASE=`dirname "$0"`
 BASE="$BASE/../.."
