@@ -39,15 +39,15 @@ parser.add_option("--cosmic", type="file", dest="cosmic", default=None,
 parser.add_option("--darned", type="file", dest="darned", default=None,
                   help="DARNED annotations.",
                   filetypes=[("DARNED Annotations", "*.txt")])
-regexs.add_option("--normalexomere", type="str", dest="normalexomere", default=r'NDNA',
-                  help="Normal exome filename regular expression. Default: NDNA.",
-                  remember=True, name="Normal Exome RE")
+regexs.add_option("--normalexomere", type="str", dest="normalexomere", default=r'GDNA',
+                  help="Germline/Normal exome filename regular expression. Default: GDNA.",
+                  remember=True, name="Germline Exome RE")
 regexs.add_option("--normaltransre", type="str", dest="normaltransre", default=r'NRNA',
                   help="Normal transcriptome filename regular expression. Default: NRNA.",
                   remember=True, name="Normal Transcr. RE")
-regexs.add_option("--tumorexomere", type="str", dest="tumorexomere", default=r'TDNA',
-                  help="Tumor exome filename regular expression. Default: TDNA.",
-                  remember=True, name="Tumor Exome RE")
+regexs.add_option("--tumorexomere", type="str", dest="tumorexomere", default=r'SDNA',
+                  help="Somatic/Tumor exome filename regular expression. Default: SDNA.",
+                  remember=True, name="Somatic Exome RE")
 regexs.add_option("--tumortransre", type="str", dest="tumortransre", default=r'TRNA',
                   help="Tumor transcriptome filename regular expression. Default: TRNA.",
                   remember=True, name="Tumor Transcr. RE")

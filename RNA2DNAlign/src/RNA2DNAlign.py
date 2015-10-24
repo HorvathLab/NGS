@@ -83,15 +83,15 @@ exfilt.add_option("-e", "--exoncoords", type="file", dest="exoncoords", default=
                   help="Exon coordinates for SNP filtering. Optional.", name="Exon Coords.",
                   remember=True,
                   filetypes=[("Exonic Coordinates", "*.txt")])
-regexs.add_option("--normalexomere", type="str", dest="normalexomere", default='NDNA',
-                  help="Normal exome filename regular expression. Default: NDNA.",
-                  remember=True, name="Normal Exome RE")
+regexs.add_option("--normalexomere", type="str", dest="normalexomere", default='GDNA',
+                  help="Germline/Normal exome filename regular expression. Default: GDNA.",
+                  remember=True, name="Germline Exome RE")
 regexs.add_option("--normaltransre", type="str", dest="normaltransre", default='NRNA',
                   help="Normal transcriptome filename regular expression. Default: NRNA.",
                   remember=True, name="Normal Transcr. RE")
-regexs.add_option("--tumorexomere", type="str", dest="tumorexomere", default='TDNA',
-                  help="Tumor exome filename regular expression. Default: TDNA.",
-                  remember=True, name="Tumor Exome RE")
+regexs.add_option("--tumorexomere", type="str", dest="tumorexomere", default='SDNA',
+                  help="Somatic/Tumor exome filename regular expression. Default: SDNA.",
+                  remember=True, name="Somatic Exome RE")
 regexs.add_option("--tumortransre", type="str", dest="tumortransre", default='TRNA',
                   help="Tumor transcriptome filename regular expression. Default: TRNA.",
                   remember=True, name="Tumor Transcr. RE")
