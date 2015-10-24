@@ -158,8 +158,8 @@ for filename in opt.snps:
         # cannonr = (",".join(map(lambda t: "%s:%s"%t,sorted(r.items()))))
         # snpkey = (chr,locus,ref,alt,cannonr)
         snpkey = (chr, locus, ref, alt)
-        if str(locus) not in "1337612851669120781870889032162692092190017123282449235487873132320332288913526053039530834572380747246127615660316838509772413593731219137348879478140329":
-            continue
+        # if str(locus) not in "1337612851669120781870889032162692092190017123282449235487873132320332288913526053039530834572380747246127615660316838509772413593731219137348879478140329":
+        #     continue
         if snpkey not in snpdata:
             snpdata[snpkey] = (chr, locus, ref, alt, r)
 
