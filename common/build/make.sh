@@ -1,6 +1,10 @@
 #!/bin/sh
 # set -x
 PACKAGE="$1"
+if [ "$PACKAGE" = "" ]; then
+    echo "Usage: make.sh PACKAGE" 1>&2
+    exit 1;
+fi
 BASE=`dirname "$0"`
 BASE="$BASE/../.."
 BASE=`readlink -f "$BASE"`
