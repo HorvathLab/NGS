@@ -92,6 +92,7 @@ SNPLociReads (F)
 > Number of reads containing SNP site.
 
 Key:
+
     (M) Fields output if -M/--matepairs/Mates option is true. 
     (F) Fields output if -F/--full/All Fields option is true. 
 
