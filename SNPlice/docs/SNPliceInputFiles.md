@@ -1,6 +1,6 @@
 # SNPlice Input Files
 
-## Alignments
+## Read Alignments
 
 Read alignments in (indexed) BAM/SAM format. Filename extension `.bam` expected, with `.bam.bai` index files. 
 
