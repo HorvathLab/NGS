@@ -2,11 +2,11 @@
 
 ### Graphical User Interface:
 
-    SNPliceCombine
+    SNPlice-Combine
 
 ### Command-line:
 
-    SNPliceCombine [options]
+    SNPlice-Combine [options]
 
 ## Description
 
@@ -22,6 +22,10 @@ Counts, -c COUNTS, --counts=COUNTS
 
 > Read count files computed by SNPlice (tabular output). Required. 
 
+Quiet, -q, --quiet
+
+>Quiet. 
+
 Output File, -o OUTPUT, --output=OUTPUT
 
 > Output file. Leave empty for console ouptut. Valid output formats include text (txt extension), tsv, csv, xlsx, and xls. Console output is in text format. 
@@ -34,6 +38,3 @@ Output File, -o OUTPUT, --output=OUTPUT
 
 >Show this help message and exit. 
 
-Quiet, -q, --quiet
-
->Quiet. 
