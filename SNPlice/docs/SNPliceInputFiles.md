@@ -15,3 +15,8 @@ Junctions are represented as two exon "blocks" separated by an intron, as output
 Single-nucleotide-polymophisms (SNPs) in tabular and VCF format. Tabular formats/extensions include txt, tsv, csv, xlsx, xls.
 
 Text files (txt) must have four white-space separated columns representing the chromosome (CHROM), locus (POS), wild-type allele nucleotide (REF), and SNP nucleotide (ALT). Other tabular formats must provide CHROM, POS, REF, ALT headings. Extra values in tabular or VCF format files are mapped to the output.
+
+## See Also
+
+[SNPlice](SNPliceUsage.md), [SNPlice-Combine](SNPliceCombineUsage.md)
+
