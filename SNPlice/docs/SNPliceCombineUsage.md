@@ -1,3 +1,5 @@
+# SNPlice-Combine Usage
+
 ## Synopsis
 
 ### Graphical User Interface:
