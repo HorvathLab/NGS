@@ -40,5 +40,5 @@ Output File, -o OUTPUT, --output=OUTPUT
 
 ## See Also
 
-[SNPlice](SNPliceUsage)
+[SNPlice](SNPliceUsage.md)
 

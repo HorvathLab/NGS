@@ -76,5 +76,5 @@ Quiet, -q, --quiet
 
 ## See Also
 
-[SNPlice-Combine](SNPliceCombineUsage)
+[SNPlice-Combine](SNPliceCombineUsage.md)
 
