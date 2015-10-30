@@ -4,7 +4,7 @@ Download: [Current release](https://github.com/HorvathLab/NGS/releases/tag/SNPli
 
 Usage:
 * [SNPlice](docs/SNPliceUsage.md)
-* [SNPlice Combine](https://github.com/HorvathLab/NGS/wiki/SNPliceCombine-Usage)
+* [SNPlice Combine](docs/SNPliceCombineUsage.md)
 
 File Formats:
 * [SNPlice Input Files](https://github.com/HorvathLab/NGS/wiki/SNPlice-InputFiles)
