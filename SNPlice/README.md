@@ -3,9 +3,9 @@ The SNPlice tools find and evaluate the co-occurrence of single-nucleotide-polym
 Download: [Current release](https://github.com/HorvathLab/NGS/releases/tag/SNPlice-1.8.0) (version 1.8.0)
 
 Usage:
-* [SNPlice](wiki/SNPlice-Usage)
-* [SNPlice Combine](wiki/SNPliceCombine-Usage)
+* [SNPlice](/HorvathLab/NGS/wiki/SNPlice-Usage)
+* [SNPlice Combine](/HorvathLab/NGS/wiki/SNPliceCombine-Usage)
 
 File Formats:
-* [SNPlice Input Files](wiki/SNPlice-InputFiles)
-* [SNPlice Output Files](wiki/SNPlice-OutputFiles)
+* [SNPlice Input Files](/HorvathLab/NGS/wiki/SNPlice-InputFiles)
+* [SNPlice Output Files](/HorvathLab/NGS/wiki/SNPlice-OutputFiles)
