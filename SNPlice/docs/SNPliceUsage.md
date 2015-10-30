@@ -78,5 +78,5 @@ Quiet, -q, --quiet
 
 ## See Also
 
-[SNPlice-Combine](SNPliceCombineUsage.md), [Input Files](SNPliceInputFiles.md)
+[SNPlice Home](../README.md), [SNPlice-Combine](SNPliceCombineUsage.md), [Input Files](SNPliceInputFiles.md)
 
