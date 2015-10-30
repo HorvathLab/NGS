@@ -78,5 +78,5 @@ Quiet, -q, --quiet
 
 ## See Also
 
-[SNPlice-Combine](SNPliceCombineUsage.md)
+[SNPlice-Combine](SNPliceCombineUsage.md) [SNPlice Input Files](SNPliceInputFiles.md)
 
