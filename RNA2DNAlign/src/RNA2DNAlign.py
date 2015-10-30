@@ -204,6 +204,6 @@ execprog("snp_computation", *args)
 if os.path.exists(join(opt.output, "summary_result.txt")):
     os.unlink(join(opt.output, "summary_result.txt"))
 for event in "RNAed T-RNAed VSE T-VSE VSL T-VSL SOM LOH".split():
-    f = join(opt.output, "Events_%s.tsv"%(event,)))
+    f = join(opt.output, "Events_%s.tsv"%(event,))
     if os.path.exists(f):
         summary_analysis.read_events(f)
