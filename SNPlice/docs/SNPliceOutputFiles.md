@@ -11,19 +11,29 @@ Text files (txt) are tab-separated fields without headers. Other tabular formats
 Note that fields and their values passed through from the input SNP file (VCF or tabular formats) are not documented here, refer to the source of the input SNP file for this.
 
 CHROM  
-> Chromosome identifier of SNP  
+> Chromosome identifier of SNP
+
 POS  
-> Chromosome position of SNP  
+> Chromosome position of SNP
+
 REF  
 > Reference allele nucleotide
+
 ALT  
 > Variant allele nucleotide
+
 NumofJuncs  
 > Number of exon-intron junctions within the specified distance (-d/--distance/Distance)
 
-Distance 	Nucleotide distance from SNP locus to exon-intron junction.
-Junctions 	Chromosome position of the exon-intron-exon junctions represented by each intron's boundaries.
-SNPJuncIntronCount	Number of spliced spanning reads with ALT nucleotide.
+Distance  
+> Nucleotide distance from SNP locus to exon-intron junction.
+
+Junctions
+> Chromosome position of the exon-intron-exon junctions represented by each intron's boundaries.
+
+SNPJuncIntronCount  
+> Number of spliced spanning reads with ALT nucleotide.
+
 SNPJuncNoIntronCount	Number of unspliced spanning reads with ALT nucleotide.
 NoSNPJuncIntronCount	Number of spliced spanning reads with REF nucleotide.
 NoSNPJuncNoIntronCount	Number of unspliced spanning reads with REF nucleotide.
