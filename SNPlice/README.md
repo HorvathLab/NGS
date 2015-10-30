@@ -7,5 +7,5 @@ Usage:
 * [SNPlice Combine](docs/SNPliceCombineUsage.md)
 
 File Formats:
-* [SNPlice Input Files](https://github.com/HorvathLab/NGS/wiki/SNPlice-InputFiles)
-* [SNPlice Output Files](https://github.com//HorvathLab/NGS/wiki/SNPlice-OutputFiles)
+* [SNPlice Input Files](docs/SNPliceInputFiles.md)
+* [SNPlice Output Files](docs/SNPliceOutputFiles.md)
