@@ -73,3 +73,8 @@ Unique Reads, -U, --uniquereads
 Quiet, -q, --quiet
 
 >Quiet. 
+
+## See Also
+
+[SNPlice-Combine](SNPliceCombineUsage)
+
