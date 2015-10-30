@@ -20,19 +20,19 @@ Categorize and count transcript reads (mate-pairs) that span a SNP locus and the
 
 ## Options
 
--r ALIGNMENTS, --readalignments=ALIGNMENTS
+Read Alignments, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
 > Read alignments in (indexed) BAM/SAM format. Required. 
 
--s SNPS, --snps=SNPS
+SNPs, -s SNPS, --snps=SNPS
 
 > Single-nucleotide-polymophisms (SNPs). Tabular and VCF format SNPs are supported. Tabular formats include txt, tsv, csv, xlsx, xls. Text files (txt) must have four spaced separated columns representing the chromosome (CHROM), locus (POS), wild-type allele nucleotide (REF), and SNP nucleotide (ALT). Other tabular formats must provide CHROM, POS, REF, ALT headings. Extra values in tabular or VCF format files are mapped to the output. Required. 
 
--j JUNCTIONS, --junctions=JUNCTIONS
+Splice Junctions, -j JUNCTIONS, --junctions=JUNCTIONS
 
 >Splice junctions in BED format. Junctions are represented as two exon "blocks" separated by an intron, as output by TopHat applied to the reads. Required. 
 
--o OUTPUT, --output=OUTPUT
+Output File, -o OUTPUT, --output=OUTPUT
 
 >Output file. Leave empty for console ouptut. Valid output formats include text (txt extension), tsv, csv, xlsx, and xls. Console output is in text format. 
 
@@ -46,26 +46,30 @@ Categorize and count transcript reads (mate-pairs) that span a SNP locus and the
 
 ### Advanced
 
--d DIST, --distance=DIST
+Distance Bound, -d DIST, --distance=DIST
 
 >Upper bound on the distance between SNP locus and splice junction. Default: 100. 
 
--R READTHROUGH, --readthrough=READTHROUGH
+Read-Through, -R READTHROUGH, --readthrough=READTHROUGH
 
 >Minimum number of bases required on each side of the intron-exon junction. Default: 5bp. 
 
--M, --matepairs
+Mates, -M, --matepairs
 
 >Consider read mate-pair alignments to determine splicing status. Default=False. 
 
--F, --full
+All Fields, -F, --full
 
 >Output extra diagnostic read count fields. Default=False. 
 
--U, --uniquereads
+Filter Alignments, -f, --alignmentfilter
+
+> (Turn off) alignment filtering by length, edits, etc.
+
+Unique Reads, -U, --uniquereads
 
 >Consider only reads with distinct sequence. 
 
--q, --quiet
+Quiet, -q, --quiet
 
 >Quiet. 
