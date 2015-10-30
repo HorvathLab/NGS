@@ -42,5 +42,5 @@ Output File, -o OUTPUT, --output=OUTPUT
 
 ## See Also
 
-[SNPlice Home](..), [SNPlice](SNPliceUsage.md),  [Input Files](SNPliceInputFiles.md)
+[SNPlice Home](..), [SNPlice](SNPliceUsage.md),  [Input Files](SNPliceInputFiles.md), [Output Files](SNPliceOutputFiles.md)
 

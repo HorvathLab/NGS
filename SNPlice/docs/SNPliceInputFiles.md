@@ -18,5 +18,5 @@ Text files (txt) must have four white-space separated columns representing the c
 
 ## See Also
 
-[SNPlice Home](..), [SNPlice](SNPliceUsage.md), [SNPlice-Combine](SNPliceCombineUsage.md)
+[SNPlice Home](..), [SNPlice](SNPliceUsage.md), [SNPlice-Combine](SNPliceCombineUsage.md), [Output Files](SNPliceOutputFiles.md)
 
