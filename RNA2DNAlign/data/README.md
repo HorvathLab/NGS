@@ -1,8 +1,25 @@
 # RNA2DNAlign Data
 
-Supporing datafiles required for filtering or annotation of SNP loci
+## Example dataset
 
-## RefSeq (Human) exon coordinates from UCSC
+    376K        example-GDNA.bam
+     64K        example-GDNA.bam.bai
+    4.7M        example-GDNA.vcf
+    172K        example-NRNA.bam
+     64K        example-NRNA.bam.bai
+    1.4M        example-NRNA.vcf
+    472K        example-SDNA.bam
+     64K        example-SDNA.bam.bai
+    1.4M        example-SDNA.vcf
+    160K        example-TRNA.bam
+     64K        example-TRNA.bam.bai
+    824K        example-TRNA.vcf
+
+## Supporting data
+
+Datafiles required for filtering or annotation of SNP loci
+
+### RefSeq (Human) exon coordinates from UCSC
 
 0. The human RefSeq exon coordinates (hg19) from UCSC are provided
 in the RNA2DNAlign/data directory and can be ussed as provided. The
@@ -19,7 +36,7 @@ or assembly.
 
    The format for sorted_exon_coordintes.txt is tab-separated chromosome number (1,2,3,...,X,Y), start position, end position, in increasing order.
 
-## COSMIC Mutants
+### COSMIC Mutants
 
 1. Register with COSMIC here:
 
@@ -31,7 +48,7 @@ or assembly.
 
 3. This file is used in its published format.
 
-## DARNED loci
+### DARNED loci
 
 1. Download the DARNED loci from here (NCBI37/hg19):
 
