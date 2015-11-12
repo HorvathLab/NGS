@@ -314,8 +314,8 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
         continue
 																																				
     for si, alf in enumerate(opt.alignments):
-        nsnpf = sum(map(lambda nuc: counts[(nuc, "F", si)], alt.split(',')[0].strip()))
-        nsnpr = sum(map(lambda nuc: counts[(nuc, "R", si)], alt.split(',')[0].strip()))
+        nsnpf = sum(map(lambda nuc: counts[(nuc, "F", si)], map(str.strip,alt.split(','))))
+        nsnpr = sum(map(lambda nuc: counts[(nuc, "R", si)], map(str.strip,alt.split(','))))
         nsnp = nsnpr + nsnpf
         nreff = counts[(ref, "F", si)]
         nrefr = counts[(ref, "R", si)]
