@@ -28,7 +28,7 @@ from fisher import *
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '1.0.2 (%s)' % (VERSION,)
+VERSION = '1.0.3 (%s)' % (VERSION,)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
@@ -262,7 +262,6 @@ else:
     readfilter = BasicFilter()
 totalsnps = 0
 for snpchr, snppos, ref, alt, snpextra in snpdata:
-
     reads = []
     total = Counter()
     badread = Counter()
@@ -306,7 +305,6 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
     for base in goodreads:
         for si, al in goodreads[base]:
             counts[(base, "R" if al.is_reverse else "F", si)] += 1
-
     mincounted = 1e+20
     for si, alf in enumerate(opt.alignments):
         counted = sum(map(lambda t: counts[(t[0], t[1], si)], [
@@ -314,11 +312,10 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
         mincounted = min(counted, mincounted)
     if mincounted < opt.minreads:
         continue
-
+																																				
     for si, alf in enumerate(opt.alignments):
-
-        nsnpf = sum(map(lambda nuc: counts[(nuc, "F", si)], alt.split(',')))
-        nsnpr = sum(map(lambda nuc: counts[(nuc, "R", si)], alt.split(',')))
+        nsnpf = sum(map(lambda nuc: counts[(nuc, "F", si)], alt.split(',')[0].strip()))
+        nsnpr = sum(map(lambda nuc: counts[(nuc, "R", si)], alt.split(',')[0].strip()))
         nsnp = nsnpr + nsnpf
         nreff = counts[(ref, "F", si)]
         nrefr = counts[(ref, "R", si)]

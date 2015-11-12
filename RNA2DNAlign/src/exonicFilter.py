@@ -13,7 +13,7 @@ except NameError:
 sys.path.append(join(scriptdir, '..', '..', 'common', 'src'))
 
 from version import VERSION
-VERSION = '1.0.2 (%s)' % (VERSION,)
+VERSION = '1.0.3 (%s)' % (VERSION,)
 
 from optparse_gui import OptionParser
 parser = OptionParser(version=VERSION)
@@ -59,7 +59,7 @@ print "done parsing for "
 print filename
 
 def chrorder(chr):
-    if chr != "X":
+    if chr != "X":		
         if chr != "Y":
             return int(chr[0:])
     if chr == "X":
@@ -124,7 +124,7 @@ def all_filteration(d):
                             chrom_variant = d[variant_count][0]
                     variant_pos = int(d[variant_count][1])
 
-                    reads_var_unsplit = d[variant_count][7]
+                    #reads_var_unsplit = d[variant_count][7]
 
                     # We want to loop and insure that the chromosome
                     # of both exonic coords and variants are equal or
@@ -154,14 +154,14 @@ def all_filteration(d):
                         # print"ya kareem", chrom_variant, " ", variant_pos
                         variant_count += 1
 
-                        split_rd = reads_var_unsplit.split(';')
+                     #   split_rd = reads_var_unsplit.split(';')
 
-                        for dp4 in split_rd:
+                      #  for dp4 in split_rd:
                             # print "DP4", dp4
 
-                            if 'DP4=' in dp4:
+                       #     if 'DP4=' in dp4:
 
-                                split_DP4_Colmn = dp4[4:].split(',')
+                        #        split_DP4_Colmn = dp4[4:].split(',')
                         if (chrom_exonic_coord == chrom_variant):
 
                             # if (int(split_DP4_Colmn[2]) >=1 and
@@ -194,7 +194,7 @@ def all_filteration(d):
                                 chrom_variant = d[variant_count][0]
                         variant_pos = int(d[variant_count][1])
 
-                        reads_var_unsplit = d[variant_count][7]
+                  #      reads_var_unsplit = d[variant_count][7]
                     
                     while (variant_pos > exonic_end_pos and chrom_variant < chrom_exonic_coord):
                         # print variant_count, len(d)
@@ -247,6 +247,7 @@ for f in d:
     # print "CHECK", f
     #  print "now we sort"
     # print
+
     sort_l = sorted(d[f], key=lambda l: (chrorder(l[0]),int(l[1])))
     d[f] = sort_l
     # for i in d[f]:

@@ -74,3 +74,5 @@ find build/$PACKAGE-${VER}.${XX} -type d -empty -exec rm -rf {} \;
 mkdir -p dist
 tar -czf dist/$PACKAGE-${VER}.${XX}.tgz -C build $PACKAGE-${VER}.${XX}
 tar -czf dist/$PACKAGE-${VER}.${YY}.tgz -C build $PACKAGE-${VER}.${YY}
+git tag -d $PACKAGE-${VER}
+git tag $PACKAGE-${VER}

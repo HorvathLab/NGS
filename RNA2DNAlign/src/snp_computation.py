@@ -24,7 +24,7 @@ def chrorder(chr):
         return 24
 
 from version import VERSION
-VERSION = '1.0.3 (%s)' % (VERSION,)
+VERSION = '1.0.4 (%s)' % (VERSION,)
 
 from optparse_gui import OptionParser, OptionGroup
 parser = OptionParser(version=VERSION)
@@ -270,11 +270,12 @@ def RNA_edit(SRNA_d, NRNA_d, NDNA_d, SDNA_d):
             NRNA_Ref_count = int(NRNA_d[k][0][10])
             SRNA_SNP_count = int(SRNA_d[k][0][9])
             SRNA_Ref_count = int(SRNA_d[k][0][10])
-            if (NDNA_Ref_count >= 3 and NDNA_SNP_count == 0 and SDNA_Ref_count >= 3 and SDNA_SNP_count == 0):
-                if (SRNA_SNP_count >= 3 and NRNA_SNP_count >= 3):
-                    if float(NDNA_d[k][0][15]) >= 85 and float(SDNA_d[k][0][15]) >= 85:
-                        if float(SRNA_d[k][0][14]) >= 25:
-                            if float(NRNA_d[k][0][14]) >= 25:
+    #        if (NDNA_Ref_count >= 3 and NDNA_SNP_count == 0 and SDNA_Ref_count >= 3 and SDNA_SNP_count == 0):
+     #           if (SRNA_SNP_count >= 3 and NRNA_SNP_count >= 3):
+            if float(NDNA_d[k][0][15]) >= 85 and float(SDNA_d[k][0][15]) >= 85:
+																											
+                        if float(SRNA_d[k][0][14]) >= 25 or float(SRNA_d[k][0][13]) >= 25:
+                            if float(NRNA_d[k][0][14]) >= 20 or float(NRNA_d[k][0][13]) >= 20:
                                 colum_SRNA = list(SRNA_d[k][0][i]
                                                   for i in range_column)
                                 colum_NRNA = list(NRNA_d[k][0][i]
@@ -327,6 +328,7 @@ def Tum_RNA_edit(SRNA_d, NRNA_d, NDNA_d, SDNA_d):
             darn_dict[key_darn].append(darn[8])
         keys = SRNA_d.keys()
         for k in sorted(keys):
+	    #print "k", k
             chr_sample = SRNA_d[k][0][0]
             pos_sample = SRNA_d[k][0][1]
             key_sample = chr_sample + ":" + pos_sample
@@ -337,8 +339,12 @@ def Tum_RNA_edit(SRNA_d, NRNA_d, NDNA_d, SDNA_d):
             # if (NDNA_Ref_count >= 3 and NDNA_SNP_count == 0 and SDNA_Ref_count >= 3 and SDNA_SNP_count==0):
             # if (NRNA_Ref_count >= 3 and NRNA_SNP_count == 0):
             # if (SRNA_SNP_count>= 3):
-            if float(SRNA_d[k][0][14]) >= 20:
-                if float(NRNA_d[k][0][15]) >= 20:
+	    #print "key_sample",key_sample
+	    #print SRNA_d[k][0][14]
+																		
+            if float(SRNA_d[k][0][13]) >= 20 or float(SRNA_d[k][0][14]) >= 20:
+	#	print NRNA_d[k][0][15]
+                if float(NRNA_d[k][0][15]) >= 9:
                     if float(NDNA_d[k][0][15]) >= 20:
                         if float(SDNA_d[k][0][15]) >= 20:
                             colum_SRNA = list(SRNA_d[k][0][i]
