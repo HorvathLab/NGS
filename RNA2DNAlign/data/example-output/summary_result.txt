@@ -1,0 +1,80 @@
+##Summary Result of example-output/Events_RNAed.tsv
+#Number of Sample Analyzed: 4
+#Number of Total SNPs: 2
+#Most Frequent Chromosome: chr 1
+#Least Frequent Chromosome: chr 1
+#Change A > T: 0	#Change A > G: 2	#Change A > C: 0
+#Change C > T: 0	#Change C > G: 0	#Change C > A: 0
+#Change G > T: 0	#Change G > C: 0	#Change G > A: 0
+#Change T > G: 0	#Change T > C: 0	#Change T > A: 0
+
+##Summary Result of example-output/Events_T-RNAed.tsv
+#Number of Sample Analyzed: 4
+#Number of Total SNPs: 1
+#Most Frequent Chromosome: chr 19
+#Least Frequent Chromosome: chr 19
+#Change A > T: 0	#Change A > G: 0	#Change A > C: 0
+#Change C > T: 0	#Change C > G: 0	#Change C > A: 0
+#Change G > T: 0	#Change G > C: 0	#Change G > A: 1
+#Change T > G: 0	#Change T > C: 0	#Change T > A: 0
+
+##Summary Result of example-output/Events_VSE.tsv
+#Number of Sample Analyzed: 4
+#Number of Total SNPs: 2
+#Most Frequent Chromosome: chr 11
+#Least Frequent Chromosome: chr 11
+#Change A > T: 0	#Change A > G: 0	#Change A > C: 0
+#Change C > T: 1	#Change C > G: 0	#Change C > A: 0
+#Change G > T: 1	#Change G > C: 0	#Change G > A: 1
+#Change T > G: 0	#Change T > C: 0	#Change T > A: 0
+
+##Summary Result of example-output/Events_T-VSE.tsv
+#Number of Sample Analyzed: 4
+#Number of Total SNPs: 2
+#Most Frequent Chromosome: chr 5
+#Least Frequent Chromosome: chr 5
+#Change A > T: 1	#Change A > G: 0	#Change A > C: 0
+#Change C > T: 0	#Change C > G: 0	#Change C > A: 0
+#Change G > T: 0	#Change G > C: 0	#Change G > A: 0
+#Change T > G: 0	#Change T > C: 1	#Change T > A: 0
+
+##Summary Result of example-output/Events_VSL.tsv
+#Number of Sample Analyzed: 4
+#Number of Total SNPs: 2
+#Most Frequent Chromosome: chr 10
+#Least Frequent Chromosome: chr 10
+#Change A > T: 0	#Change A > G: 0	#Change A > C: 0
+#Change C > T: 0	#Change C > G: 0	#Change C > A: 0
+#Change G > T: 0	#Change G > C: 1	#Change G > A: 1
+#Change T > G: 0	#Change T > C: 0	#Change T > A: 0
+
+##Summary Result of example-output/Events_T-VSL.tsv
+#Number of Sample Analyzed: 4
+#Number of Total SNPs: 2
+#Most Frequent Chromosome: chr X
+#Least Frequent Chromosome: chr X
+#Change A > T: 0	#Change A > G: 0	#Change A > C: 0
+#Change C > T: 0	#Change C > G: 0	#Change C > A: 1
+#Change G > T: 0	#Change G > C: 0	#Change G > A: 0
+#Change T > G: 0	#Change T > C: 1	#Change T > A: 0
+
+##Summary Result of example-output/Events_SOM.tsv
+#Number of Sample Analyzed: 4
+#Number of Total SNPs: 2
+#Most Frequent Chromosome: chr 11
+#Least Frequent Chromosome: chr 11
+#Change A > T: 0	#Change A > G: 0	#Change A > C: 0
+#Change C > T: 0	#Change C > G: 0	#Change C > A: 0
+#Change G > T: 0	#Change G > C: 0	#Change G > A: 2
+#Change T > G: 0	#Change T > C: 0	#Change T > A: 0
+
+##Summary Result of example-output/Events_LOH.tsv
+#Number of Sample Analyzed: 4
+#Number of Total SNPs: 1
+#Most Frequent Chromosome: chr 1
+#Least Frequent Chromosome: chr 1
+#Change A > T: 0	#Change A > G: 0	#Change A > C: 0
+#Change C > T: 1	#Change C > G: 0	#Change C > A: 0
+#Change G > T: 1	#Change G > C: 0	#Change G > A: 0
+#Change T > G: 0	#Change T > C: 0	#Change T > A: 0
+

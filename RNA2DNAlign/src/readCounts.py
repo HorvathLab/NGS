@@ -391,7 +391,8 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
 
     progress.update()
 progress.done()
-print "SNPs/sec: %.2f"%(float(totalsnps)/(time.time()-start),)
+if not opt.quiet:
+    print "SNPs/sec: %.2f"%(float(totalsnps)/(time.time()-start),)
 
 pvkeys = filter(lambda h: h.endswith('pV'), outheaders)
 fdrkeys = filter(lambda h: h.endswith('FDR'), outheaders)
