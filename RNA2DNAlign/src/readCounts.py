@@ -5,7 +5,6 @@ import os.path
 import glob
 import copy
 import traceback
-import time
 import re
 import csv
 import tempfile
@@ -25,10 +24,12 @@ except NameError:
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText
 from util import *
 from fisher import *
+from pileups import SerialPileups, ThreadedPileups
+from chromreg import ChromLabelRegistry
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '1.0.3 (%s)' % (VERSION,)
+VERSION = '1.0.4 (%s)' % (VERSION,)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
@@ -59,13 +60,13 @@ else:
 
 advanced = OptionGroup(parser, "Advanced")
 parser.add_option("-s", "--snps", type="files", dest="snps", default=None,
-                  help="Single-Nucleotide-Polymophisms. Required.", name="SNPs",
+                  help="Single-Nucleotide-Polymophism files. Required.", name="SNP Files",
                   notNone=True, remember=True,
-                  filetypes=[("SNPs", "*.vcf;*.csv;*.tsv;*.xls;*.xlsx;*.txt")])
+                  filetypes=[("SNP Files", "*.vcf;*.csv;*.tsv;*.xls;*.xlsx;*.txt")])
 parser.add_option("-r", "--readalignments", type="files", dest="alignments", default=None,
-                  help="Read alignments in BAM/SAM format. Required.", name="Read Alignments",
+                  help="Read alignment files in indexed BAM format. Required.", name="Read Alignment Files",
                   notNone=True, remember=True,
-                  filetypes=[("Read Alignments (BAM/SAM Format)", "*.bam;*.sam")])
+                  filetypes=[("Read Alignment Files (indexed BAM)", "*.bam")])
 advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=10, remember=True,
                     help="Minimum number of good reads at SNP locus per alignment file. Default=10.", name="Min. Reads")
 advanced.add_option("-F", "--full", action="store_true", dest="full", default=False, remember=True,
@@ -74,8 +75,12 @@ advanced.add_option("-f", "--alignmentfilter", action="store_false", dest="filte
                     help="(Turn off) alignment filtering by length, edits, etc.", name="Filter Alignments")
 advanced.add_option("-U", "--uniquereads", action="store_true", dest="unique", default=False, remember=True,
                     help="Consider only distinct reads.", name="Unique Reads")
+advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=1, remember=True,
+                    help="Worker threads per alignment file. Indicate no threading with 0. Default=1.", name="Threads/BAM")
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
+# advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
+#                     help="Debug.", name="Debug")
 parser.add_option("-o", "--output", type="savefile", dest="output", remember=True,
                   help="Output file. Leave empty for console ouptut.", default="",
                   name="Output File", filetypes=[("All output formats", "*.xlsx;*.xls;*.csv;*.tsv;*.txt"),
@@ -100,7 +105,6 @@ if not opt.output:
     opt.quiet = True
 progress = ProgressText(quiet=opt.quiet)
 
-import pysam
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable, BEDFile, VCFFile
 
 progress.stage("Read SNP data", len(opt.snps))
@@ -109,8 +113,9 @@ CHROM POS REF ALT
 """.split())
 
 snpdata = {}
-extrasnpheaders = []
-usedsnpheaders = set()
+# extrasnpheaders = []
+# usedsnpheaders = set()
+snpchroms = defaultdict(set)
 for filename in opt.snps:
 
     base, extn = filename.rsplit('.', 1)
@@ -138,47 +143,52 @@ for filename in opt.snps:
     for h in snps.headers():
         if h in snpheaders:
             continue
-        if h not in extrasnpheaders:
-            extrasnpheaders.append(h)
+        # if h not in extrasnpheaders:
+        #     extrasnpheaders.append(h)
 
     for r in snps:
-        chr = r[snpheaders[0]]
-        locus = int(r[snpheaders[1]])
-        ref = r[snpheaders[2]]
-        alt = r[snpheaders[3]]
+        chr = r[snpheaders[0]].strip()
+	snpchroms[filename].add(chr)
+        locus = int(r[snpheaders[1]].strip())
+        ref = r[snpheaders[2]].strip()
+        alt = r[snpheaders[3]].strip()
         if r.get('INFO:INDEL'):
             continue
         if len(ref) != 1:
             continue
         if not re.search(r'^[ACGT](,[ACGT])*$', alt):
             continue
-        for h in r:
-            if r.get(h):
-                usedsnpheaders.add(h)
-        # cannonr = (",".join(map(lambda t: "%s:%s"%t,sorted(r.items()))))
-        # snpkey = (chr,locus,ref,alt,cannonr)
-        snpkey = (chr, locus, ref, alt)
-        # if str(locus) not in "1337612851669120781870889032162692092190017123282449235487873132320332288913526053039530834572380747246127615660316838509772413593731219137348879478140329":
-        #     continue
+        # for h in r:
+        #     if r.get(h):
+        #         usedsnpheaders.add(h)
+        snpkey = (filename, chr, locus, ref, alt)
         if snpkey not in snpdata:
-            snpdata[snpkey] = (chr, locus, ref, alt, r)
+            snpdata[snpkey] = r
 
     progress.update()
 progress.done()
 
-snpdata = sorted(snpdata.values())
-extrasnpheaders = filter(lambda h: h in usedsnpheaders, extrasnpheaders)
-progress.message("SNPs: %d" % len(snpdata))
+chrreg = ChromLabelRegistry()
 
-samfiles = []
-for al in opt.alignments:
-    if al.lower().endswith('.bam'):
-        samfile = pysam.Samfile(al, "rb")
-    elif al.lower().endswith('.sam'):
-        samfile = pysam.Samfile(al, "r")
-    else:
-        raise RuntimeError("Unexpected alignments file extension: %s." % al)
-    samfiles.append(samfile)
+for snpfile in snpchroms:
+    chrreg.add_labels(snpfile,snpchroms[snpfile])
+
+snpdata1 = {}
+for (sf, chr, locus, ref, alt), r in snpdata.iteritems():
+    chrom = chrreg.label2chrom(sf,chr)
+    assert(chrom)
+    snpkey = (chrom,locus,ref,alt)
+    if snpkey not in snpdata1:
+        snpdata1[snpkey] = (chrom,locus,ref,alt,r)
+
+for bamfile in opt.alignments:
+    chrreg.add_bamlabels(bamfile)
+
+chrreg.determine_chrom_order()
+
+snpdata = sorted(snpdata1.values(),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
+# extrasnpheaders = filter(lambda h: h in usedsnpheaders, extrasnpheaders)
+progress.message("SNPs: %d" % len(snpdata))
 
 outheaders = snpheaders + filter(None, """
 SNPCountForward
@@ -254,29 +264,41 @@ else:
 
 outrows = []
 
-progress.stage("Count reads per SNP", len(snpdata))
+# if opt.debug:
+#     import random
+#     random.seed(1234567)
+#     snpdata = sorted(random.sample(snpdata,10000))
+#     snpdata = sorted(sorted(random.sample(snpdata,200))*5)
+#     snpdata = sorted(random.sample(snpdata,200))*5
 
 if opt.filter:
     readfilter = SNPPileupReadFilter()
 else:
     readfilter = BasicFilter()
+
+if opt.tpb == 0:
+    pileups = SerialPileups(snpdata, opt.alignments, readfilter, chrreg).iterator()
+else:
+    pileups = ThreadedPileups(snpdata, opt.alignments, readfilter, chrreg, threadsperbam=opt.tpb).iterator()
+
+progress.stage("Count reads per SNP", len(snpdata))
+
 totalsnps = 0
+start = time.time()
+# for i in range(len(snpdata)):
 for snpchr, snppos, ref, alt, snpextra in snpdata:
-    reads = []
-    total = Counter()
-    badread = Counter()
-    snppos1 = snppos - 1
-    for i, samfile in enumerate(samfiles):
-        for pileupcolumn in samfile.pileup(snpchr, snppos1, snppos1 + 1, truncate=True):
-            total[i] += pileupcolumn.n
-            for pileupread in pileupcolumn.pileups:
-                try:
-                    al, pos, base, nseg = readfilter.test(pileupread)
-                except BadRead, e:
-                    badread[(i, e.message)] += 1
-                    continue
-                reads.append((al, pos, base, i))
-                badread[i, 'Good'] += 1
+    
+##     if opt.debug:
+## 	if totalsnps % 100 == 0 and totalsnps > 0:
+## 	    print "SNPs/sec: %.2f"%(float(totalsnps)/(time.time()-start),)
+
+    snpchr1, snppos1, ref1, alt1, total, reads, badread = pileups.next()
+    assert(snpchr == snpchr1 and snppos == snppos1)
+    
+##     if opt.debug:
+##         print snpchr,snppos,ref,alt, \
+##               " ".join(map(str,map(lambda i: total[i],range(len(opt.alignments))))), \
+##               " ".join(map(str,map(lambda i: badread[(i, 'Good')],range(len(opt.alignments)))))
 
     goodreads = defaultdict(list)
     for al, pos, base, si in reads:
@@ -312,7 +334,7 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
         mincounted = min(counted, mincounted)
     if mincounted < opt.minreads:
         continue
-																																				
+
     for si, alf in enumerate(opt.alignments):
         nsnpf = sum(map(lambda nuc: counts[(nuc, "F", si)], map(str.strip,alt.split(','))))
         nsnpr = sum(map(lambda nuc: counts[(nuc, "R", si)], map(str.strip,alt.split(','))))
@@ -346,7 +368,6 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
             vardom = 1.0
             refdom = 1.0
 
-        # [ snpextra.get(k,emptysym) for k in extrasnpheaders ] + \
         row = [ snpchr, snppos, ref, alt ] + \
               [ os.path.split(alf)[1].rsplit('.', 1)[0] ] + \
               [nsnpf, nsnpr,
@@ -370,6 +391,7 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
 
     progress.update()
 progress.done()
+print "SNPs/sec: %.2f"%(float(totalsnps)/(time.time()-start),)
 
 pvkeys = filter(lambda h: h.endswith('pV'), outheaders)
 fdrkeys = filter(lambda h: h.endswith('FDR'), outheaders)

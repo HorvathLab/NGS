@@ -9,7 +9,6 @@ import os.path
 import glob
 import copy
 import traceback
-import time
 import re
 import csv
 import tempfile
@@ -36,7 +35,7 @@ from fisher import *
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '1.0.3 (%s)' % (VERSION,)
+VERSION = '1.0.4 (%s)' % (VERSION,)
 
 
 def excepthook(etype, value, tb):
@@ -72,13 +71,13 @@ readcounts = OptionGroup(parser, "Read Counting")
 regexs = OptionGroup(parser, "Filename Matching")
 snpannot = OptionGroup(parser, "SNP Annotation")
 parser.add_option("-s", "--snps", type="files", dest="snps", default=None,
-                  help="Single-Nucleotide-Polymophisms. Required.", name="SNPs",
+                  help="Single-Nucleotide-Polymophism files. Required.", name="SNP Files",
                   notNone=True, remember=True,
-                  filetypes=[("SNPs", "*.vcf")])
+                  filetypes=[("SNP Files", "*.vcf")])
 parser.add_option("-r", "--readalignments", type="files", dest="alignments", default=None,
-                  help="Read alignments in BAM/SAM format. Required.", name="Read Alignments",
+                  help="Read alignment files in indexed BAM format. Required.", name="Read Alignment Files",
                   notNone=True, remember=True,
-                  filetypes=[("Read Alignments (BAM/SAM Format)", "*.bam;*.sam")])
+                  filetypes=[("Read Alignment Files (Indexed BAM)", "*.bam")])
 exfilt.add_option("-e", "--exoncoords", type="file", dest="exoncoords", default=None,
                   help="Exon coordinates for SNP filtering. Optional.", name="Exon Coords.",
                   remember=True,
@@ -107,6 +106,9 @@ readcounts.add_option("-f", "--alignmentfilter", action="store_false", dest="fil
                       help="(Turn off) alignment filtering by length, edits, etc.", name="Filter Alignments")
 readcounts.add_option("-U", "--uniquereads", action="store_true", dest="unique", default=False, remember=True,
                       help="Consider only distinct reads.", name="Unique Reads")
+readcounts.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=1, remember=True,
+                    help="Worker threads per alignment file. Indicate no threading with 0. Default=1.",
+                      name="Threads/BAM")
 readcounts.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                       help="Quiet.", name="Quiet")
 
@@ -159,7 +161,7 @@ for snpfile in opt.snps:
     if opt.exoncoords:
         base, extn = snpfile.rsplit('.', 1)
         basedir, basename = split(base)
-        outfile = join(opt.output, basename + '.filtered.' + extn)
+        outfile = join(opt.output, "." + basename + '.filtered.' + extn)
         if not os.path.exists(outfile):
             makedirs(opt.output)
             execprog("exonicFilter", "--exons", opt.exoncoords,
@@ -177,6 +179,7 @@ if not os.path.exists(outfile):
             "-s", " ".join(snpfiles),
             "-o", outfile]
     args.extend(["-m", str(opt.minreads)])
+    args.extend(["-t", str(opt.tpb)])
     if not opt.filter:
         args.append("-f")
     if opt.unique:

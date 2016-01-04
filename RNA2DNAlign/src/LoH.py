@@ -26,7 +26,7 @@ from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, Pro
 from util import *
 
 from version import VERSION
-VERSION = '1.0.0 (%s)' % (VERSION,)
+VERSION = '1.0.1 (%s)' % (VERSION,)
 
 
 def excepthook(etype, value, tb):
@@ -98,7 +98,7 @@ if not opt.output:
     opt.quiet = True
 progress = ProgressText(quiet=opt.quiet)
 
-import pysam
+from pysamimport import pysam                                                   
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable, BEDFile, VCFFile
 
 progress.stage("Read SNP data", len(opt.snps))

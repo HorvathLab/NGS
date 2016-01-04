@@ -1,6 +1,6 @@
 
 import sys
-import pysam
+from pysamimport import pysam
 import re
 import inspect
 
