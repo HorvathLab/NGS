@@ -31,7 +31,7 @@ except:
     scriptextn = ""
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText
 from util import *
-from fisher import *
+
 from operator import itemgetter
 
 from version import VERSION
@@ -67,13 +67,12 @@ else:
 						
 exfilt = OptionGroup(parser, "Filtering")
 readcounts = OptionGroup(parser, "Read Counting")
-# advanced = OptionGroup(parser, "Advanced")
 regexs = OptionGroup(parser, "Filename Matching")
 snvannot = OptionGroup(parser, "SNV Annotation")
 parser.add_option("-s", "--snvs", type="files", dest="snvs", default=None,
                   help="Single-Nucleotide-Variant files. Required.", name="SNV Files",
                   notNone=True, remember=True,
-                  filetypes=[("SNV Files", "*.vcf")])
+                  filetypes=[("SNV Files", "*.vcf;*.csv;*.tsv;*.xls;*.xlsx;*.txt")])
 parser.add_option("-r", "--readalignments", type="files", dest="alignments", default=None,
                   help="Read alignment files in indexed BAM format. Required.", name="Read Alignment Files",
                   notNone=True, remember=True,
@@ -133,17 +132,15 @@ while True:
 
     break
 
-
 def makedirs(d):
     if os.path.isdir(d):
         return
     os.makedirs(d)
 
-
 def execprog(prog, *args, **kw):
     progpath = os.path.join(scriptdir, prog + scriptextn)
     assert os.path.exists(progpath), "%s does not exist" % (progpath,)
-    if kw.get('verbose', True):
+    if kw.get('verbose', False):
         argstr = " ".join(
             map(lambda a: a if " " not in a else '"%s"' % a, args))
         print >>sys.stderr, "Executing:\n  %s %s" % (prog + scriptextn, argstr)
@@ -163,9 +160,9 @@ for snvfile in opt.snvs:
         if extn != 'vcf':
             extn = 'tsv'
         basedir, basename = split(base)
+        makedirs(opt.output)
         outfile = join(opt.output, "." + basename + '.filtered.' + extn)
-        if not os.path.exists(outfile):
-            makedirs(opt.output)
+        if not os.path.exists(outfile) or True:
             execprog("exonicFilter", "--exons", opt.exoncoords,
                      "--input", snvfile, "--output", outfile)
         snvfiles.append(outfile)
@@ -174,7 +171,7 @@ for snvfile in opt.snvs:
 
 # Apply readCounts to SNVs and aligned reads. Pass on options as needed...
 outfile = join(opt.output, "readCounts.tsv")
-if not os.path.exists(outfile):
+if not os.path.exists(outfile) or True:
 
     args = ["-F",
             "-r", " ".join(opt.alignments),

@@ -1,3 +1,4 @@
+import numpy
 from scipy.stats.distributions import hypergeom, binom
 from math import log
 

@@ -49,7 +49,7 @@ PROGS=`python27 $PACKAGE/src/version.py PROGRAMS`
 rm -rf $PACKAGE/bin
 export TCL_LIBRARY=/tools/EPD/lib/tcl8.5
 for p in $PROGS; do
-  /tools/EPD/bin/cxfreeze --include-path=common/src --include-modules=hashlib,ctypes,platform,pysam.TabProxies --target-dir=$PACKAGE/bin $PACKAGE/src/$p
+  /tools/EPD/bin/cxfreeze --include-path=common/src --include-modules=hashlib,ctypes,platform,pysam.TabProxies,numpy.core --target-dir=$PACKAGE/bin $PACKAGE/src/$p
 done
 mkdir -p build/$PACKAGE-${VER}.${XX}
 for d in bin data scripts; do
@@ -61,6 +61,8 @@ for d in bin data scripts; do
     rsync -a $PACKAGE/$d build/$PACKAGE-${VER}.${XX}
   fi
 done
+rsync -a common/src/*.ini build/$PACKAGE-${VER}.${XX}/bin
+rsync -a $PACKAGE/src/*.ini build/$PACKAGE-${VER}.${XX}/bin
 mv build/$PACKAGE-${VER}.${XX}/bin build/$PACKAGE-${VER}.${XX}/lib
 mkdir -p build/$PACKAGE-${VER}.${XX}/bin
 for s in $PROGS; do

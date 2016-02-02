@@ -22,7 +22,7 @@ parser.add_option("--exons", type="file", dest="exons", default=None,
                   help="Exonic coordinates (sored). Required.", notNone=True,
                   filetypes=[("Exonic Coordinates", "*.txt")])
 parser.add_option("--input", type="file", dest="input", default=None,
-                  help="Input SNVs in VCF format. Required",
+                  help="Input SNVs. Required",
                   filetypes=[("Input SNV File", "*.vcf;*.csv;*.tsv;*.xls;*.xlsx;*.txt")])
 parser.add_option("--output", type="savefile", dest="output", default=None,
                   help="Output file. Required",
@@ -80,7 +80,7 @@ def ReadTSV(filename):
         chrom.add(ri[0])
         snvdata.append(ri)
 
-    return "\t".join(snvs.headers()), chrom, snvdata
+    return ["\t".join(snvs.headers())], chrom, snvdata
 												
 exoncoords = opt.exons
 filename = opt.input

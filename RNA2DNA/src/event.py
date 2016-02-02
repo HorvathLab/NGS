@@ -18,11 +18,17 @@ class Event(object):
     cosmic = False
     darned = False
     def __init__(self,**kw):
-        if not self.config:
-            iniFile = resource_stream(__name__, 'event.ini')
-            self.config = SafeConfigParser()
-            self.config.optionxform = str
-            self.config.readfp(iniFile)
+        if not Event.config:
+            iniPath = os.path.split(__file__)[0]
+            for i in range(2):
+                iniFile = os.path.join(iniPath,'event.ini')
+                if os.path.exists(iniFile):
+                    break
+                iniPath = os.path.split(iniPath)[0]
+            iniFile = open(iniFile,'r')
+            Event.config = SafeConfigParser()
+            Event.config.optionxform = str
+            Event.config.readfp(iniFile)
         self.goodkeys = set()
         self.params = dict(self.config.items(self.__class__.__name__))
         for p,vstr in self.params.items():
@@ -60,11 +66,20 @@ class Event(object):
         if "TRNA" in self.requires and k not in self.TRNA:
             return False
         return True
+
+    @classmethod
+    def listall(cls):
+        abbrevs = []
+        for cls1 in cls.allEvents():
+            abbrevs.append(cls1.abbrev)
+        abbrevs.sort()
+        return abbrevs
             
     @classmethod
     def testall(cls):
         cls.events = []
-        for e in cls.allEvents():
+        for cls1 in cls.allEvents():
+            e = cls1()
             for k in cls.keys:
                 if e.apply(k):
                     e.test(k)
@@ -74,7 +89,7 @@ class Event(object):
     def allEvents(cls):
         for cls1 in map(itemgetter(1),inspect.getmembers(sys.modules[__name__])):
             if inspect.isclass(cls1) and issubclass(cls1,cls) and hasattr(cls1,'keep'):
-                yield cls1()
+                yield cls1
 
     @classmethod
     def getEvent(cls):
@@ -141,11 +156,7 @@ class NoGDNAEvent(Event):
             self.goodkeys.add(k)
 
 class SomaticVariantEvent(Event):
-    abbrev = "Som"
-    cosmic = True
-
-class TSSEvent(Event):
-    abbrev = "Som"
+    abbrev = "SOM"
     cosmic = True
 
 class RNAEditingEvent(Event):
