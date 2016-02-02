@@ -16,7 +16,7 @@ fi
 PACKAGE=`readlink -f "$PACKAGE"`
 PACKAGE=`basename "$PACKAGE"`
 if [ ! -d "./$PACKAGE" ]; then
-    echo "Valid packages: SNPlice, RNA2DNAlign" 1>&2
+    echo "Valid packages: SNPlice, RNA2DNA" 1>&2
     exit 1;
 fi
 VER=`python27 $PACKAGE/src/version.py VERSION | tr -d -c '0-9.'`

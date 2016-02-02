@@ -17,7 +17,7 @@ except NameError:
     scriptdir = dirname(realpath(sys.argv[0]))
 sys.path.append(join(scriptdir, '..', '..', 'common', 'src'))
 
-from optparse_gui import OptionParser, OptionGroup
+from optparse_gui import OptionParser, OptionGroup, ProgressText
 parser = OptionParser(version=VERSION)
 regexs = OptionGroup(parser, "Filename Matching")
 
@@ -50,6 +50,8 @@ opt.normaltransre = re.compile(opt.normaltransre)
 opt.tumorexomere = re.compile(opt.tumorexomere)
 opt.tumortransre = re.compile(opt.tumortransre)
 
+progress = ProgressText()
+
 base = os.path.split(os.path.abspath(opt.counts))[0]
 
 TRNA = {}; NRNA = {}; GDNA = {}; SDNA = {}
@@ -61,6 +63,7 @@ chrreg.add_labels(opt.counts,labels)
 chrreg.default_chrom_order()
 chrorder = chrreg.chrom_order
 
+progress.stage("Parsing read-counts")
 f = open(opt.counts, 'r')
 reader = csv.DictReader(f, delimiter='\t')
 types2files = defaultdict(set)
@@ -82,6 +85,8 @@ for row in reader:
     if opt.tumortransre.search(filename) and key not in TRNA:
         TRNA[key] = row; types2files["TRNA"].add(filename); files2types[filename].add("TRNA")
 f.close()
+progress.done()
+
 fatal = False
 for f in files2types:
     if len(files2types[f]) < 1:
@@ -123,6 +128,7 @@ events.setCounts(GDNA,SDNA,NRNA,TRNA)
 
 cosmic_headers = []
 if opt.cosmic:
+    progress.stage("Parsing COSMIC annotation file")
     if opt.cosmic.endswith('.gz'):
         f = gzip.open(opt.cosmic, 'r')
     else:
@@ -143,9 +149,11 @@ if opt.cosmic:
                              table[key]['COSMIC '+h] = cos[k]
     f.close()
     cosmic_headers = ['COSMIC Gene','COSMIC Site','COSMIC Sub_Site','COSMIC Cancer_Type']
+    progress.done()
 
 darned_headers = []
 if opt.darned:
+    progress.stage("Parsing DARNED annotation file")
     with open(opt.darned, 'r') as f:
         reader = csv.DictReader((f), delimiter='\t')
         for darn in reader:
@@ -157,8 +165,11 @@ if opt.darned:
                                        ('Cancer_Type',)):
                             table[key]['DARNED '+h] = darn[k]
     darned_headers = ['DARNED Cancer_Type']
+    progress.done()
     
+progress.stage("Filtering SNVs")
 events.testall()
+progress.done()
 
 headers = """
 AlignedReads CHROM POS REF ALT
@@ -170,6 +181,7 @@ NotHomoVarpV NotHomoRefpV NotHetpV VarDompV RefDompV
 NotHomoVarFDR NotHomoRefFDR NotHetFDR VarDomFDR RefDomFDR
 """.split()
 
+progress.stage("Generating event reports")
 for ev in events.events:
     wh = open(os.path.join(base,'Events_%s.tsv'%ev.abbrev),'w')
     event_headers = []
@@ -186,6 +198,7 @@ for ev in events.events:
             if k in table:
                 writer.writerow(table[k])
     wh.close()
+progress.done()
     
 sys.exit(0)    
 

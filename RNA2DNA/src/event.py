@@ -168,6 +168,9 @@ class LoHEvent(Event):
 class VSLEvent(Event):
     abbrev = "VSL"
 
+class TumorVSLEvent(Event):
+    abbrev = "T-VSL"
+
 class Somatic_DNAOnly(DNAOnlyEvent,SomaticVariantEvent):
 
     def keep(self,gdna,sdna):
@@ -400,3 +403,36 @@ class VSL_TumorOnly(TumorOnlyEvent,VSLEvent):
         cond &= (sdna['HetSc']     >= self.param('SDNA_HetSc'))
 
         return cond
+
+class Tumor_VSL_AllSamples(AllSamplesEvent,TumorVSLEvent):
+
+    def keep(self,gdna,sdna,nrna,trna):
+
+        cond  = ((trna['HomoRefSc'] >= self.param('TRNA_HomoRefSc')) and \
+                 (nrna['HetSc']     >= self.param('NRNA_HetSc')))
+
+        cond &= ((gdna['HetSc']     >= self.param('GDNA_HetSc')) and \
+                 (sdna['HetSc']     >= self.param('SDNA_HetSc')))
+
+        return cond
+
+class Tumor_VSL_NoGDNA(NoGDNAEvent,TumorVSLEvent):
+
+    def keep(self,sdna,nrna,trna):
+
+        cond  = ((trna['HomoRefSc'] >= self.param('TRNA_HomoRefSc')) and \
+                 (nrna['HetSc']     >= self.param('NRNA_HetSc')))
+
+        cond &=  (sdna['HetSc']     >= self.param('SDNA_HetSc'))
+
+        return cond
+
+class Tumor_VSL_RNAOnly(RNAOnlyEvent,TumorVSLEvent):
+
+    def keep(self,nrna,trna):
+
+        cond  = ((trna['HomoRefSc'] >= self.param('TRNA_HomoRefSc')) and \
+                 (nrna['HetSc']     >= self.param('NRNA_HetSc')))
+
+        return cond
+
