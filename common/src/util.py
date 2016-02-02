@@ -43,28 +43,28 @@ class BadCigar(BadRead):
     header = "BadCIGAROperation"
 
 
-class IndelAtSNP(BadRead):
-    header = "QueryIndelAtSNPLocus"
+class IndelAtSNV(BadRead):
+    header = "QueryIndelAtSNVLocus"
 
 
-class GapAtSNP(BadRead):
-    header = "GapInQueryAtSNPLocus"
+class GapAtSNV(BadRead):
+    header = "GapInQueryAtSNVLocus"
 
 
-class SNPPadding(BadRead):
-    header = "SNPLocusAtEndOfRead"
+class SNVPadding(BadRead):
+    header = "SNVLocusAtEndOfRead"
 
 
-class SNPEditPadding(BadRead):
-    header = "SubstitutionNearSNPLocus"
+class SNVEditPadding(BadRead):
+    header = "SubstitutionNearSNVLocus"
 
 
 class TooManyEdits(BadRead):
     header = "TooManyEdits"
 
 
-class TooManyEditsOtherThanSNP(BadRead):
-    header = "TooManyEditsOtherThanSNP"
+class TooManyEditsOtherThanSNV(BadRead):
+    header = "TooManyEditsOtherThanSNV"
 
 
 class TooManyQueryGaps(BadRead):
@@ -135,7 +135,7 @@ class ReadFilter:
         return segments
 
 
-class SNPPileupReadFilter:
+class SNVPileupReadFilter:
 
     def __init__(self, minpad=3, minsubstdist=3, maxedits=1, **kw):
         kw['maxedits'] = (maxedits + 1)
@@ -155,15 +155,15 @@ class SNPPileupReadFilter:
 
     def test(self, pileupread):
         if pileupread.indel != 0:
-            raise IndelAtSNP()
+            raise IndelAtSNV()
         if pileupread.is_del:
-            raise GapAtSNP()
+            raise GapAtSNV()
         al = pileupread.alignment
         segments = self.rf.test(al)
         qpos = pileupread.query_position
         seg, qpos = self.findseg(qpos, segments)
         if qpos < self.minpad or (segments[seg] - qpos) < self.minpad:
-            raise SNPPadding()
+            raise SNVPadding()
         try:
             edits = re.split(r'(\d+)', al.opt('MD'))[1:-1]
             substs = dict()
@@ -174,10 +174,10 @@ class SNPPileupReadFilter:
                 if pos == pileupread.query_position:
                     reference = edits[i + 1]
                 elif abs(pos - pileupread.query_position) < self.minsubstdist:
-                    raise SNPEditPadding()
+                    raise SNVEditPadding()
             try:
                 if int(al.opt('NM')) > (self.maxedits + (0 if (reference) else 1)):
-                    raise TooManyEditsOtherThanSNP()
+                    raise TooManyEditsOtherThanSNV()
             except KeyError:
                 if self.NONM in self.warnings:
                     print >>sys.stderr, self.NONM + \
@@ -187,7 +187,7 @@ class SNPPileupReadFilter:
         except KeyError:
             if self.NOMD in self.warnings:
                 print >>sys.stderr, self.NOMD + \
-                    ".\n         Cannot filter out reads with edits too close to the SNP locus or reference reads with one too many substitutions."
+                    ".\n         Cannot filter out reads with edits too close to the SNV locus or reference reads with one too many substitutions."
                 self.warnings.remove(self.NOMD)
 
         readbase = al.seq[pileupread.query_position]
@@ -212,9 +212,9 @@ class BasicFilter:
 
     def test(self, pileupread):
         if pileupread.indel != 0:
-            raise IndelAtSNP()
+            raise IndelAtSNV()
         if pileupread.is_del:
-            raise GapAtSNP()
+            raise GapAtSNV()
         al = pileupread.alignment
         if al.is_duplicate:
             raise IsDuplicate()

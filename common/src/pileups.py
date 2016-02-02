@@ -24,16 +24,16 @@ class SerialPileups(Pileups):
             samfiles.append(samfile)
             chrommap.append(self.chrreg.chrommap(al))
             
-        for snpchr, snppos, ref, alt, snpextra in self.loci:
+        for snvchr, snvpos, ref, alt, snvextra in self.loci:
             cnts = Counter()
             total = Counter()
             reads = []
-            snppos1 = snppos - 1
+            snvpos1 = snvpos - 1
             for i, samfile in enumerate(samfiles):
 		try:
-		    snplabel = chrommap[i](snpchr)
-		    if snplabel != None:
-                      for pileupcolumn in samfile.pileup(snplabel, snppos1, snppos1 + 1, truncate=True):
+		    snvlabel = chrommap[i](snvchr)
+		    if snvlabel != None:
+                      for pileupcolumn in samfile.pileup(snvlabel, snvpos1, snvpos1 + 1, truncate=True):
                         total[i] += pileupcolumn.n
                         for pileupread in pileupcolumn.pileups:
                             try:
@@ -45,9 +45,9 @@ class SerialPileups(Pileups):
                             cnts[(i, 'Good')] += 1
 		except ValueError:
 		    pass
-	    total[i] -= cnts[(i,"GapInQueryAtSNPLocus")]
-	    # del cnts[(i,"GapInQueryAtSNPLocus")]
-            yield (snpchr, snppos, ref, alt, total, reads, cnts)
+	    total[i] -= cnts[(i,"GapInQueryAtSNVLocus")]
+	    # del cnts[(i,"GapInQueryAtSNVLocus")]
+            yield (snvchr, snvpos, ref, alt, total, reads, cnts)
 
 class ThreadedPileups(Pileups):
     def __init__(self,*args,**kw):
@@ -73,15 +73,15 @@ class ThreadedPileups(Pileups):
 	# blocksize = int(math.ceil(len(self.loci)/self.tpb))
 	# for l in range(j*blocksize,min((j+1)*blocksize,len(self.loci))):
 	for l in range(j,len(self.loci),self.tpb):
-	    snpchr, snppos, ref, alt, snpextra = self.loci[l]
+	    snvchr, snvpos, ref, alt, snvextra = self.loci[l]
             cnts = Counter()
             total = Counter()
             reads = []
-            snppos1 = snppos - 1
+            snvpos1 = snvpos - 1
 	    try:
-		snplabel = chrommap(snpchr)
-		if snplabel != None:
-                  for pileupcolumn in samfile.pileup(snplabel, snppos1, snppos1 + 1, truncate=True):
+		snvlabel = chrommap(snvchr)
+		if snvlabel != None:
+                  for pileupcolumn in samfile.pileup(snvlabel, snvpos1, snvpos1 + 1, truncate=True):
                     total[i] += pileupcolumn.n
                     for pileupread in pileupcolumn.pileups:
                         try:
@@ -93,27 +93,27 @@ class ThreadedPileups(Pileups):
                         cnts[(i, 'Good')] += 1
 	    except ValueError, e:
 	        pass # raise e
-	    total[i] -= cnts[(i,"GapInQueryAtSNPLocus")]
-	    # del cnts[(i,"GapInQueryAtSNPLocus")]
-	    # print >>sys.stderr, (snpchr, snppos, ref, alt, total, cnts)
-            self._queue[k].put((snpchr, snppos, ref, alt, total, reads, cnts))
+	    total[i] -= cnts[(i,"GapInQueryAtSNVLocus")]
+	    # del cnts[(i,"GapInQueryAtSNVLocus")]
+	    # print >>sys.stderr, (snvchr, snvpos, ref, alt, total, cnts)
+            self._queue[k].put((snvchr, snvpos, ref, alt, total, reads, cnts))
         return
         
     def iterator(self):
         k = 0
 	# for i in range(len(self.loci)):
-        for snpchr, snppos, ref, alt, snpextra in self.loci:
+        for snvchr, snvpos, ref, alt, snvextra in self.loci:
             cnts = Counter()
             total = Counter()
             reads = []
             for i in range(len(self.samfiles)):
-                snpchri, snpposi, refi, alti, totali, readsi, cntsi = self._queue[k].get()
-                assert(snpchri == snpchr and snpposi == snppos)
+                snvchri, snvposi, refi, alti, totali, readsi, cntsi = self._queue[k].get()
+                assert(snvchri == snvchr and snvposi == snvpos)
                 assert(i in totali or len(totali.keys()) == 0)
                 reads.extend(readsi)
                 cnts.update(cntsi)
                 total.update(totali)
                 self._queue[k].task_done()
                 k = (k+1)%self.nt
-            yield (snpchr, snppos, ref, alt, total, reads, cnts)
+            yield (snvchr, snvpos, ref, alt, total, reads, cnts)
 

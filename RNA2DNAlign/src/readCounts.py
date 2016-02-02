@@ -59,16 +59,16 @@ else:
     error_kwargs = {}
 
 advanced = OptionGroup(parser, "Advanced")
-parser.add_option("-s", "--snps", type="files", dest="snps", default=None,
-                  help="Single-Nucleotide-Polymophism files. Required.", name="SNP Files",
+parser.add_option("-s", "--snvs", type="files", dest="snvs", default=None,
+                  help="Single-Nucleotide-Variant files. Required.", name="SNV Files",
                   notNone=True, remember=True,
-                  filetypes=[("SNP Files", "*.vcf;*.csv;*.tsv;*.xls;*.xlsx;*.txt")])
+                  filetypes=[("SNV Files", "*.vcf;*.csv;*.tsv;*.xls;*.xlsx;*.txt")])
 parser.add_option("-r", "--readalignments", type="files", dest="alignments", default=None,
                   help="Read alignment files in indexed BAM format. Required.", name="Read Alignment Files",
                   notNone=True, remember=True,
                   filetypes=[("Read Alignment Files (indexed BAM)", "*.bam")])
 advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=10, remember=True,
-                    help="Minimum number of good reads at SNP locus per alignment file. Default=10.", name="Min. Reads")
+                    help="Minimum number of good reads at SNV locus per alignment file. Default=10.", name="Min. Reads")
 advanced.add_option("-F", "--full", action="store_true", dest="full", default=False, remember=True,
                     help="Output extra diagnostic read count fields. Default=False.", name="All Fields")
 advanced.add_option("-f", "--alignmentfilter", action="store_false", dest="filter", default=True, remember=True,
@@ -107,51 +107,51 @@ progress = ProgressText(quiet=opt.quiet)
 
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable, BEDFile, VCFFile
 
-progress.stage("Read SNP data", len(opt.snps))
-snpheaders = filter(None, """
+progress.stage("Read SNV data", len(opt.snvs))
+snvheaders = filter(None, """
 CHROM POS REF ALT
 """.split())
 
-snpdata = {}
-# extrasnpheaders = []
-# usedsnpheaders = set()
-snpchroms = defaultdict(set)
-for filename in opt.snps:
+snvdata = {}
+# extrasnvheaders = []
+# usedsnvheaders = set()
+snvchroms = defaultdict(set)
+for filename in opt.snvs:
 
     base, extn = filename.rsplit('.', 1)
     extn = extn.lower()
     if extn == 'csv':
-        snps = CSVFileTable(filename=filename)
+        snvs = CSVFileTable(filename=filename)
     elif extn == 'vcf':
-        snps = VCFFile(filename=filename)
+        snvs = VCFFile(filename=filename)
     elif extn == 'tsv':
-        snps = TSVFileTable(filename=filename)
+        snvs = TSVFileTable(filename=filename)
     elif extn == 'xls':
-        snps = XLSFileTable(filename=filename)
+        snvs = XLSFileTable(filename=filename)
     elif extn == 'xlsx':
-        snps = XLSXFileTable(filename=filename)
+        snvs = XLSXFileTable(filename=filename)
     elif extn == 'txt':
-        snps = TXTFileTable(filename=filename, headers=snpheaders)
+        snvs = TXTFileTable(filename=filename, headers=snvheaders)
     else:
-        raise RuntimeError("Unexpected SNP file extension: %s" % filename)
+        raise RuntimeError("Unexpected SNV file extension: %s" % filename)
 
-    for h in snpheaders:
-        if h not in snps.headers():
+    for h in snvheaders:
+        if h not in snvs.headers():
             raise RuntimeError(
-                "Required header: %s missing from SNP file %s" % (h, filename))
+                "Required header: %s missing from SNV file %s" % (h, filename))
 
-    for h in snps.headers():
-        if h in snpheaders:
+    for h in snvs.headers():
+        if h in snvheaders:
             continue
-        # if h not in extrasnpheaders:
-        #     extrasnpheaders.append(h)
+        # if h not in extrasnvheaders:
+        #     extrasnvheaders.append(h)
 
-    for r in snps:
-        chr = r[snpheaders[0]].strip()
-	snpchroms[filename].add(chr)
-        locus = int(r[snpheaders[1]].strip())
-        ref = r[snpheaders[2]].strip()
-        alt = r[snpheaders[3]].strip()
+    for r in snvs:
+        chr = r[snvheaders[0]].strip()
+	snvchroms[filename].add(chr)
+        locus = int(r[snvheaders[1]].strip())
+        ref = r[snvheaders[2]].strip()
+        alt = r[snvheaders[3]].strip()
         if r.get('INFO:INDEL'):
             continue
         if len(ref) != 1:
@@ -160,42 +160,42 @@ for filename in opt.snps:
             continue
         # for h in r:
         #     if r.get(h):
-        #         usedsnpheaders.add(h)
-        snpkey = (filename, chr, locus, ref, alt)
-        if snpkey not in snpdata:
-            snpdata[snpkey] = r
+        #         usedsnvheaders.add(h)
+        snvkey = (filename, chr, locus, ref, alt)
+        if snvkey not in snvdata:
+            snvdata[snvkey] = r
 
     progress.update()
 progress.done()
 
 chrreg = ChromLabelRegistry()
 
-for snpfile in snpchroms:
-    chrreg.add_labels(snpfile,snpchroms[snpfile])
+for snvfile in snvchroms:
+    chrreg.add_labels(snvfile,snvchroms[snvfile])
 
-snpdata1 = {}
-for (sf, chr, locus, ref, alt), r in snpdata.iteritems():
+snvdata1 = {}
+for (sf, chr, locus, ref, alt), r in snvdata.iteritems():
     chrom = chrreg.label2chrom(sf,chr)
     assert(chrom)
-    snpkey = (chrom,locus,ref,alt)
-    if snpkey not in snpdata1:
-        snpdata1[snpkey] = (chrom,locus,ref,alt,r)
+    snvkey = (chrom,locus,ref,alt)
+    if snvkey not in snvdata1:
+        snvdata1[snvkey] = (chrom,locus,ref,alt,r)
 
 for bamfile in opt.alignments:
     chrreg.add_bamlabels(bamfile)
 
 chrreg.determine_chrom_order()
 
-snpdata = sorted(snpdata1.values(),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
-# extrasnpheaders = filter(lambda h: h in usedsnpheaders, extrasnpheaders)
-progress.message("SNPs: %d" % len(snpdata))
+snvdata = sorted(snvdata1.values(),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
+# extrasnvheaders = filter(lambda h: h in usedsnvheaders, extrasnvheaders)
+progress.message("SNVs: %d" % len(snvdata))
 
-outheaders = snpheaders + filter(None, """
-SNPCountForward
-SNPCountReverse
+outheaders = snvheaders + filter(None, """
+SNVCountForward
+SNVCountReverse
 RefCountForward
 RefCountReverse
-SNPCount
+SNVCount
 RefCount
 GoodReads
 %BadRead
@@ -221,16 +221,16 @@ NotHetFDR
 VarDomFDR
 RefDomFDR
 RemovedDuplicateReads
-FilteredSNPLociReads
-SNPLociReads
+FilteredSNVLociReads
+SNVLociReads
 """.split())
 debugging.extend(sorted(BadRead.allheaders))
 
 outheaders.extend(debugging)
 
-pos = outheaders.index("SNPCountForward")
+pos = outheaders.index("SNVCountForward")
 outheaders.insert(pos, 'AlignedReads')
-# for h in reversed(extrasnpheaders):
+# for h in reversed(extrasnvheaders):
 #    outheaders.insert(pos,h)
 
 outheaders1 = copy.copy(outheaders)
@@ -267,36 +267,36 @@ outrows = []
 # if opt.debug:
 #     import random
 #     random.seed(1234567)
-#     snpdata = sorted(random.sample(snpdata,10000))
-#     snpdata = sorted(sorted(random.sample(snpdata,200))*5)
-#     snpdata = sorted(random.sample(snpdata,200))*5
+#     snvdata = sorted(random.sample(snvdata,10000))
+#     snvdata = sorted(sorted(random.sample(snvdata,200))*5)
+#     snvdata = sorted(random.sample(snvdata,200))*5
 
 if opt.filter:
-    readfilter = SNPPileupReadFilter()
+    readfilter = SNVPileupReadFilter()
 else:
     readfilter = BasicFilter()
 
 if opt.tpb == 0:
-    pileups = SerialPileups(snpdata, opt.alignments, readfilter, chrreg).iterator()
+    pileups = SerialPileups(snvdata, opt.alignments, readfilter, chrreg).iterator()
 else:
-    pileups = ThreadedPileups(snpdata, opt.alignments, readfilter, chrreg, threadsperbam=opt.tpb).iterator()
+    pileups = ThreadedPileups(snvdata, opt.alignments, readfilter, chrreg, threadsperbam=opt.tpb).iterator()
 
-progress.stage("Count reads per SNP", len(snpdata))
+progress.stage("Count reads per SNV", len(snvdata))
 
-totalsnps = 0
+totalsnvs = 0
 start = time.time()
-# for i in range(len(snpdata)):
-for snpchr, snppos, ref, alt, snpextra in snpdata:
+# for i in range(len(snvdata)):
+for snvchr, snvpos, ref, alt, snvextra in snvdata:
     
 ##     if opt.debug:
-## 	if totalsnps % 100 == 0 and totalsnps > 0:
-## 	    print "SNPs/sec: %.2f"%(float(totalsnps)/(time.time()-start),)
+## 	if totalsnvs % 100 == 0 and totalsnvs > 0:
+## 	    print "SNVs/sec: %.2f"%(float(totalsnvs)/(time.time()-start),)
 
-    snpchr1, snppos1, ref1, alt1, total, reads, badread = pileups.next()
-    assert(snpchr == snpchr1 and snppos == snppos1)
+    snvchr1, snvpos1, ref1, alt1, total, reads, badread = pileups.next()
+    assert(snvchr == snvchr1 and snvpos == snvpos1)
     
 ##     if opt.debug:
-##         print snpchr,snppos,ref,alt, \
+##         print snvchr,snvpos,ref,alt, \
 ##               " ".join(map(str,map(lambda i: total[i],range(len(opt.alignments))))), \
 ##               " ".join(map(str,map(lambda i: badread[(i, 'Good')],range(len(opt.alignments)))))
 
@@ -321,7 +321,7 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
 
     # goodreads now contains the relevant read alignments.
 
-    totalsnps += 1
+    totalsnvs += 1
 
     counts = defaultdict(int)
     for base in goodreads:
@@ -336,9 +336,9 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
         continue
 
     for si, alf in enumerate(opt.alignments):
-        nsnpf = sum(map(lambda nuc: counts[(nuc, "F", si)], map(str.strip,alt.split(','))))
-        nsnpr = sum(map(lambda nuc: counts[(nuc, "R", si)], map(str.strip,alt.split(','))))
-        nsnp = nsnpr + nsnpf
+        nsnvf = sum(map(lambda nuc: counts[(nuc, "F", si)], map(str.strip,alt.split(','))))
+        nsnvr = sum(map(lambda nuc: counts[(nuc, "R", si)], map(str.strip,alt.split(','))))
+        nsnv = nsnvr + nsnvf
         nreff = counts[(ref, "F", si)]
         nrefr = counts[(ref, "R", si)]
         nref = nreff + nrefr
@@ -350,17 +350,17 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
                       (n, d) for n in 'ACGT' for d in 'FR']))
 
         pcount = 0.5
-        n = nsnp + nref + nother
-        nprime = nsnp + nref + nother + 4 * pcount
+        n = nsnv + nref + nother
+        nprime = nsnv + nref + nother + 4 * pcount
         q = float(nother + 2 * pcount) / (2 * nprime)
-        nothomoref = binom_test_high(nsnp, n, q)
+        nothomoref = binom_test_high(nsnv, n, q)
         nothomovar = binom_test_high(nref, n, q)
-        if nsnp > nref:
-            nothet = binom_test_high(nsnp, nsnp + nref, 0.5)
+        if nsnv > nref:
+            nothet = binom_test_high(nsnv, nsnv + nref, 0.5)
             refdom = 1.0
             vardom = nothet
-        elif nref > nsnp:
-            nothet = binom_test_high(nref, nsnp + nref, 0.5)
+        elif nref > nsnv:
+            nothet = binom_test_high(nref, nsnv + nref, 0.5)
             vardom = 1.0
             refdom = nothet
         else:
@@ -368,11 +368,11 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
             vardom = 1.0
             refdom = 1.0
 
-        row = [ snpchr, snppos, ref, alt ] + \
+        row = [ snvchr, snvpos, ref, alt ] + \
               [ os.path.split(alf)[1].rsplit('.', 1)[0] ] + \
-              [nsnpf, nsnpr,
+              [nsnvf, nsnvr,
                nreff, nrefr,
-               nsnp, nref,
+               nsnv, nref,
                counted,
                100.0 * (total[si] - badread[si, 'Good']) /
                float(total[si]) if total[si] != 0 else 0.0,
@@ -392,7 +392,7 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
     progress.update()
 progress.done()
 if not opt.quiet:
-    print "SNPs/sec: %.2f"%(float(totalsnps)/(time.time()-start),)
+    print "SNVs/sec: %.2f"%(float(totalsnvs)/(time.time()-start),)
 
 pvkeys = filter(lambda h: h.endswith('pV'), outheaders)
 fdrkeys = filter(lambda h: h.endswith('FDR'), outheaders)

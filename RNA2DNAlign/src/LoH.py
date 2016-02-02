@@ -57,10 +57,10 @@ else:
     error_kwargs = {}
 
 advanced = OptionGroup(parser, "Advanced")
-parser.add_option("-s", "--snps", type="files", dest="snps", default=None,
-                  help="Single-Nucleotide-Polymophisms. Required.", name="SNPs",
+parser.add_option("-s", "--snvs", type="files", dest="snvs", default=None,
+                  help="Single-Nucleotide-Variant files. Required.", name="SNVs",
                   notNone=True, remember=True,
-                  filetypes=[("SNPs", "*.vcf;*.csv;*.tsv;*.xls;*.xlsx;*.txt")])
+                  filetypes=[("SNVs", "*.vcf;*.csv;*.tsv;*.xls;*.xlsx;*.txt")])
 parser.add_option("-r", "--readalignments", type="files", dest="alignments", default=None,
                   help="Read alignments in BAM/SAM format. Required.", name="Read Alignments",
                   notNone=True, remember=True,
@@ -101,49 +101,49 @@ progress = ProgressText(quiet=opt.quiet)
 from pysamimport import pysam                                                   
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable, BEDFile, VCFFile
 
-progress.stage("Read SNP data", len(opt.snps))
-snpheaders = filter(None, """
+progress.stage("Read SNV data", len(opt.snvs))
+snvheaders = filter(None, """
 CHROM POS REF ALT
 """.split())
 
-snpdata = {}
-extrasnpheaders = []
-usedsnpheaders = set()
-for filename in opt.snps:
+snvdata = {}
+extrasnvheaders = []
+usedsnvheaders = set()
+for filename in opt.snvs:
 
     base, extn = filename.rsplit('.', 1)
     extn = extn.lower()
     if extn == 'csv':
-        snps = CSVFileTable(filename=filename)
+        snvs = CSVFileTable(filename=filename)
     elif extn == 'vcf':
-        snps = VCFFile(filename=filename)
+        snvs = VCFFile(filename=filename)
     elif extn == 'tsv':
-        snps = TSVFileTable(filename=filename)
+        snvs = TSVFileTable(filename=filename)
     elif extn == 'xls':
-        snps = XLSFileTable(filename=filename)
+        snvs = XLSFileTable(filename=filename)
     elif extn == 'xlsx':
-        snps = XLSXFileTable(filename=filename)
+        snvs = XLSXFileTable(filename=filename)
     elif extn == 'txt':
-        snps = TXTFileTable(filename=filename, headers=snpheaders)
+        snvs = TXTFileTable(filename=filename, headers=snvheaders)
     else:
-        raise RuntimeError("Unexpected SNP file extension: %s" % filename)
+        raise RuntimeError("Unexpected SNV file extension: %s" % filename)
 
-    for h in snpheaders:
-        if h not in snps.headers():
+    for h in snvheaders:
+        if h not in snvs.headers():
             raise RuntimeError(
-                "Required header: %s missing from SNP file %s" % (h, filename))
+                "Required header: %s missing from SNV file %s" % (h, filename))
 
-    for h in snps.headers():
-        if h in snpheaders:
+    for h in snvs.headers():
+        if h in snvheaders:
             continue
-        if h not in extrasnpheaders:
-            extrasnpheaders.append(h)
+        if h not in extrasnvheaders:
+            extrasnvheaders.append(h)
 
-    for r in snps:
-        chr = r[snpheaders[0]]
-        locus = int(r[snpheaders[1]])
-        ref = r[snpheaders[2]]
-        alt = r[snpheaders[3]]
+    for r in snvs:
+        chr = r[snvheaders[0]]
+        locus = int(r[snvheaders[1]])
+        ref = r[snvheaders[2]]
+        alt = r[snvheaders[3]]
         if r.get('INFO:INDEL'):
             continue
         if len(ref) != 1:
@@ -152,17 +152,17 @@ for filename in opt.snps:
             continue
         for h in r:
             if r.get(h):
-                usedsnpheaders.add(h)
+                usedsnvheaders.add(h)
         cannonr = (",".join(map(lambda t: "%s:%s" % t, sorted(r.items()))))
-        snpkey = (chr, locus, ref, alt, cannonr)
-        if snpkey not in snpdata:
-            snpdata[snpkey] = (chr, locus, ref, alt, r)
+        snvkey = (chr, locus, ref, alt, cannonr)
+        if snvkey not in snvdata:
+            snvdata[snvkey] = (chr, locus, ref, alt, r)
 
     progress.update()
 progress.done()
-snpdata = sorted(snpdata.values())
-extrasnpheaders = filter(lambda h: h in usedsnpheaders, extrasnpheaders)
-progress.message("SNPs: %d" % len(snpdata))
+snvdata = sorted(snvdata.values())
+extrasnvheaders = filter(lambda h: h in usedsnvheaders, extrasnvheaders)
+progress.message("SNVs: %d" % len(snvdata))
 
 samfiles = []
 for al in opt.alignments:
@@ -174,9 +174,9 @@ for al in opt.alignments:
         raise RuntimeError("Unexpected alignments file extension: %s." % al)
     samfiles.append(samfile)
 
-outheaders = snpheaders + filter(None, """
-SNPCount
-NoSNPCount
+outheaders = snvheaders + filter(None, """
+SNVCount
+NoSNVCount
 Prob
 LogOdds
 P-Value
@@ -188,14 +188,14 @@ debugging = filter(None, """
 OtherCount
 GoodReads
 RemovedDuplicateReads
-FilteredSNPLociReads
-SNPLociReads
+FilteredSNVLociReads
+SNVLociReads
 """.split())
 
 outheaders.extend(debugging)
 
-pos = outheaders.index("SNPCount")
-for h in reversed(extrasnpheaders):
+pos = outheaders.index("SNVCount")
+for h in reversed(extrasnvheaders):
     outheaders.insert(pos, h)
 
 outheaders1 = copy.copy(outheaders)
@@ -232,17 +232,17 @@ outrows = []
 from fisher import fisher_exact, bonferroni, fdr, lod, binom_test
 pvalues = []
 
-progress.stage("Count reads per SNP", len(snpdata))
+progress.stage("Count reads per SNV", len(snvdata))
 
-filter = SNPPileupReadFilter()
+filter = SNVPileupReadFilter()
 
-for snpchr, snppos, ref, alt, snpextra in snpdata:
+for snvchr, snvpos, ref, alt, snvextra in snvdata:
 
     reads = []
     total = 0
-    snppos1 = snppos - 1
+    snvpos1 = snvpos - 1
     for i, samfile in enumerate(samfiles):
-        for pileupcolumn in samfile.pileup(snpchr, snppos1, snppos1 + 1, truncate=True):
+        for pileupcolumn in samfile.pileup(snvchr, snvpos1, snvpos1 + 1, truncate=True):
             total += pileupcolumn.n
             for pileupread in pileupcolumn.pileups:
                 try:
@@ -281,23 +281,23 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
         for si, al in goodreads[base]:
             counts[base] += 1
 
-    nsnp = sum(map(lambda nuc: counts[nuc], alt.split(',')))
+    nsnv = sum(map(lambda nuc: counts[nuc], alt.split(',')))
     nref = counts[ref]
-    nother = sum(counts.values()) - nsnp - nref
+    nother = sum(counts.values()) - nsnv - nref
     p = emptysym
     pval = emptysym
     logprob = emptysym
 
-    psnp = nsnp / float(nsnp + nref)
-    pref = nref / float(nsnp + nref)
-    p = psnp / (psnp + pref)
-    logodds = math.log(float(nsnp) / float(nref), 2.0)
-    pval = binom_test(nsnp, nsnp + nref, 0.5)
+    psnv = nsnv / float(nsnv + nref)
+    pref = nref / float(nsnv + nref)
+    p = psnv / (psnv + pref)
+    logodds = math.log(float(nsnv) / float(nref), 2.0)
+    pval = binom_test(nsnv, nsnv + nref, 0.5)
     pvalues.append(pval)
 
-    row = [ snpchr, snppos, ref, alt ] + \
-          [ snpextra.get(k, emptysym) for k in extrasnpheaders ] + \
-          [nsnp,
+    row = [ snvchr, snvpos, ref, alt ] + \
+          [ snvextra.get(k, emptysym) for k in extrasnvheaders ] + \
+          [nsnv,
            nref,
            p,
            logodds,

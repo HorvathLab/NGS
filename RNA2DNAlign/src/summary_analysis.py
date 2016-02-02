@@ -70,7 +70,7 @@ def read_events(file):
         out.write("\n")
         out.write("#Number of Sample Analyzed:" + " " + str(count_sam))
         out.write("\n")
-        out.write("#Number of Total SNPs:" + " " + str(count))
+        out.write("#Number of Total SNVs:" + " " + str(count))
         out.write("\n")
         try:
             out.write("#Most Frequent Chromosome:" + " chr" + " " +

@@ -13,7 +13,7 @@ except NameError:
 sys.path.append(join(scriptdir, '..', '..', 'common', 'src'))
 
 from version import VERSION
-VERSION = '1.0.3 (%s)' % (VERSION,)
+VERSION = '1.0.4 (%s)' % (VERSION,)
 
 from optparse_gui import OptionParser
 parser = OptionParser(version=VERSION)
@@ -22,19 +22,21 @@ parser.add_option("--exons", type="file", dest="exons", default=None,
                   help="Exonic coordinates (sored). Required.", notNone=True,
                   filetypes=[("Exonic Coordinates", "*.txt")])
 parser.add_option("--input", type="file", dest="input", default=None,
-                  help="Input SNPs in VCF format. Required",
-                  filetypes=[("Input SNP File", "*.vcf")])
+                  help="Input SNVs in VCF format. Required",
+                  filetypes=[("Input SNV File", "*.vcf;*.csv;*.tsv;*.xls;*.xlsx;*.txt")])
 parser.add_option("--output", type="savefile", dest="output", default=None,
                   help="Output file. Required",
-                  filetypes=[("Output SNP File", "*.vcf")])
+                  filetypes=[("Output SNV File", "*.vcf;*.tsv")])
 
 opt, args = parser.parse_args()
 
-d = {}
-fileheader = []
+from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable
 
 def ReadVCF(file_name):
-    d[file_name] = []
+    fileheader = []
+    rows = []
+    chrom = set()
+    
     with open((file_name), 'r') as f:
         reader = csv.reader((f), delimiter='\t')
 	inheader = True
@@ -43,29 +45,87 @@ def ReadVCF(file_name):
                 fileheader.append('\t'.join(row))
             else:
 		inheader = False
-                if row[0] != 'MT':
-                    d[file_name].append(row)
+                chrom.add(row[0])
+                rows.append(row)
+    return fileheader, chrom, rows
 
+def ReadTSV(filename):
+    snvheaders = filter(None, """CHROM POS REF ALT""".split())  
+    base, extn = filename.rsplit('.', 1)
+    extn = extn.lower()
+    if extn == 'csv':
+        snvs = CSVFileTable(filename=filename)
+    elif extn == 'tsv':
+        snvs = TSVFileTable(filename=filename)
+    elif extn == 'xls':
+        snvs = XLSFileTable(filename=filename)
+    elif extn == 'xlsx':
+        snvs = XLSXFileTable(filename=filename)
+    elif extn == 'txt':
+        snvs = TXTFileTable(filename=filename, headers=snvheaders)
+    else:
+        raise RuntimeError("Unexpected SNV file extension: %s" % filename)
+
+    for h in snvheaders:
+        if h not in snvs.headers():
+            raise RuntimeError(
+                "Required header: %s missing from SNV file %s" % (h, filename))
+
+    assert(snvs.headers()[:4] == snvheaders)
+
+    chrom = set()
+    snvdata = []
+    for r in snvs:
+        ri = map(r.get,snvs.headers())
+        chrom.add(ri[0])
+        snvdata.append(ri)
+
+    return "\t".join(snvs.headers()), chrom, snvdata
+												
 exoncoords = opt.exons
 filename = opt.input
 outfile = opt.output
-l_pathname = []
 
-print "Now parsing file", filename,
-print "Please wait, thanks...."
-ReadVCF(filename)
-print
-print "done parsing for "
-print filename
+if outfile.endswith('.vcf'):
+    assert(filename.endswith('.vcf'))
+if not filename.endswith('.vcf'):
+    assert(outfile.endswith('.tsv'))
 
-def chrorder(chr):
-    if chr != "X":		
-        if chr != "Y":
-            return int(chr[0:])
-    if chr == "X":
-        return 23
-    if chr == "Y":
-        return 24
+print "Reading", filename, "...",
+sys.stdout.flush()
+
+if filename.rsplit('.',1)[-1].lower() == 'vcf':
+    fileheader,chrlab,snvdata = ReadVCF(filename)
+else:
+    fileheader,chrlab,snvdata = ReadTSV(filename)
+
+from chromreg import ChromLabelRegistry
+chrreg = ChromLabelRegistry()
+chrreg.add_labels(filename,chrlab)
+
+for i in range(len(snvdata)-1,-1,-1):
+    chrlab = snvdata[i][0]
+    chrom = chrreg.label2chrom(filename,chrlab)
+    if not chrreg.isnumberedchrom(chrom) and \
+       not chrreg.issexchrom(chrom):
+        del snvdata[i]
+        continue
+    snvdata[i][0] = chrom
+    snvdata[i][1] = int(snvdata[i][1])
+
+# Expected chromosome labels from UCSC file...
+# Extra numeric chromosomes might make this more robust for organisms
+# with more chromosomes? Doesn't hurt normal (human) case either way.
+# Should we add mitochondria here too? What notation does UCSC use?
+exonlabels = map(str,range(1,100)) + ["X","Y","MT"]
+chrreg.add_labels(exoncoords,exonlabels)
+
+chrreg.default_chrom_order()
+chrorder = chrreg.chrom_order
+
+snvdata.sort(key=lambda sd: (chrorder(sd[0]),sd[1]))
+
+print "done"
 
 #=========================================================================
 # A function called "all_filteration" which does take one argument;
@@ -77,187 +137,61 @@ def chrorder(chr):
 
 def all_filteration(d):
 
-    # Opening, Reading the Exonic coordinates from ensemble database, and
+    #
+    # This code assumes that the exon file is sorted by chromosome and
+    # start and end position. Chromosome sort order (for human) is
+    #     1, 2, ..., 9, 10, 11, ...., 19, 20, 21, 22, X, Y.
+    # Position sort order is as integers.
+    #
+
+    # Opening, Reading the Exonic coordinates from EMBL database, and
     # opening the output file to write to
     with open(exoncoords, 'r') as csvfile:
-        #  f_list = f.split('/')
-    	# file = f_list[1]
-        #dir = f_list[0]
-        # print "DIR", dir
-        # print file
-        # file = f.split('/')[-1]
         with open(outfile, 'w') as outpt:
             outpt.write("\n".join(fileheader) + '\n')
-            # outpt.write("\t".join(headers) + '\n')
-
-            # Initiating a counter to looping around the list of
-            # variants (vcf file)
 
             variant_count = 0
+	    last_exonic_coords = (-1e+20,-1e+20,-1e+20)
             reader = csv.reader(csvfile, delimiter='\t')
+            
             for row in reader:   # This loop belongs to the exonic coordinates file
-                if row[0] != 'X'and row[0] != 'Y':
-                    chrom_exonic_coord = int(row[0])
-                else:
-                    chrom_exonic_coord = (row[0])
+
+                chrom_exonic_coord = chrreg.label2chrom(exoncoords,row[0])
+                assert chrom_exonic_coord != None, "Unexpected chromosome label in exon coordinates file"
                 exonic_start_pos = int(row[1]) + 1
                 exonic_end_pos = int(row[2])
 
-                # This is to check that counter doesn't outrun the end
-                # of the vcf list.
+		assert (chrorder(chrom_exonic_coord),exonic_start_pos,exonic_end_pos) >= last_exonic_coords, \
+			"Exon coordinates file is not correctly ordered by chromosome and start/end positions"
 
                 if (variant_count < len(d)):
                     
                     chrom_variant = d[variant_count][0]
-
-                    # The following is to parse the chromosome which
-                    # is of type string with two steps process: If it
-                    # is numerical then convert the string to int ,
-                    # otherwise leave it as string. This will enable
-                    # to do numerical comparision instead of string
-                    # one.
-
-                    if 'MT' not in d[variant_count][0]:
-                        if chrom_variant != 'X' and chrom_variant != 'Y':
-                            chrom_variant = int(d[variant_count][0])
-                        else:
-                            chrom_variant = d[variant_count][0]
-                    variant_pos = int(d[variant_count][1])
-
-                    #reads_var_unsplit = d[variant_count][7]
-
-                    # We want to loop and insure that the chromosome
-                    # of both exonic coords and variants are equal or
-                    # the chromosome of exonic coord is greater than
-                    # the variants' So we can get the next chromosome
-                    # from the exonic coordinates The only addition I
-                    # added is to say that do the while loop when
-                    # exonic_end_pos is greater than variant_pos to
-                    # insure it is within the exonic so that it will
-                    # stop the loop once the vairant pos is greater
-                    # than exonic_end_pos and take the next exonic
-                    # coords. Also, we want to start what we left off
-                    # and currntly the program is not doing
-                    # this. Because we Initiating the variant_count to
-                    # 0 so every time it takes another exonic region
-                    # the counter is set to 0 which means that it will
-                    # start again from the first position in the vcf
-                    # file which we don't want, we want the next
-                    # variant not the very first one.
-
-                    while ((chrom_exonic_coord == chrom_variant or chrom_exonic_coord > chrom_variant) and (exonic_end_pos > variant_pos)):
-
-                        # Below is just to extract the two digits
-                        # (forward and reverse variant reads) from
-                        # "DP4" of the "Info" column in VCF file
-
-                        # print"ya kareem", chrom_variant, " ", variant_pos
-                        variant_count += 1
-
-                     #   split_rd = reads_var_unsplit.split(';')
-
-                      #  for dp4 in split_rd:
-                            # print "DP4", dp4
-
-                       #     if 'DP4=' in dp4:
-
-                        #        split_DP4_Colmn = dp4[4:].split(',')
+                    variant_pos = d[variant_count][1]
+                    
+                    while ((chrom_exonic_coord == chrom_variant) and (exonic_end_pos > variant_pos)) or (chrorder(chrom_exonic_coord) > chrorder(chrom_variant)):
+	
                         if (chrom_exonic_coord == chrom_variant):
-
-                            # if (int(split_DP4_Colmn[2]) >=1 and
-                            # int(split_DP4_Colmn[3]) >=1):
 
                             if (exonic_start_pos <= variant_pos <= exonic_end_pos):
 
-                                # writing to the file the passed (filtered) variants
-                                # print "FILTER"
-                                # chrom_exonic_coord == chrom_variant
+				chrlab = chrreg.chrom2label(filename,d[variant_count][0])
+				chrpos = str(d[variant_count][1])
+                                outpt.writelines("\t".join([chrlab,chrpos] + d[variant_count][2:]) + '\n')
 
-                                # print chrom_exonic_coord  ,":", chrom_variant
-                                # print "Check in One:", exonic_start_pos, " ",
-                                # variant_pos, " ", exonic_end_pos
-                                outpt.writelines(
-                                    "\t".join(d[variant_count - 1]) + '\n')
+                        variant_count += 1
 
-                            # print "Not in ", chrom_exonic_coord  ,":", chrom_variant
-                            # print "NOT IN:", exonic_start_pos, " ", variant_pos, " ", exonic_end_pos
-                            # print " Done FILTER"
-
-                        # When we are done reading the variants list , then
-                        # exit
                         if (variant_count >= len(d)):
                             break
-                        if 'MT' not in d[variant_count][0]:
-                            if d[variant_count][0] != 'X' and d[variant_count][0] != 'Y':
-                                chrom_variant = int(d[variant_count][0])
-                            else:
-                                chrom_variant = d[variant_count][0]
-                        variant_pos = int(d[variant_count][1])
 
-                  #      reads_var_unsplit = d[variant_count][7]
-                    
-                    while (variant_pos > exonic_end_pos and chrom_variant < chrom_exonic_coord):
-                        # print variant_count, len(d)
-                        if (variant_count == len(d) - 1):
-                            break
-                        variant_count += 1
-                        # print  d[variant_count][0], d[variant_count][1],
-                        # variant_count
-                        if d[variant_count][0] != 'X':
-                            if d[variant_count][0] != 'Y':
-                                chrom_variant = int(d[variant_count][0])
-                        # if d[variant_count][0] != 'X' or d[variant_count][0] != 'X':
-                        else:
-                            chrom_variant = d[variant_count][0]
-                            
-                        variant_pos = int(d[variant_count][1])
-                        # print"hi ya rab", chrom_variant, " ", variant_pos,
-                        # "and", chrom_exonic_coord," ", exonic_end_pos
+                        chrom_variant = d[variant_count][0]
+                        variant_pos = d[variant_count][1]
 
-                        if (chrom_exonic_coord == chrom_variant):
+                last_exonic_coords = (chrorder(chrom_exonic_coord),exonic_start_pos,exonic_end_pos)
 
-                            # if (int(split_DP4_Colmn[2]) >=1 and
-                            # int(split_DP4_Colmn[3]) >=1):
+print "Filtering", filename, "...",
+sys.stdout.flush()
 
-                            if (exonic_start_pos <= variant_pos <= exonic_end_pos):
+all_filteration(snvdata)
 
-                            	#     print "hi"
-                                # writing to the file the passed (filtered) variants
-                                # print "Check in:", exonic_start_pos, " ",
-                                # variant_pos, " ", exonic_end_pos
-                                
-                                outpt.writelines("\t".join(d[variant_count - 1]) + '\n')
-
-
-#sorted_d = sorted(d.items(), key=operator.itemgetter(1))
-# for i in range(len(sorted_d[1][0])):
-# print "i",sorted_d
-print
-print "Now Filtering Data"
-for f in d:
-    # print
-    print "the F", f
-    # for path in l_pathname:
-    #  print "path", path
-    # print "check", d[f]
-
-    # for i in d[f]:
-    #	print i
-
-    # print "CHECK", f
-    #  print "now we sort"
-    # print
-
-    sort_l = sorted(d[f], key=lambda l: (chrorder(l[0]),int(l[1])))
-    d[f] = sort_l
-    # for i in d[f]:
-    #	print i
-    # print
-    # print "f", f
-    all_filteration(d[f])
-    # print all_filteration(d[f])
-    print "done filtering for"
-    print f
-print
-print "Done All with Parsing and Filtering"
-print
+print "done"

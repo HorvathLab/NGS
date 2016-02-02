@@ -69,17 +69,17 @@ exfilt = OptionGroup(parser, "Filtering")
 readcounts = OptionGroup(parser, "Read Counting")
 # advanced = OptionGroup(parser, "Advanced")
 regexs = OptionGroup(parser, "Filename Matching")
-snpannot = OptionGroup(parser, "SNP Annotation")
-parser.add_option("-s", "--snps", type="files", dest="snps", default=None,
-                  help="Single-Nucleotide-Polymophism files. Required.", name="SNP Files",
+snvannot = OptionGroup(parser, "SNV Annotation")
+parser.add_option("-s", "--snvs", type="files", dest="snvs", default=None,
+                  help="Single-Nucleotide-Variant files. Required.", name="SNV Files",
                   notNone=True, remember=True,
-                  filetypes=[("SNP Files", "*.vcf")])
+                  filetypes=[("SNV Files", "*.vcf")])
 parser.add_option("-r", "--readalignments", type="files", dest="alignments", default=None,
                   help="Read alignment files in indexed BAM format. Required.", name="Read Alignment Files",
                   notNone=True, remember=True,
                   filetypes=[("Read Alignment Files (Indexed BAM)", "*.bam")])
 exfilt.add_option("-e", "--exoncoords", type="file", dest="exoncoords", default=None,
-                  help="Exon coordinates for SNP filtering. Optional.", name="Exon Coords.",
+                  help="Exon coordinates for SNV filtering. Optional.", name="Exon Coords.",
                   remember=True,
                   filetypes=[("Exonic Coordinates", "*.txt")])
 regexs.add_option("--normalexomere", type="str", dest="normalexomere", default='GDNA',
@@ -94,14 +94,14 @@ regexs.add_option("--tumorexomere", type="str", dest="tumorexomere", default='SD
 regexs.add_option("--tumortransre", type="str", dest="tumortransre", default='TRNA',
                   help="Tumor transcriptome filename regular expression. Default: TRNA.",
                   remember=True, name="Tumor Transcr. RE")
-snpannot.add_option("-d", "--darned", type="file", dest="darned", default="",
+snvannot.add_option("-d", "--darned", type="file", dest="darned", default="",
                     help="DARNED Annotations. Optional.", remember=True,
                     filetypes=[("DARNED Annotations", "*.txt")])
-snpannot.add_option("-c", "--cosmic", type="file", dest="cosmic", default="",
+snvannot.add_option("-c", "--cosmic", type="file", dest="cosmic", default="",
                     help="COSMIC Annotations. Optional.", remember=True,
                     filetypes=[("COSMIC Annotations", "*.tsv;*.tsv.gz")])
 readcounts.add_option("-m", "--minreads", type="int", dest="minreads", default=10, remember=True,
-                      help="Minimum number of good reads at SNP locus per alignment file. Default=10.", name="Min. Reads")
+                      help="Minimum number of good reads at SNV locus per alignment file. Default=10.", name="Min. Reads")
 readcounts.add_option("-f", "--alignmentfilter", action="store_false", dest="filter", default=True, remember=True,
                       help="(Turn off) alignment filtering by length, edits, etc.", name="Filter Alignments")
 readcounts.add_option("-U", "--uniquereads", action="store_true", dest="unique", default=False, remember=True,
@@ -119,7 +119,7 @@ parser.add_option("-o", "--output", type="savedir", dest="output", remember=True
 parser.add_option_group(exfilt)
 parser.add_option_group(readcounts)
 parser.add_option_group(regexs)                 
-parser.add_option_group(snpannot)
+parser.add_option_group(snvannot)
 
 opt = None
 while True:
@@ -155,28 +155,30 @@ def execprog(prog, *args, **kw):
         assert(status == 0)
     return True
 
-# Apply exonic filter on SNPs if desired...
-snpfiles = []
-for snpfile in opt.snps:
+# Apply exonic filter on SNVs if desired...
+snvfiles = []
+for snvfile in opt.snvs:
     if opt.exoncoords:
-        base, extn = snpfile.rsplit('.', 1)
+        base, extn = snvfile.rsplit('.', 1)
+        if extn != 'vcf':
+            extn = 'tsv'
         basedir, basename = split(base)
         outfile = join(opt.output, "." + basename + '.filtered.' + extn)
         if not os.path.exists(outfile):
             makedirs(opt.output)
             execprog("exonicFilter", "--exons", opt.exoncoords,
-                     "--input", snpfile, "--output", outfile)
-        snpfiles.append(outfile)
+                     "--input", snvfile, "--output", outfile)
+        snvfiles.append(outfile)
     else:
-        snpfiles.append(snpfile)
+        snvfiles.append(snvfile)
 
-# Apply readCounts to SNPs and aligned reads. Pass on options as needed...
+# Apply readCounts to SNVs and aligned reads. Pass on options as needed...
 outfile = join(opt.output, "readCounts.tsv")
 if not os.path.exists(outfile):
 
     args = ["-F",
             "-r", " ".join(opt.alignments),
-            "-s", " ".join(snpfiles),
+            "-s", " ".join(snvfiles),
             "-o", outfile]
     args.extend(["-m", str(opt.minreads)])
     args.extend(["-t", str(opt.tpb)])
@@ -190,7 +192,7 @@ if not os.path.exists(outfile):
     makedirs(opt.output)
     execprog("readCounts", *args)
 
-# Set up and apply snp_computation.py
+# Set up and apply snv_computation.py
 args = ["--counts", outfile]
 if opt.darned:
     args.extend(["--darned", opt.darned])
@@ -201,7 +203,7 @@ args.extend(["--normaltransre",opt.normaltransre])
 args.extend(["--tumorexomere",opt.tumorexomere])
 args.extend(["--tumortransre",opt.tumortransre])
 
-execprog("snp_computation", *args)
+execprog("snv_computation", *args)
 
 # Summarize events
 if os.path.exists(join(opt.output, "summary_result.txt")):
