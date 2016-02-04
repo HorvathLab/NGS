@@ -140,7 +140,7 @@ def makedirs(d):
 def execprog(prog, *args, **kw):
     progpath = os.path.join(scriptdir, prog + scriptextn)
     assert os.path.exists(progpath), "%s does not exist" % (progpath,)
-    if kw.get('verbose', False):
+    if kw.get('verbose', True):
         argstr = " ".join(
             map(lambda a: a if " " not in a else '"%s"' % a, args))
         print >>sys.stderr, "Executing:\n  %s %s" % (prog + scriptextn, argstr)

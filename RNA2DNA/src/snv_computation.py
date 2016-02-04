@@ -45,10 +45,11 @@ regexs.add_option("--tumortransre", type="str", dest="tumortransre", default=r'T
 parser.add_option_group(regexs)                 
 
 opt, args = parser.parse_args()
-opt.normalexomere = re.compile(opt.normalexomere)
-opt.normaltransre = re.compile(opt.normaltransre)
-opt.tumorexomere = re.compile(opt.tumorexomere)
-opt.tumortransre = re.compile(opt.tumortransre)
+regex = {}
+regex["GDNA"] = opt.normalexomere
+regex["NRNA"] = opt.normaltransre
+regex["SDNA"] = opt.tumorexomere
+regex["TRNA"] = opt.tumortransre
 
 progress = ProgressText()
 
@@ -61,7 +62,7 @@ chrreg = ChromLabelRegistry()
 labels = map(str,range(1,100)) + ["X","Y","MT"]
 chrreg.add_labels(opt.counts,labels)
 chrreg.default_chrom_order()
-chrorder = chrreg.chrom_order
+chrorder = lambda l: chrreg.chrom_order(chrreg.label2chrom(opt.counts,l))
 
 progress.stage("Parsing read-counts")
 f = open(opt.counts, 'r')
@@ -76,13 +77,13 @@ for row in reader:
             row[k] = int(row[k])
         if k.endswith('Sc') and row[k] != "":
             row[k] = float(row[k])
-    if opt.normalexomere.search(filename) and key not in GDNA:
+    if re.search(regex["GDNA"],filename) and key not in GDNA:
         GDNA[key] = row; types2files["GDNA"].add(filename); files2types[filename].add("GDNA")
-    if opt.normaltransre.search(filename) and key not in NRNA:
+    if re.search(regex["NRNA"],filename) and key not in NRNA:
         NRNA[key] = row; types2files["NRNA"].add(filename); files2types[filename].add("NRNA")
-    if opt.tumorexomere.search(filename) and key not in SDNA:
+    if re.search(regex["SDNA"],filename) and key not in SDNA:
         SDNA[key] = row; types2files["SDNA"].add(filename); files2types[filename].add("SDNA")
-    if opt.tumortransre.search(filename) and key not in TRNA:
+    if re.search(regex["TRNA"],filename) and key not in TRNA:
         TRNA[key] = row; types2files["TRNA"].add(filename); files2types[filename].add("TRNA")
 f.close()
 progress.done()
@@ -94,6 +95,7 @@ for f in files2types:
 	fatal = True
     elif len(files2types[f]) > 1:
         print >>sys.stderr, "Filename %s matches more than one read type regular expression."%(f,)
+	print >>sys.stderr, "Matching regular expressions: %s."%(", ".join(map(regex.get,files2types[f])))
 	fatal = True
 for t in "GDNA NRNA SDNA TRNA".split():
     if len(types2files[t]) < 1:
@@ -145,7 +147,7 @@ if opt.cosmic:
              if key in events.keys:
                  for table in (GDNA,SDNA,NRNA,TRNA):
                      if key in table:
-                         for k,h in zip(('Gene name','Primary site','Site subtype1','Primary histology'),
+                         for k,h in zip(('Gene name','Primary site','Site subtype 1','Primary histology'),
                                         ('Gene','Site','Sub_Site','Cancer_Type')):
                              table[key]['COSMIC '+h] = cos[k]
     f.close()

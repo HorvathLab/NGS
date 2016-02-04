@@ -81,7 +81,7 @@ BAM_CMATCH = 0
 BAM_CREF_SKIP = 3
 
 
-class ReadFilter:
+class ReadFilter(object):
     NONH = "Warning: Tag NH missing from alignments"
     NONM = "Warning: Tag NM missing from alignments"
     NOMD = "Warning: Tag MD missing from alignments"
@@ -135,14 +135,14 @@ class ReadFilter:
         return segments
 
 
-class SNVPileupReadFilter:
+class SNVPileupReadFilter(ReadFilter):
 
     def __init__(self, minpad=3, minsubstdist=3, maxedits=1, **kw):
         kw['maxedits'] = (maxedits + 1)
-        self.rf = ReadFilter(**kw)
         self.maxedits = maxedits
         self.minpad = minpad
         self.minsubstdist = minsubstdist
+	super(SNVPileupReadFilter,self).__init__(**kw)
 
     def findseg(self, pos, segments):
         i = 0
@@ -159,7 +159,7 @@ class SNVPileupReadFilter:
         if pileupread.is_del:
             raise GapAtSNV()
         al = pileupread.alignment
-        segments = self.rf.test(al)
+        segments = super(SNVPileupReadFilter,self).test(al)
         qpos = pileupread.query_position
         seg, qpos = self.findseg(qpos, segments)
         if qpos < self.minpad or (segments[seg] - qpos) < self.minpad:
@@ -181,13 +181,13 @@ class SNVPileupReadFilter:
             except KeyError:
                 if self.NONM in self.warnings:
                     print >>sys.stderr, self.NONM + \
-                        ".\n         Cannot filter out reference reads with one too many substitutions."
+                        ".\n         Cannot filter out reference reads with one too many\n         substitutions."
                     self.warnings.remove(self.NONM)
 
         except KeyError:
             if self.NOMD in self.warnings:
                 print >>sys.stderr, self.NOMD + \
-                    ".\n         Cannot filter out reads with edits too close to the SNV locus or reference reads with one too many substitutions."
+                    ".\n         Cannot filter out reads with edits too close to the SNV locus\n         or reference reads with one too many substitutions."
                 self.warnings.remove(self.NOMD)
 
         readbase = al.seq[pileupread.query_position]

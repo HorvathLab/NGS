@@ -188,7 +188,7 @@ chrreg.determine_chrom_order()
 
 snvdata = sorted(snvdata1.values(),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
 # extrasnvheaders = filter(lambda h: h in usedsnvheaders, extrasnvheaders)
-progress.message("SNVs: %d" % len(snvdata))
+progress.message("SNVs: %d\n" % len(snvdata))
 
 outheaders = snvheaders + filter(None, """
 SNVCountForward
