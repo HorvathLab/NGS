@@ -118,30 +118,12 @@ class NormalOnlyEvent(Event):
         if self.keep(**kw):
             self.goodkeys.add(k)
 
-class TumorOnlyEvent(Event):
-    requires = set(["SDNA","TRNA"])
-
-    def test(self,k):
-        kw = dict(sdna = self.SDNA[k],
-                  trna = self.TRNA[k])
-        if self.keep(**kw):
-            self.goodkeys.add(k)
-
 class DNAOnlyEvent(Event):
     requires = set(["GDNA","SDNA"])
 
     def test(self,k):
         kw = dict(gdna = self.GDNA[k],
                   sdna = self.SDNA[k])
-        if self.keep(**kw):
-            self.goodkeys.add(k)
-
-class RNAOnlyEvent(Event):
-    requires = set(["NRNA","TRNA"])
-
-    def test(self,k):
-        kw = dict(nrna = self.NRNA[k],
-                  trna = self.TRNA[k])
         if self.keep(**kw):
             self.goodkeys.add(k)
 
@@ -237,19 +219,6 @@ class RNA_Editing_NormalOnly(NormalOnlyEvent,RNAEditingEvent):
         
         return cond
 
-class RNA_Editing_TumorOnly(TumorOnlyEvent,RNAEditingEvent):
-
-    def keep(self,sdna,trna):
-
-        cond  = (sdna['RefCount']  >= self.param('SDNA_RefCount') and \
-                 sdna['SNVCount']  == self.param('SDNA_SNVCount') and \
-                 trna['SNVCount']  >= self.param('TRNA_SNVCount'))
-
-        cond &= (sdna['HomoRefSc'] >= self.param('SDNA_HomoRefSc') and \
-                 trna['HetSc']     >= self.param('TRNA_HetSc'))
-        
-        return cond
-
 class Tumor_RNA_Edit_AllSamples(AllSamplesEvent,TumorRNAEditingEvent):
 
     def keep(self,gdna,sdna,nrna,trna):
@@ -278,16 +247,6 @@ class Tumor_RNA_Edit_NoGDNA(NoGDNAEvent,TumorRNAEditingEvent):
         
         return cond
 
-class Tumor_RNA_Edit_RNAOnly(RNAOnlyEvent,TumorRNAEditingEvent):
-
-    def keep(self,nrna,trna):
-
-        cond  = (trna['HetSc']     >= self.param('TRNA_HetSc'))
-
-        cond &= (nrna['HomoRefSc'] >= self.param('NRNA_HomoRefSc'))
-
-        return cond
-
 class VSE_AllSamples(AllSamplesEvent,VSEEvent):
 
     def keep(self,gdna,sdna,nrna,trna):
@@ -302,16 +261,6 @@ class VSE_AllSamples(AllSamplesEvent,VSEEvent):
         
         return cond    
 
-class VSE_TumorOnly(TumorOnlyEvent,VSEEvent):
-
-    def keep(self,sdna,trna):
-
-        cond  = (trna['HomoVarSc'] >= self.param('TRNA_HomoVarSc'))
-
-        cond &= (sdna['HetSc']     >= self.param('SDNA_HetSc'))
-        
-        return cond
-                 
 class VSE_NormalOnly(NormalOnlyEvent,VSEEvent):
 
     def keep(self,gdna,nrna):
@@ -347,17 +296,6 @@ class Tumor_VSE_NoGDNA(NoGDNAEvent,TumorVSEEvent):
         cond &= (sdna['HetSc']     >= self.param('SDNA_HetSc'))
         
         return cond    
-
-class Tumor_VSE_RNAOnly(RNAOnlyEvent,TumorVSEEvent):
-
-    def keep(self,nrna,trna):
-
-        cond  = (trna['HomoVarSc'] >= self.param('TRNA_HomoVarSc'))
-
-        cond &= (nrna['HetSc']     >= self.param('NRNA_HetSc'))
-
-        return cond    
-
 
 class LOH_AllSamples(AllSamplesEvent,LoHEvent):
 
@@ -405,16 +343,6 @@ class VSL_NormalOnly(NormalOnlyEvent,VSLEvent):
 
         return cond
 
-class VSL_TumorOnly(TumorOnlyEvent,VSLEvent):
-
-    def keep(self,sdna,trna):
-
-        cond  = (trna['HomoRefSc'] >= self.param('TRNA_HomoRefSc'))
-
-        cond &= (sdna['HetSc']     >= self.param('SDNA_HetSc'))
-
-        return cond
-
 class Tumor_VSL_AllSamples(AllSamplesEvent,TumorVSLEvent):
 
     def keep(self,gdna,sdna,nrna,trna):
@@ -435,15 +363,6 @@ class Tumor_VSL_NoGDNA(NoGDNAEvent,TumorVSLEvent):
                  (nrna['HetSc']     >= self.param('NRNA_HetSc')))
 
         cond &=  (sdna['HetSc']     >= self.param('SDNA_HetSc'))
-
-        return cond
-
-class Tumor_VSL_RNAOnly(RNAOnlyEvent,TumorVSLEvent):
-
-    def keep(self,nrna,trna):
-
-        cond  = ((trna['HomoRefSc'] >= self.param('TRNA_HomoRefSc')) and \
-                 (nrna['HetSc']     >= self.param('NRNA_HetSc')))
 
         return cond
 

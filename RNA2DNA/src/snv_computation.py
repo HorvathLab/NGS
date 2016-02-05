@@ -115,12 +115,8 @@ if sampsig == "1111":
     events = AllSamplesEvent
 elif sampsig == "1100":
     events = DNAOnlyEvent
-elif sampsig == "0011":
-    events = RNAOnlyEvent
 elif sampsig == "1010":
     events = NormalOnlyEvent
-elif sampsig == "0101":
-    events = TumorOnlyEvent
 elif sampsig == "0111":
     events = NoGDNAEvent
 else:
