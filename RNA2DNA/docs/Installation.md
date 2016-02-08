@@ -3,7 +3,7 @@
 
 RNA2DNA is available in two forms, a self-contained packaged binary
 for 64-bit Linux systems, and as Python source. We recommend the
-self-contained packaged binary.
+self-contained packaged binary for Linux systems.
 
 ## RNA2DNA for 64-bit Linux ##
 
@@ -42,25 +42,25 @@ self-contained packaged binary.
    your system. We recommend the Enthought Python Distribution (EPD) which
    pre-installs many of the third-party dependencies needed by RNA2DNA.
 
-3. Ensure the necessary third-party Python modules are installed. 
+3. Ensure the necessary third-party Python modules are installed. pysam version >= 0.8.1 is required. 
 
    ```
    pysam, numpy, scipy
    ```
 
-For the configuration and execution GUI:
-
+   For the configuration and execution GUI:
+   
    ```
    wxPython
    ```
 
-For Excel format SNV input files:
+   For Excel format SNV input files:
 
    ```
    xlrd, openpyxl
    ```
 
-The existence of required modules can be tested as follows:
+   The existence of required modules can be tested as follows:
 
    ```
    python27 -c "from scipy import __version__; print __version__"
