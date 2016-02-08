@@ -1,2 +1,2 @@
-## [RNA2DNAlign](RNA2DNAlign)
+## [RNA2DNA](RNA2DNA)
 ## [SNPlice](SNPlice)
