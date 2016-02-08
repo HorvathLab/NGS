@@ -83,16 +83,16 @@ exfilt.add_option("-e", "--exoncoords", type="file", dest="exoncoords", default=
                   filetypes=[("Exonic Coordinates", "*.txt")])
 regexs.add_option("--normalexomere", type="str", dest="normalexomere", default='GDNA',
                   help="Germline/Normal exome filename regular expression. Default: GDNA.",
-                  remember=True, name="Germline Exome RE")
+                  remember=True, name="Germline Exome")
 regexs.add_option("--normaltransre", type="str", dest="normaltransre", default='NRNA',
                   help="Normal transcriptome filename regular expression. Default: NRNA.",
-                  remember=True, name="Normal Transcr. RE")
+                  remember=True, name="Normal Transcr.")
 regexs.add_option("--tumorexomere", type="str", dest="tumorexomere", default='SDNA',
                   help="Somatic/Tumor exome filename regular expression. Default: SDNA.",
-                  remember=True, name="Somatic Exome RE")
+                  remember=True, name="Somatic Exome")
 regexs.add_option("--tumortransre", type="str", dest="tumortransre", default='TRNA',
                   help="Tumor transcriptome filename regular expression. Default: TRNA.",
-                  remember=True, name="Tumor Transcr. RE")
+                  remember=True, name="Tumor Transcr.")
 snvannot.add_option("-d", "--darned", type="file", dest="darned", default="",
                     help="DARNED Annotations. Optional.", remember=True,
                     filetypes=[("DARNED Annotations", "*.txt")])
