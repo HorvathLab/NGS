@@ -52,13 +52,10 @@ class FileDataset(Dataset):
                 self.names_ = names
                 self.from_tables(tables)
 
-import xlrd
-import xlwt
-
-
 class XLSFileDataset(FileDataset):
 
     def __init__(self, *args, **kw):
+	import xlwt
         self.colwidth = defaultdict(lambda: {})
         if kw.has_key('columnwidth'):
             self.colwidth.update(kw['columnwidth'])
@@ -67,8 +64,8 @@ class XLSFileDataset(FileDataset):
         if kw.has_key('rowheight'):
             self.rowheight.update(kw['rowheight'])
             del kw['rowheight']
+        self.underline = xlwt.easyxf('font: underline single')
         super(XLSFileDataset, self).__init__(*args, **kw)
-    underline = xlwt.easyxf('font: underline single')
     heightstyles = {}
 
     @staticmethod
@@ -79,6 +76,7 @@ class XLSFileDataset(FileDataset):
 
     @staticmethod
     def setrowheight(ws, i, pixels):
+	import xlwt
         height = XLSFileDataset.heightstyles.get(pixels)
         if height == None:
             hinpts = int(pixels * 12.0)
@@ -88,6 +86,7 @@ class XLSFileDataset(FileDataset):
 
     @staticmethod
     def writevalue(ws, i, j, value):
+	import xlwt
         if value == None:
             return
         try:
@@ -117,11 +116,13 @@ class XLSFileDataset(FileDataset):
         ws.write(i, j, str(value))
 
     def set_names(self):
+	import xlrd
         book = xlrd.open_workbook(self.filename)
         for sheet_idx, sheet_name in enumerate(book.sheet_names()):
             self.names_.append(sheet_name)
 
     def from_tables(self, tables):
+	import xlwt
         wb = xlwt.Workbook()
         for n, t in zip(self.names_, tables):
             ws = wb.add_sheet(n)
@@ -143,9 +144,6 @@ class XLSFileDataset(FileDataset):
                     XLSFileDataset.writevalue(ws, i + 1, j, r[h])
         wb.save(self.filename)
 
-import openpyxl
-
-
 class XLSXFileDataset(FileDataset):
 
     def __init__(self, *args, **kw):
@@ -161,6 +159,7 @@ class XLSXFileDataset(FileDataset):
 
     @staticmethod
     def setcolwidth(ws, j, pixels):
+	import openpyxl
         # openpyxl.shared.units.pixels_to_points(pixels)
         winpts = pixels * 0.14214
         ws.cell(row=0, column=j)
@@ -176,6 +175,7 @@ class XLSXFileDataset(FileDataset):
 
     @staticmethod
     def writevalue(ws, i, j, value):
+	import openpyxl
         if value == None:
             return
         try:
@@ -210,13 +210,14 @@ class XLSXFileDataset(FileDataset):
             pass
         ws.cell(row=i, column=j).value = str(value)
 
-    # underline = xlwt.easyxf('font: underline single')
     def set_names(self):
+	import openpyxl
         book = openpyxl.reader.excel.load_workbook(filename=self.filename)
         for sheet_idx, sheet_name in enumerate(book.get_sheet_names()):
             self.names_.append(sheet_name)
 
     def from_tables(self, tables):
+	import openpyxl
         wb = openpyxl.workbook.Workbook()
         for i, (n, t) in enumerate(zip(self.names_, tables)):
             if i == 0:
@@ -607,10 +608,6 @@ class VCFFile(TXTFileTable):
             yield r
         h.close()
 
-import xlrd
-import xlwt
-
-
 class XLSFileTable(FileTable):
 
     def __init__(self, *args, **kw):
@@ -633,6 +630,7 @@ class XLSFileTable(FileTable):
         super(XLSFileTable, self).__init__(*args, **kw)
 
     def set_headers(self):
+        import xlrd
         self.headers_ = []
         book = xlrd.open_workbook(self.filename)
         for sheet_idx, sheet_name in enumerate(book.sheet_names()):
@@ -646,6 +644,7 @@ class XLSFileTable(FileTable):
         assert len(self.headers_) > 0
 
     def rows(self):
+	import xlrd
         book = xlrd.open_workbook(self.filename)
         for sheet_idx, sheet_name in enumerate(book.sheet_names()):
             if self.sheet != None and sheet_name != self.sheet:
@@ -659,6 +658,7 @@ class XLSFileTable(FileTable):
                 yield dict(zip(self.headers_, map(str, sheet.row_values(r))))
 
     def from_rows(self, rows):
+	import xlwt
         wb = xlwt.Workbook()
         assert(self.sheet != None)
         ws = wb.add_sheet(self.sheet)
@@ -677,9 +677,6 @@ class XLSFileTable(FileTable):
             for j, h in enumerate(self.headers_):
                 XLSFileDataset.writevalue(ws, i + 1, j, r.get(h, ""))
         wb.save(self.filename)
-
-import openpyxl
-
 
 class XLSXFileTable(FileTable):
 

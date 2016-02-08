@@ -21,6 +21,13 @@ self-contained packaged binary for Linux systems.
    ./RNA2DNA-1.0.10.Linux-x86_64/bin/RNA2DNA
    ```
 
+3. Test the install using the provided example data:
+
+   ```
+   cd RNA2DNA-1.0.10.Linux-x86_64
+   ./bin/RNA2DNA -r "data/example-*.bam" -s "data/example-SNV.tsv" -o testing
+   ```
+
 ## Python 2.7 RNA2DNA ##
 
 1. Unpack the downloaded release:
@@ -72,5 +79,12 @@ self-contained packaged binary for Linux systems.
    python ./RNA2DNA-1.0.10.Python-2.7/src/RNA2DNA.py -h
 
    python ./RNA2DNA-1.0.10.Python-2.7/src/RNA2DNA.py
+   ```
+
+5. Test the installation using the provided example data:
+
+   ```
+   cd RNA2DNA-1.0.10.Python-2.7
+   python ./src/RNA2DNA.py -r "data/example-*.bam" -s "data/example-SNV.tsv" -o testing
    ```
 
