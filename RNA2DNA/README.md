@@ -9,9 +9,10 @@ may be derived from independent sources.
 
 RNA2DNA is available as a self-contained binary package for 64-bit Linux
 systems and as Python source. The
-[pysam](https://github.com/pysam-developers/pysam) module (version >= 0.8.1) must be
-installed to use in Python source form. We recommend the binary package
-for x86_64 Linux systems.
+[pysam](https://github.com/pysam-developers/pysam) package, plus a variety of common third-party python packages  including numpy and scipy must be
+installed to use in Python source form. See the install instructions for
+more details. The self-contained binary package is appropriate for most
+Linux users.
 
 [Download](https://github.com/HorvathLab/NGS/releases/) and [Install](docs/Installation.md).
 
