@@ -88,6 +88,10 @@ for row in reader:
 f.close()
 progress.done()
 
+if sum(map(len,[GDNA,SDNA,NRNA,TRNA])) == 0:
+    print >>sys.stderr, "No read counts available for testing"
+    sys.exit(0)
+
 fatal = False
 for f in files2types:
     if len(files2types[f]) < 1:

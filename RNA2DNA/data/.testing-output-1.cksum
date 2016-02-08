@@ -1,0 +1,14 @@
+3213874573 1325 .testing-output-1/Events_LOH.tsv
+4266244224 2386 .testing-output-1/Events_RNAed.tsv
+199970917 2356 .testing-output-1/Events_SOM.tsv
+113750090 1277 .testing-output-1/Events_T-RNAed.tsv
+3319884990 2343 .testing-output-1/Events_T-VSE.tsv
+2408924828 2246 .testing-output-1/Events_T-VSL.tsv
+2678371873 2170 .testing-output-1/Events_VSE.tsv
+11265079 2136 .testing-output-1/Events_VSL.tsv
+369880852 22659 .testing-output-1/.example-GDNA.filtered.vcf
+2927583530 5784 .testing-output-1/.example-NRNA.filtered.vcf
+272732301 22764 .testing-output-1/.example-SDNA.filtered.vcf
+2420874842 5587 .testing-output-1/.example-TRNA.filtered.vcf
+1046270934 23194 .testing-output-1/readCounts.tsv
+2209319123 3056 .testing-output-1/summary_result.txt
