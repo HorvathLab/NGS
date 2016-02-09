@@ -65,7 +65,7 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 
 Exon Coords., -e EXONCOORDS, --exoncoords=EXONCOORDS
 
-> Exon coordinates to filter out non-coding SNVs. See [Annotation Files](AnnotationFiles.md) for format and download information. Optional.
+> Exon coordinates to filter out non-coding SNVs. Use of exon coordinates to filter the SNVs is strongly recommended for semantic and performance reasons. See [Annotation Files](AnnotationFiles.md) for format and download information. Optional.
 
 ### Read Counting
 
