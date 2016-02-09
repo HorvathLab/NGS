@@ -81,15 +81,15 @@ exfilt.add_option("-e", "--exoncoords", type="file", dest="exoncoords", default=
                   help="Exon coordinates for SNV filtering. Optional.", name="Exon Coords.",
                   remember=True,
                   filetypes=[("Exonic Coordinates", "*.txt")])
-regexs.add_option("--normalexomere", type="str", dest="normalexomere", default='GDNA',
-                  help="Germline/Normal exome filename regular expression. Default: GDNA.",
-                  remember=True, name="Germline Exome")
+regexs.add_option("--normaldnare", type="str", dest="normaldnare", default='GDNA',
+                  help="Germline/Normal DNA filename regular expression. Default: GDNA.",
+                  remember=True, name="Germline DNA")
 regexs.add_option("--normaltransre", type="str", dest="normaltransre", default='NRNA',
                   help="Normal transcriptome filename regular expression. Default: NRNA.",
                   remember=True, name="Normal Transcr.")
-regexs.add_option("--tumorexomere", type="str", dest="tumorexomere", default='SDNA',
-                  help="Somatic/Tumor exome filename regular expression. Default: SDNA.",
-                  remember=True, name="Somatic Exome")
+regexs.add_option("--tumordnare", type="str", dest="tumordnare", default='SDNA',
+                  help="Somatic/Tumor DNA filename regular expression. Default: SDNA.",
+                  remember=True, name="Somatic DNA")
 regexs.add_option("--tumortransre", type="str", dest="tumortransre", default='TRNA',
                   help="Tumor transcriptome filename regular expression. Default: TRNA.",
                   remember=True, name="Tumor Transcr.")
@@ -195,9 +195,9 @@ if opt.darned:
     args.extend(["--darned", opt.darned])
 if opt.cosmic:
     args.extend(["--cosmic", opt.cosmic])
-args.extend(["--normalexomere",opt.normalexomere])
+args.extend(["--normaldnare",opt.normaldnare])
 args.extend(["--normaltransre",opt.normaltransre])
-args.extend(["--tumorexomere",opt.tumorexomere])
+args.extend(["--tumordnare",opt.tumordnare])
 args.extend(["--tumortransre",opt.tumortransre])
 
 execprog("snv_computation", *args)

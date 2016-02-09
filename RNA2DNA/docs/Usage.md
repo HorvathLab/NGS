@@ -15,7 +15,7 @@
 ## Description
 
 RNA2DNA evaluates evidence of allelic imbalance and asymmetry in next-gen
-sequencing reads of exomes and RNA from normal and tumor samples from
+sequencing reads of DNA and RNA from normal and tumor samples from
 the same individual.
 
 ## Graphical User Interface
@@ -95,17 +95,17 @@ Quiet, -q, --quiet
 
 ![Filename Matching](RNA2DNA4.png)
 
-Germline Exome, --normalexomere=NORMALEXOMERE
+Germline DNA, --normaldnare=NORMALDNARE
 
-> Germline/Normal exome filename regular expression. Default: GDNA.
+> Germline/Normal DNA filename regular expression. Default: GDNA.
 
 Normal Transcr., --normaltransre=NORMALTRANSRE 
 
 > Normal transcriptome filename regular expression. Default: NRNA.
 
-Somatic Exome, --tumorexomere=TUMOREXOMERE      
+Somatic DNA, --tumordnare=TUMORDNARE      
 
-> Somatic/Tumor exome filename regular expression. Default: SDNA.
+> Somatic/Tumor DNA filename regular expression. Default: SDNA.
 
 Tumor Transcr., --tumortransre=TUMORTRANSRE
 
