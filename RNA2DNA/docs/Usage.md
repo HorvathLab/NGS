@@ -35,9 +35,9 @@ Additional GUI option tabs are documented below.
 SNVs, -s SNVS, --snvs=SNVS
 
 > Single-nucleotide-polymophisms (SNVs). Tabular and VCF format SNVs
-> are supported. See [Input Files](InputFiles.md) for more
-> information. Multiple files are specified inside quotes, separated
-> by spaces, and by using file globbing. Required.
+> are supported. Multiple files are specified inside quotes, separated
+> by spaces, and by using file globbing. See [Input
+> Files](InputFiles.md) for more information. Required.
 
 Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
