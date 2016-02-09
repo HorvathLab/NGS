@@ -2,8 +2,8 @@
 SRC=`dirname $0`/../src
 SRC=`readlink -f $SRC`
 EXONS="UCSC_Human_hg19_RefSeq_CDS_exon_coordinates.txt"
-DARNED="../nodist/hg19.txt"
-COSMIC="../nodist/CosmicMutantExport.tsv.gz"
+DARNED="DARNED_hg19.txt"
+COSMIC="CosmicMutantExport_hg19.tsv.gz"
 
 function testcmd() {
   NUMBER=$1

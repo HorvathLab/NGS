@@ -5,13 +5,13 @@ else
   PROG=../src/RNA2DNA
 fi
 rm -rf example-output
-DARNEDFILE=../nodist/hg19.txt
-DARNED=
+DARNEDFILE="DARNED_hg19.txt"
+DARNED=""
 if [ -f $DARNEDFILE ]; then
   DARNED="-d $DARNEDFILE"
 fi
-COSMICFILE=../nodist/CosmicMutantExport.tsv.gz
-COSMIC=
+COSMICFILE="CosmicMutantExport_hg19.tsv.gz"
+COSMIC=""
 if [ -f $COSMICFILE ]; then
   COSMIC="-c $COSMICFILE"
 fi

@@ -9,12 +9,12 @@ may be derived from independent sources, such as lists of known
 annotated variants. Variant positions must correspond to genomic
 coordinates of the reference genome used for the alignment.
 
-RNA2DNA is available as a self-contained binary package for 64-bit Linux
-systems and as Python source. The
-pysam package, plus a variety of common third-party python packages  including numpy and scipy must be
-installed to use in Python source form. See the install instructions for
-more details. The self-contained binary package is appropriate for most
-Linux users.
+RNA2DNA is available as a self-contained binary package for 64-bit
+Linux systems and as Python source. The pysam package, plus a variety
+of common third-party python packages including numpy and scipy must
+be installed to use in Python source form. See the install
+instructions for more details. The self-contained binary package is
+appropriate for most Linux users.
 
 Setup:
 * [Download](https://github.com/HorvathLab/NGS/releases/)
