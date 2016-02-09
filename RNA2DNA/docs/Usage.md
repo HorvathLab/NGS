@@ -20,11 +20,11 @@ the same individual.
 
 ## Graphical User Interface
 
-![Options](RNA2DNA1.png)
+![Options](RNA2DNA6.png)
 
 Click the help icon (question mark) at the top right of the GUI and
 then an input field for help. Multiple files can be selected in the
-file-browser using Ctrl-Click or Shift-Click. Fields can be reset to
+file-chooser using Ctrl-Click or Shift-Click. Fields can be reset to
 their default values using the Reset button. Click OK to execute
 RNA2DNA.
 
