@@ -1,5 +1,15 @@
 # RNA2DNA Output Files
 
+RNA2DNA output files are created in the directory specified. The
+folder will be created if necessary. Existing files will be
+overwritten.
+
+## Summary
+
+The `summary_result.txt` file summarizes the count of each type of event observed.
+
+See example output files in the `RNA2DNA/data` directory.
+
 ## Event Files
 
 Each execution of RNA2DNA will create (up to) eight tab-separated value event files
@@ -7,6 +17,8 @@ representing the following events: RNA editing (`Events_RNAed.tsv`), tumor-speci
 RNA editing (`Events_T-RNAed.tsv`), variant-specific expression (`Events_VSE.tsv`) or loss
 (`Events_VSL.tsv`), tumor-specific variant expression (`Events_T-VSE.tsv`) or loss (`Events_T-VSL.tsv`),
 somatic mutagenesis (`Events_SOM.tsv`), and loss of heterozygosity (`Events_LOH.tsv`).
+
+See example output files in the `RNA2DNA/data` directory.
 
 ### Event File Fields
 
@@ -87,6 +99,16 @@ VarDomFDR
 
 RefDomFDR
 > Multiple-test corrected FDR significance of increased reference read counts with respect to heterozygous reference and variant null model.
+
+## Read Counts
+
+A tab-separated values file consisting of the computed read-counts is
+also provided (`readCounts.tsv`). This file contains the read counts
+for each SNV locus in each BAM file and computes the various
+statistical tests described above, in "Event File Fields". The read
+counts file can be used to investigate the computed values for
+expected events that didn't pass filtering, significance, or scoring
+thresholds.
 
 ## See Also
 
