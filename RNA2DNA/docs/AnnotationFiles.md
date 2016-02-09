@@ -33,17 +33,17 @@ file can be used as provided.
 
     1. Register with COSMIC
 
-```
-   https://cancer.sanger.ac.uk/cosmic/register
-```
+    ```
+    https://cancer.sanger.ac.uk/cosmic/register
+    ```
 
     2. Download the COSMIC mutants:
 
-```
-   sftp "login"@sftp-cancer.sanger.ac.uk:/cosmic/grch37/cosmic/v75/CosmicMutantExport.tsv.gz
-```
+    ```
+    sftp "login"@sftp-cancer.sanger.ac.uk:/cosmic/grch37/cosmic/v75/CosmicMutantExport.tsv.gz
+    ```
 
-    3. COSMIC mutant annotations are used in its downloaded format. 
+    3. COSMIC mutant annotations can be used in its downloaded format. 
 
 ## [DARNED](http://darned.ucc.ie/) Loci
 
@@ -55,9 +55,9 @@ annotation file can be used as provided.
 
     1. Download the DARNED loci:
 
-```
-   http://darned.ucc.ie/static/downloads/hg19.txt
-```
+    ```
+    http://darned.ucc.ie/static/downloads/hg19.txt
+    ```
 
-    2. This file is used in its published format.
+    2. DARNED loci can be used in its downloaded format.
 
