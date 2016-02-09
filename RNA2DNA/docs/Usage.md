@@ -35,13 +35,8 @@ Additional GUI option tabs are documented below.
 SNVs, -s SNVS, --snvs=SNVS
 
 > Single-nucleotide-polymophisms (SNVs). Tabular and VCF format SNVs
-> are supported. Supported tabular formats include `txt`, `tsv`,
-> `csv`, `xlsx`, `xls`. Text files (`txt`) must have four whitespace
-> separated columns representing the chromosome (CHROM), locus (POS),
-> wild-type allele nucleotide (REF), and SNV nucleotide (ALT). Other
-> tabular formats must provide CHROM, POS, REF, ALT headings. Extra
-> values in tabular or VCF format files are mapped to the output. See
-> [Input Files](InputFiles.md) for more information. Required.
+> are supported. See [Input Files](InputFiles.md) for more
+> information. Required.
 
 Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
@@ -86,7 +81,7 @@ Unique Reads, -U, --uniquereads
 
 > Consider only distinct reads.  
 
-Threads/BAm, -t TPB, --threadsperbam=TPB                   
+Threads/BAM, -t TPB, --threadsperbam=TPB                   
 
 > Worker threads per alignment file. Indicate no threading with 0. Default=1.
 
