@@ -36,14 +36,16 @@ SNVs, -s SNVS, --snvs=SNVS
 
 > Single-nucleotide-polymophisms (SNVs). Tabular and VCF format SNVs
 > are supported. See [Input Files](InputFiles.md) for more
-> information. Required.
+> information. Multiple files are specified inside quotes, separated
+> by spaces, and by using file globbing. Required.
 
 Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
 > Read alignments files in indexed BAM format, with extension
 > `.bam`. BAM index with extension `.bam.bai` must be located in the
-> same directory. See [Input Files](InputFiles.md) for more
-> information. Required.
+> same directory. Multiple files are specified inside quotes,
+> separated by spaces, and by using file globbing. See [Input
+> Files](InputFiles.md) for more information. Required.
 
 Output Folder, -o OUTPUT, --output=OUTPUT
 

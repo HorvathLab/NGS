@@ -11,12 +11,11 @@ and Excel 2003 (`.xls`).
 Text files must have four white-space separated columns
 representing the chromosome (CHROM), locus (POS), wild-type allele
 nucleotide (REF), and SNV nucleotide (ALT). Other tabular formats must
-provide CHROM, POS, REF, ALT headings. Extra values in tabular or VCF
-format files are mapped to the output.
+provide CHROM, POS, REF, ALT headings. 
 
-> All SNV loci, read alignments, and annotation files *must* indicate
-> genomic position with respect to the same specific release of a common
-> reference genome.
+**All SNV loci, read alignments, and annotation files must indicate
+genomic position with respect to the same specific release of a common
+reference genome.**
 
 ## Read Alignment Files
 
@@ -25,9 +24,9 @@ expected with `.bam.bai` index files in the same folder. RNA2DNA will
 execute fastest if all BAM files are sorted and indexed in a
 consistent manner.
 
-> All read alignemnts, SNV loci, and annotation files *must* indicate
-> genomic position with respect to the same specific release of a common
-> reference genome.
+**All read alignemnts, SNV loci, and annotation files must indicate
+genomic position with respect to the same specific release of a common
+reference genome.**
 
 ## See Also
 
