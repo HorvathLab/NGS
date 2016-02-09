@@ -6,7 +6,7 @@ reference genome.**
 
 The following files and instructions are for hg19/grch37/NCBI37.
 
-## RefSeq Exon Coordinates
+## RefSeq Exon Coordinates from UCSC Genome Browser
 
 Use of exon coordinates to filter the SNVs is strongly recommended.
 
