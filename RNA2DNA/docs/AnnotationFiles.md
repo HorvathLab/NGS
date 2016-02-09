@@ -30,15 +30,15 @@ file can be used as provided.
 file can be used as provided.
 
 2. COSMIC mutants can be downloaded for another organism or assembly as follows: 
-    1. Register with COSMIC
+    * Register with COSMIC
     ```
     https://cancer.sanger.ac.uk/cosmic/register
     ```
-    2. Download the COSMIC mutants:
+    * Download the COSMIC mutants:
     ```
     sftp "login"@sftp-cancer.sanger.ac.uk:/cosmic/grch37/cosmic/v75/CosmicMutantExport.tsv.gz
     ```
-    3. COSMIC mutant annotations can be used in its downloaded format. 
+    * COSMIC mutant annotations can be used in its downloaded format. 
 
 ## [DARNED](http://darned.ucc.ie/) Loci
 
@@ -47,9 +47,8 @@ the RNA2DNA/data directory in the file: `DARNED_hg19.txt`.  The
 annotation file can be used as provided.
 
 2. DARNED loci can be downloaded for another organism or assembly as follows: 
-
-    1. Download the DARNED loci:
+    * Download the DARNED loci:
     ```
     http://darned.ucc.ie/static/downloads/hg19.txt
     ```
-    2. DARNED loci can be used in its downloaded format.
+    * DARNED loci can be used in its downloaded format.
