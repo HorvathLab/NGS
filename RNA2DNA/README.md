@@ -16,7 +16,9 @@ installed to use in Python source form. See the install instructions for
 more details. The self-contained binary package is appropriate for most
 Linux users.
 
-[Download](https://github.com/HorvathLab/NGS/releases/) and [Installation](docs/Installation.md).
+Setup:
+* [Download](https://github.com/HorvathLab/NGS/releases/)
+* [Install](docs/Installation.md)
 
 Usage:
 * [RNA2DNA](docs/Usage.md)
