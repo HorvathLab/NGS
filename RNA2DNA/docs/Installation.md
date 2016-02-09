@@ -90,4 +90,4 @@ self-contained packaged binary for Linux systems.
 
 ## See Also
 
-[RNA2DNA Home](..), [RNA2DNA Usage] (Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
+[RNA2DNA Home](..), [Usage] (Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)

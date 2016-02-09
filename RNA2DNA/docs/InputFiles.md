@@ -30,5 +30,5 @@ reference genome.**
 
 ## See Also
 
-[RNA2DNA Home](..), [RNA2DNA Usage](Usage.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
+[RNA2DNA Home](..), [Usage](Usage.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
 
