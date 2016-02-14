@@ -55,6 +55,9 @@ SNPCount
 RefCount
 > Total number of reference reads.
 
+R
+> Proportion of variant reads.
+
 HomoVarSc
 > Score of locus as homozygous variant.
 

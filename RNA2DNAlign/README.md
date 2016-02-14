@@ -28,5 +28,4 @@ File Formats:
 * [Output Files](docs/OutputFiles.md)
 * [Annotation Files](docs/AnnotationFiles.md)
 
-Examples:
-* [Examples](docs/Examples.md)
+[Examples](docs/Examples.md)

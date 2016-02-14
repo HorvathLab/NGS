@@ -43,7 +43,7 @@ Example output files:
 
 ![Image8](RNA2DNAlign8.png)
 
-3. Specify the output directory by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, clicking `Create Folder`, entering "example1", and clicking `OK`.
+3. Specify the output directory by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, clicking `Create Folder`, entering "example1", and clicking `Open`.
 
 ![Image9](RNA2DNAlign9.png)
 
@@ -62,7 +62,7 @@ Example output files:
 
 ![Image8](RNA2DNAlign8.png)
 
-3. Specify the output directory by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, clicking `Create Folder`, entering "example2" and clicking `OK`.
+3. Specify the output directory by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, clicking `Create Folder`, entering "example2" and clicking `Open`.
 
 ![Image12](RNA2DNAlign12.png)
 
