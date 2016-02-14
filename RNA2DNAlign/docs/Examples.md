@@ -25,9 +25,15 @@ Result files corresponding to this analysis are available in the `RNA2DNAlign/da
 
 1. Select the SNV file by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, selecting `example-SNV.tsv`, and clicking `OK`.
 
+![Image7](RNA2DNAlign7.png)
+
 2. Select the BAM files by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, selecting all the BAM files, using shift-click or control-click as needed, and clicking `OK`.
 
+![Image8](RNA2DNAlign8.png)
+
 3. Specify the output directory by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, clicking `Create Folder`, entering "example1", and clicking `OK`.
+
+![Image9](RNA2DNAlign9.png)
 
 4. Click `OK` to execute the program.
 

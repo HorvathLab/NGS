@@ -29,5 +29,4 @@ File Formats:
 * [Annotation Files](docs/AnnotationFiles.md)
 
 Examples:
-* [Minimal Example](docs/ExampleAnalysis.md)
-* [TCGA Analysis](docs/TCGAExampleAnalysis.md)
+* [Examples](docs/Examples.md)
