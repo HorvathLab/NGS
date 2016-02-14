@@ -47,7 +47,7 @@ self-contained packaged binary for Linux systems.
    We refer to the Python binary as `python` below, please substitute
    whatever path and version numbers are required to run Python 2.7 on
    your system. We recommend the Enthought Python Distribution (EPD) which
-   pre-installs all by the pysam third-party dependencies needed by RNA2DNAlign.
+   pre-installs all but the pysam third-party dependencies needed by RNA2DNAlign.
 
 3. Ensure the necessary third-party Python modules are installed. pysam version >= 0.8.1 is required. 
 
@@ -67,7 +67,7 @@ self-contained packaged binary for Linux systems.
     xlrd, openpyxl
     ```
 
-   The existence of required modules can be tested as follows:
+   The existence of required modules can be tested as follows (demonstrated here for `scipy`):
 
     ```
     python27 -c "from scipy import __version__; print __version__"
