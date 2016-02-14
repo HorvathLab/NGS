@@ -4,7 +4,7 @@
 
 ### Graphical User Interface:
 
-    RNA2DNAlign1
+    RNA2DNAlign
     RNA2DNAlign.py
 
 ### Command-line:
