@@ -177,7 +177,7 @@ progress.done()
 headers = """
 AlignedReads CHROM POS REF ALT
 SNVCountForward SNVCountReverse RefCountForward RefCountReverse
-SNVCount RefCount
+SNVCount RefCount R
 HomoVarSc HetSc HomoRefSc
 VarDomSc RefDomSc
 NotHomoVarpV NotHomoRefpV NotHetpV VarDompV RefDompV
@@ -202,4 +202,3 @@ for ev in events.events:
                 writer.writerow(table[k])
     wh.close()
 progress.done()
-    

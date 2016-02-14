@@ -199,6 +199,7 @@ SNVCount
 RefCount
 GoodReads
 %BadRead
+R
 HomoVarSc
 HetSc
 HomoRefSc
@@ -376,6 +377,7 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
                counted,
                100.0 * (total[si] - badread[si, 'Good']) /
                float(total[si]) if total[si] != 0 else 0.0,
+	       float(nsnv)/(nsnv+nref),
                -1, -1, -1, -1, -1,
                notherf, notherr,
                nother,

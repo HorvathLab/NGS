@@ -4,7 +4,7 @@
 
 ### Graphical User Interface:
 
-    RNA2DNAlign
+    RNA2DNAlign1
     RNA2DNAlign.py
 
 ### Command-line:
@@ -20,7 +20,7 @@ the same individual.
 
 ## Graphical User Interface
 
-![Options](RNA2DNAlign.png)
+![Options](RNA2DNAlign2.png)
 
 Click the help icon (question mark) at the top right of the GUI and
 then an input field for help. Multiple files can be selected in the
@@ -61,7 +61,7 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 
 ### Filtering
 
-![Filtering](RNA2DNAlign.png)
+![Filtering](RNA2DNAlign3.png)
 
 Exon Coords., -e EXONCOORDS, --exoncoords=EXONCOORDS
 
@@ -69,7 +69,7 @@ Exon Coords., -e EXONCOORDS, --exoncoords=EXONCOORDS
 
 ### Read Counting
 
-![Read Counting](RNA2DNAlign.png)
+![Read Counting](RNA2DNAlign4.png)
 
 Min. Reads, -m MINREADS, --minreads=MINREADS
 
@@ -93,7 +93,7 @@ Quiet, -q, --quiet
 
 ### Filename Matching
 
-![Filename Matching](RNA2DNAlign.png)
+![Filename Matching](RNA2DNAlign5.png)
 
 Germline DNA, --normaldnare=NORMALDNARE
 
@@ -113,7 +113,7 @@ Tumor Transcr., --tumortransre=TUMORTRANSRE
 
 ### SNV Annotation
 
-![SNV Annotation](RNA2DNAlign.png)
+![SNV Annotation](RNA2DNAlign6.png)
 
 Darned, -d DARNED, --darned=DARNED
 
