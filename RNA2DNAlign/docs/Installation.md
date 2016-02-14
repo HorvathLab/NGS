@@ -10,8 +10,8 @@ self-contained packaged binary for Linux systems.
 1. Unpack the downloaded release:
 
     ```
-    tar xzf RNA2DNAlign-1.0.10.Linux-x86_64.tgz
-    ln -s RNA2DNAlign-1.0.10.Linux-x86_64 RNA2DNAlign
+    tar xzf RNA2DNAlign-*.tgz
+    ln -s RNA2DNAlign-* RNA2DNAlign
     ```
 
 2. The RNA2DNAlign program is located in the bin subdirectory:
@@ -34,8 +34,8 @@ self-contained packaged binary for Linux systems.
 1. Unpack the downloaded release:
 
     ```
-    tar xzf RNA2DNAlign-1.0.10.Python-2.7.tgz
-    ln -s RNA2DNAlign-1.0.10.Python-2.7 RNA2DNAlign
+    tar xzf RNA2DNAlign-*.tgz
+    ln -s RNA2DNAlign-* RNA2DNAlign
     ```
 
 2. Locate your Python binary and ensure it is version 2.7:
