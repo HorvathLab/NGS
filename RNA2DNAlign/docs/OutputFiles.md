@@ -18,7 +18,7 @@ RNA editing (`Events_T-RNAed.tsv`), variant-specific expression (`Events_VSE.tsv
 (`Events_VSL.tsv`), tumor-specific variant expression (`Events_T-VSE.tsv`) or loss (`Events_T-VSL.tsv`),
 somatic mutagenesis (`Events_SOM.tsv`), and loss of heterozygosity (`Events_LOH.tsv`).
 
-See example output files in the `RNA2DNAlign/data` directory.
+See example output files in the [`RNA2DNAlign/data/example-output`](../data/example-output) directory.
 
 ### Event File Fields
 
