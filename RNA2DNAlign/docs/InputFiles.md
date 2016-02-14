@@ -1,4 +1,4 @@
-# RNA2DNA Input Files
+# RNA2DNAlign Input Files
 
 ## SNVs
 
@@ -20,7 +20,7 @@ reference genome.**
 ## Read Alignment Files
 
 Read alignment files in indexed BAM format. Filename extension `.bam`
-expected with `.bam.bai` index files in the same folder. RNA2DNA will
+expected with `.bam.bai` index files in the same folder. RNA2DNAlign will
 execute fastest if all BAM files are sorted and indexed in a
 consistent manner.
 
@@ -30,5 +30,5 @@ reference genome.**
 
 ## See Also
 
-[RNA2DNA Home](..), [Usage](Usage.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
+[RNA2DNAlign Home](..), [Usage](Usage.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
 

@@ -1,6 +1,6 @@
-# RNA2DNA Output Files
+# RNA2DNAlign Output Files
 
-RNA2DNA output files are created in the directory specified. The
+RNA2DNAlign output files are created in the directory specified. The
 folder will be created if necessary. Existing files will be
 overwritten.
 
@@ -8,17 +8,17 @@ overwritten.
 
 The `summary_result.txt` file summarizes the count of each type of event observed.
 
-See example output files in the `RNA2DNA/data` directory.
+See example output files in the `RNA2DNAlign/data` directory.
 
 ## Event Files
 
-Each execution of RNA2DNA will create (up to) eight tab-separated value event files
+Each execution of RNA2DNAlign will create (up to) eight tab-separated value event files
 representing the following events: RNA editing (`Events_RNAed.tsv`), tumor-specific
 RNA editing (`Events_T-RNAed.tsv`), variant-specific expression (`Events_VSE.tsv`) or loss
 (`Events_VSL.tsv`), tumor-specific variant expression (`Events_T-VSE.tsv`) or loss (`Events_T-VSL.tsv`),
 somatic mutagenesis (`Events_SOM.tsv`), and loss of heterozygosity (`Events_LOH.tsv`).
 
-See example output files in the `RNA2DNA/data` directory.
+See example output files in the `RNA2DNAlign/data` directory.
 
 ### Event File Fields
 
@@ -112,5 +112,5 @@ thresholds.
 
 ## See Also
 
-[RNA2DNA Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Annotation Files](AnnotationFiles.md)
+[RNA2DNAlign Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Annotation Files](AnnotationFiles.md)
 

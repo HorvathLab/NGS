@@ -1,8 +1,8 @@
 #!/bin/sh
 if [ -d ../src ]; then
-  PROG=../src/RNA2DNA.py
+  PROG=../src/RNA2DNAlign.py
 else
-  PROG=../src/RNA2DNA
+  PROG=../bin/RNA2DNAlign
 fi
 rm -rf example-output
 DARNEDFILE="DARNED_hg19.txt"

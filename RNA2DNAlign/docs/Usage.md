@@ -1,32 +1,32 @@
-# RNA2DNA Usage
+# RNA2DNAlign Usage
 
 ## Synopsis
 
 ### Graphical User Interface:
 
-    RNA2DNA
-    RNA2DNA.py
+    RNA2DNAlign
+    RNA2DNAlign.py
 
 ### Command-line:
 
-    RNA2DNA [options]
-    RNA2DNA.py [options]
+    RNA2DNAlign [options]
+    RNA2DNAlign.py [options]
 
 ## Description
 
-RNA2DNA evaluates evidence of allelic imbalance and asymmetry in next-gen
+RNA2DNAlign evaluates evidence of allelic imbalance and asymmetry in next-gen
 sequencing reads of DNA and RNA from normal and tumor samples from
 the same individual.
 
 ## Graphical User Interface
 
-![Options](RNA2DNA6.png)
+![Options](RNA2DNAlign.png)
 
 Click the help icon (question mark) at the top right of the GUI and
 then an input field for help. Multiple files can be selected in the
 file-chooser using Ctrl-Click or Shift-Click. Fields can be reset to
 their default values using the Reset button. Click OK to execute
-RNA2DNA.
+RNA2DNAlign.
 
 Additional GUI option tabs are documented below.
 
@@ -61,7 +61,7 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 
 ### Filtering
 
-![Filtering](RNA2DNA2.png)
+![Filtering](RNA2DNAlign.png)
 
 Exon Coords., -e EXONCOORDS, --exoncoords=EXONCOORDS
 
@@ -69,7 +69,7 @@ Exon Coords., -e EXONCOORDS, --exoncoords=EXONCOORDS
 
 ### Read Counting
 
-![Read Counting](RNA2DNA3.png)
+![Read Counting](RNA2DNAlign.png)
 
 Min. Reads, -m MINREADS, --minreads=MINREADS
 
@@ -93,7 +93,7 @@ Quiet, -q, --quiet
 
 ### Filename Matching
 
-![Filename Matching](RNA2DNA4.png)
+![Filename Matching](RNA2DNAlign.png)
 
 Germline DNA, --normaldnare=NORMALDNARE
 
@@ -113,7 +113,7 @@ Tumor Transcr., --tumortransre=TUMORTRANSRE
 
 ### SNV Annotation
 
-![SNV Annotation](RNA2DNA5.png)
+![SNV Annotation](RNA2DNAlign.png)
 
 Darned, -d DARNED, --darned=DARNED
 
@@ -125,5 +125,5 @@ Cosmic, -c COSMIC, --cosmic=COSMIC
 
 ## See Also
 
-[RNA2DNA Home](..), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
+[RNA2DNAlign Home](..), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
 

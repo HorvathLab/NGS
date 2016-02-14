@@ -1,39 +1,39 @@
 
-# RNA2DNA Installation #
+# RNA2DNAlign Installation #
 
-RNA2DNA is available in two forms, a self-contained packaged binary
+RNA2DNAlign is available in two forms, a self-contained packaged binary
 for 64-bit Linux systems, and as Python source. We recommend the
 self-contained packaged binary for Linux systems.
 
-## RNA2DNA for 64-bit Linux ##
+## RNA2DNAlign for 64-bit Linux ##
 
 1. Unpack the downloaded release:
 
     ```
-    tar xzf RNA2DNA-1.0.10.Linux-x86_64.tgz
+    tar xzf RNA2DNAlign-1.0.10.Linux-x86_64.tgz
     ```
 
-2. The RNA2DNA program is located in the bin subdirectory:
+2. The RNA2DNAlign program is located in the bin subdirectory:
 
     ```
-    ./RNA2DNA-1.0.10.Linux-x86_64/bin/RNA2DNA -h
+    ./RNA2DNAlign-1.0.10.Linux-x86_64/bin/RNA2DNAlign -h
     
-    ./RNA2DNA-1.0.10.Linux-x86_64/bin/RNA2DNA 
+    ./RNA2DNAlign-1.0.10.Linux-x86_64/bin/RNA2DNAlign 
     ```
 
 3. Test the install using the provided example data:
 
     ```
-    cd RNA2DNA-1.0.10.Linux-x86_64
-    ./bin/RNA2DNA -r "data/example-*.bam" -s "data/example-SNV.tsv" -o testing
+    cd RNA2DNAlign-1.0.10.Linux-x86_64
+    ./bin/RNA2DNAlign -r "data/example-*.bam" -s "data/example-SNV.tsv" -o testing
     ```
 
-## Python 2.7 RNA2DNA ##
+## Python 2.7 RNA2DNAlign ##
 
 1. Unpack the downloaded release:
 
     ```
-    tar xzf RNA2DNA-1.0.10.Python-2.7.tgz
+    tar xzf RNA2DNAlign-1.0.10.Python-2.7.tgz
     ```
 
 2. Locate your Python binary and ensure it is version 2.7:
@@ -47,7 +47,7 @@ self-contained packaged binary for Linux systems.
    We refer to the Python binary as `python` below, please substitute
    whatever path and version numbers are required to run Python 2.7 on
    your system. We recommend the Enthought Python Distribution (EPD) which
-   pre-installs all by the pysam third-party dependencies needed by RNA2DNA.
+   pre-installs all by the pysam third-party dependencies needed by RNA2DNAlign.
 
 3. Ensure the necessary third-party Python modules are installed. pysam version >= 0.8.1 is required. 
 
@@ -73,21 +73,21 @@ self-contained packaged binary for Linux systems.
     python27 -c "from scipy import __version__; print __version__"
     ```
 
-4. The RNA2DNA program is located in the src subdirectory:
+4. The RNA2DNAlign program is located in the src subdirectory:
 
     ```
-    python ./RNA2DNA-1.0.10.Python-2.7/src/RNA2DNA.py -h
+    python ./RNA2DNAlign-1.0.10.Python-2.7/src/RNA2DNAlign.py -h
     
-    python ./RNA2DNA-1.0.10.Python-2.7/src/RNA2DNA.py
+    python ./RNA2DNAlign-1.0.10.Python-2.7/src/RNA2DNAlign.py
     ```
 
 5. Test the installation using the provided example data:
 
     ```
-    cd RNA2DNA-1.0.10.Python-2.7
-    python ./src/RNA2DNA.py -r "data/example-*.bam" -s "data/example-SNV.tsv" -o testing
+    cd RNA2DNAlign-1.0.10.Python-2.7
+    python ./src/RNA2DNAlign.py -r "data/example-*.bam" -s "data/example-SNV.tsv" -o testing
     ```
 
 ## See Also
 
-[RNA2DNA Home](..), [Usage] (Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
+[RNA2DNAlign Home](..), [Usage] (Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)

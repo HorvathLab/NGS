@@ -1,4 +1,4 @@
-# RNA2DNA Annotation Files
+# RNA2DNAlign Annotation Files
 
 **All annotation files, SNV loci, and read alignments must indicate
 genomic position with respect to the same specific release of a common
@@ -43,7 +43,7 @@ file can be used as provided.
 ## [DARNED](http://darned.ucc.ie/) Loci
 
 1. DARNED loci are downloaded form the DARNED website and provided in
-the RNA2DNA/data directory in the file: `DARNED_hg19.txt`.  The
+the RNA2DNAlign/data directory in the file: `DARNED_hg19.txt`.  The
 annotation file can be used as provided.
 
 2. DARNED loci can be downloaded for another organism or assembly as follows: 
@@ -53,4 +53,4 @@ annotation file can be used as provided.
     ```
     * DARNED loci can be used in its downloaded format.
 
-[RNA2DNA Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md)
+[RNA2DNAlign Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md)

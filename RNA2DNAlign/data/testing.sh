@@ -12,7 +12,7 @@ function testcmd() {
   rm -rf $BASE-$NUMBER
   mkdir -p $BASE-$NUMBER
   echo -n "Test $NUMBER: "
-  $SRC/RNA2DNA.py "$@" -o $BASE-$NUMBER > $BASE-$NUMBER/logfile.txt 2>&1
+  $SRC/RNA2DNAlign.py "$@" -o $BASE-$NUMBER > $BASE-$NUMBER/logfile.txt 2>&1
   if [ $? -eq 0 ]; then
     echo "Success"
     cksum `find $BASE-$NUMBER -type f | sort | grep -v logfile` > $BASE-$NUMBER.cksum.tmp
@@ -31,7 +31,7 @@ function testcmd() {
     fi
   else
     echo "Failed"
-    echo RNA2DNA.py "$@"
+    echo RNA2DNAlign.py "$@"
     cat $BASE-$NUMBER/logfile.txt
   fi
   rm -rf $BASE-$NUMBER
