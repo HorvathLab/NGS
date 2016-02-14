@@ -37,6 +37,8 @@ Result files corresponding to this analysis are available in the `RNA2DNAlign/da
 
 4. Click `OK` to execute the program.
 
+![Image10](RNA2DNAlign10.png)
+
 ### Example 2: BAM and VCF files for each dataset, exonic SNV filtering, and DARNED and COSMIC annotations using the supplied annotation files.
 
 1. Select the VCF files by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, selecting all the VCF files, using shift-click or control-click as needed, and clicking `OK`.
