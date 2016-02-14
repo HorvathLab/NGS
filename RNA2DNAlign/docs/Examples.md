@@ -1,5 +1,8 @@
 # RNA2DNAlign Examples
 
+* [Command-line](https://github.com/HorvathLab/NGS/blob/master/RNA2DNAlign/docs/Examples.md#command-line)
+* [Graphical User Interface](https://github.com/HorvathLab/NGS/blob/master/RNA2DNAlign/docs/Examples.md#graphical-user-interface)
+
 ## Command-line:
 
 ### Example 1: BAM files and single SNV file in TSV format.
