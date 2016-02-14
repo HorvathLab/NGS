@@ -11,20 +11,21 @@ self-contained packaged binary for Linux systems.
 
     ```
     tar xzf RNA2DNAlign-1.0.10.Linux-x86_64.tgz
+    ln -s RNA2DNAlign-1.0.10.Linux-x86_64 RNA2DNAlign
     ```
 
 2. The RNA2DNAlign program is located in the bin subdirectory:
 
     ```
-    ./RNA2DNAlign-1.0.10.Linux-x86_64/bin/RNA2DNAlign -h
+    ./RNA2DNAlign/bin/RNA2DNAlign -h
     
-    ./RNA2DNAlign-1.0.10.Linux-x86_64/bin/RNA2DNAlign 
+    ./RNA2DNAlign/bin/RNA2DNAlign 
     ```
 
 3. Test the install using the provided example data:
 
     ```
-    cd RNA2DNAlign-1.0.10.Linux-x86_64
+    cd RNA2DNAlign
     ./bin/RNA2DNAlign -r "data/example-*.bam" -s "data/example-SNV.tsv" -o testing
     ```
 
@@ -34,6 +35,7 @@ self-contained packaged binary for Linux systems.
 
     ```
     tar xzf RNA2DNAlign-1.0.10.Python-2.7.tgz
+    ln -s RNA2DNAlign-1.0.10.Python-2.7 RNA2DNAlign
     ```
 
 2. Locate your Python binary and ensure it is version 2.7:
@@ -76,15 +78,15 @@ self-contained packaged binary for Linux systems.
 4. The RNA2DNAlign program is located in the src subdirectory:
 
     ```
-    python ./RNA2DNAlign-1.0.10.Python-2.7/src/RNA2DNAlign.py -h
+    python ./RNA2DNAlign/src/RNA2DNAlign.py -h
     
-    python ./RNA2DNAlign-1.0.10.Python-2.7/src/RNA2DNAlign.py
+    python ./RNA2DNAlign/src/RNA2DNAlign.py
     ```
 
 5. Test the installation using the provided example data:
 
     ```
-    cd RNA2DNAlign-1.0.10.Python-2.7
+    cd RNA2DNAlign
     python ./src/RNA2DNAlign.py -r "data/example-*.bam" -s "data/example-SNV.tsv" -o testing
     ```
 
