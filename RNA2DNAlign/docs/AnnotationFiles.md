@@ -53,4 +53,4 @@ annotation file can be used as provided.
     ```
     * DARNED loci can be used in its downloaded format.
 
-[RNA2DNAlign Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md)
+[RNA2DNAlign Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Examples](Examples.md)

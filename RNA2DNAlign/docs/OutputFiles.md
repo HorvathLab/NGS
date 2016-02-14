@@ -115,5 +115,5 @@ thresholds.
 
 ## See Also
 
-[RNA2DNAlign Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Annotation Files](AnnotationFiles.md)
+[RNA2DNAlign Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Annotation Files](AnnotationFiles.md), [Examples](Examples.md)
 

@@ -30,5 +30,5 @@ reference genome.**
 
 ## See Also
 
-[RNA2DNAlign Home](..), [Usage](Usage.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
+[RNA2DNAlign Home](..), [Usage](Usage.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md), [Examples](Examples.md)
 
