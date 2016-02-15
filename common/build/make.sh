@@ -28,7 +28,7 @@ YY="Python-2.7"
 # Source (Python-2.7) distribution
 rm -rf build/$PACKAGE-${VER}.${YY} dist/$PACKAGE-${VER}.${YY}.tgz
 mkdir -p build/$PACKAGE-${VER}.${YY}
-for d in src data scripts; do
+for d in src docs data scripts; do
   mkdir -p build/$PACKAGE-${VER}.${YY}/$d
   if [ -d common/$d ]; then
     rsync -a common/$d build/$PACKAGE-${VER}.${YY}
@@ -52,7 +52,7 @@ for p in $PROGS; do
   /tools/EPD/bin/cxfreeze --include-path=common/src --include-modules=hashlib,ctypes,platform,pysam.TabProxies,numpy.core --target-dir=$PACKAGE/bin $PACKAGE/src/$p
 done
 mkdir -p build/$PACKAGE-${VER}.${XX}
-for d in bin data scripts; do
+for d in bin docs data scripts; do
   mkdir -p build/$PACKAGE-${VER}.${XX}/$d
   if [ -d common/$d ]; then
     rsync -a common/$d build/$PACKAGE-${VER}.${XX}
