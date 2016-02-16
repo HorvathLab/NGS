@@ -37,11 +37,11 @@ for d in src docs data scripts; do
     rsync -a $PACKAGE/$d build/$PACKAGE-${VER}.${YY}
   fi
 done
+rm build/$PACKAGE-${VER}.${YY}/scripts/wrapper.sh
 find build/$PACKAGE-${VER}.${YY} -name ".svn" -exec rm -rf {} \;
 find build/$PACKAGE-${VER}.${YY} -name "*.pyc" -exec rm -rf {} \;
 find build/$PACKAGE-${VER}.${YY} -name "*~" -exec rm -rf {} \;
 find build/$PACKAGE-${VER}.${YY} -type d -empty -exec rm -rf {} \;
-rm build/$PACKAGE-${VER}.${YY}/scripts/wrapper.sh
 
 # Binary distribution
 rm -rf build/$PACKAGE-${VER}.${XX} dist/$PACKAGE-${VER}.${XX}.tgz
@@ -71,6 +71,8 @@ for s in $PROGS; do
 done
 rm build/$PACKAGE-${VER}.${XX}/scripts/wrapper.sh
 find build/$PACKAGE-${VER}.${XX} -name ".svn" -exec rm -rf {} \;
+find build/$PACKAGE-${VER}.${XX} -name "*.pyc" -exec rm -rf {} \;
+find build/$PACKAGE-${VER}.${XX} -name "*~" -exec rm -rf {} \;
 find build/$PACKAGE-${VER}.${XX} -type d -empty -exec rm -rf {} \;
 
 mkdir -p dist
