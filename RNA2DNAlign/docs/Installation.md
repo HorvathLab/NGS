@@ -43,7 +43,7 @@ self-contained packaged binary for Linux systems.
     ```
     python --version
 
-    /path/to/python27 --version 
+    /path/to/python2.7 --version 
     ``` 
 
    We refer to the Python binary as `python` below, please substitute
@@ -72,7 +72,7 @@ self-contained packaged binary for Linux systems.
    The existence of required modules can be tested as follows (demonstrated here for `scipy`):
 
     ```
-    python27 -c "from scipy import __version__; print __version__"
+    python2.7 -c "from scipy import __version__; print __version__"
     ```
 
 4. The RNA2DNAlign program is located in the src subdirectory:

@@ -19,7 +19,7 @@ if [ ! -d "./$PACKAGE" ]; then
     echo "Valid packages: SNPlice, RNA2DNAlign" 1>&2
     exit 1;
 fi
-VER=`python27 $PACKAGE/src/version.py VERSION | tr -d -c '0-9.'`
+VER=`python2.7 $PACKAGE/src/version.py VERSION | tr -d -c '0-9.'`
 OS=`uname`
 AR=`uname -m`
 XX="$OS-$AR"
@@ -45,7 +45,7 @@ find build/$PACKAGE-${VER}.${YY} -type d -empty -exec rm -rf {} \;
 
 # Binary distribution
 rm -rf build/$PACKAGE-${VER}.${XX} dist/$PACKAGE-${VER}.${XX}.tgz
-PROGS=`python27 $PACKAGE/src/version.py PROGRAMS`
+PROGS=`python2.7 $PACKAGE/src/version.py PROGRAMS`
 rm -rf $PACKAGE/bin
 export TCL_LIBRARY=/tools/EPD/lib/tcl8.5
 for p in $PROGS; do

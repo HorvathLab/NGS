@@ -1,4 +1,4 @@
-#!/bin/env python27
+#!/bin/env python2.7
 VERSION = '1.8.0'
 PROGRAMS = 'SNPlice.py SNPlice-Combine.py'
 if __name__ == '__main__':
