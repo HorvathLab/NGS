@@ -274,7 +274,7 @@ Args that contain spaces must be entered like so: "arg with sapce"
                 else:
                     fileMask = '|'.join([ "%s (%s)|%s"%(nm,ft,ft) for nm,ft in option.filetypes])
 		if isinstance(values.get(option.dest,""),basestring):
-		    initStr = values(option.dest,"")
+		    initStr = values.get(option.dest,"")
 		else:
 		    initStr = str(' '.join(v if ' ' not in v else '"%s"'%v for v in values.get(option.dest,[])))
                 ctrl = MyFileBrowseButton(parent, -1,
@@ -477,6 +477,9 @@ class OptionParserGUI( OptionParser ):
 	    config=ConfigParser()
 	    if os.path.exists(self.dotfile):
 	        config.read(self.dotfile)
+                if not config.has_section("VERSION") or config.get("VERSION","VERSION") != self.version:
+                    os.unlink(self.dotfile)
+                    config=ConfigParser()
 	    if config.has_section("LastValue"):
 	        for g,o in self.iteropts():
 	            if o.dest and o.remember and config.has_option("LastValue",o.dest):
@@ -558,6 +561,9 @@ class OptionParserGUI( OptionParser ):
 	    config.read(self.dotfile)
 	if not config.has_section("LastValue"):
 	    config.add_section("LastValue")
+        if not config.has_section("VERSION"):
+            config.add_section("VERSION")
+        config.set("VERSION","VERSION",self.version)
 	for g,o in self.iteropts():
 	    if o.remember:
                 if getattr(values,o.dest) not in (None,""):
