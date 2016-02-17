@@ -273,8 +273,8 @@ Args that contain spaces must be entered like so: "arg with sapce"
                     fileMask = 'All Files|*.*'
                 else:
                     fileMask = '|'.join([ "%s (%s)|%s"%(nm,ft,ft) for nm,ft in option.filetypes])
-		if isinstance(values[option.dest],basestring):
-		    initStr = values[option.dest]
+		if isinstance(values.get(option.dest,""),basestring):
+		    initStr = values(option.dest,"")
 		else:
 		    initStr = str(' '.join(v if ' ' not in v else '"%s"'%v for v in values.get(option.dest,[])))
                 ctrl = MyFileBrowseButton(parent, -1,
@@ -328,7 +328,7 @@ Args that contain spaces must be entered like so: "arg with sapce"
 			size=(300,-1)
                     )
 		    try:
-		        ind = option.choices.index(values[option.dest])
+		        ind = option.choices.index(values.get(option.dest,None))
 		    except (ValueError,KeyError):
 		        ind = 0
 		    ctrl.Select(ind)
