@@ -29,7 +29,7 @@ file can be used as provided.
 1. COSMIC mutants are downloaded from the COSMIC website and provided in the RNA2DNAlign/data directory in the file: `CosmicMutantExport_hg19.tsv.gz`.  The annotation
 file can be used as provided.
 
-2. COSMIC mutants can be downloaded for another organism or assembly as follows: 
+2. COSMIC mutants can be downloaded for another assembly as follows: 
     * Register with COSMIC
     ```
     https://cancer.sanger.ac.uk/cosmic/register
@@ -46,7 +46,7 @@ file can be used as provided.
 the RNA2DNAlign/data directory in the file: `DARNED_hg19.txt`.  The
 annotation file can be used as provided.
 
-2. DARNED loci can be downloaded for another organism or assembly as follows: 
+2. DARNED loci can be downloaded for another assembly as follows: 
     * Download the DARNED loci:
     ```
     http://darned.ucc.ie/static/downloads/hg19.txt
