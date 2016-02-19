@@ -79,5 +79,4 @@ mkdir -p dist
 tar -czf dist/$PACKAGE-${VER}.${XX}.tgz -C build $PACKAGE-${VER}.${XX}
 tar -czf dist/$PACKAGE-${VER}.${YY}.tgz -C build $PACKAGE-${VER}.${YY}
 ( cd dist; md5sum $PACKAGE-${VER}.*.tgz > $PACKAGE-${VER}.md5 )
-git tag -d $PACKAGE-${VER}
-git tag $PACKAGE-${VER}
+git tag -f $PACKAGE-${VER}
