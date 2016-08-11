@@ -1,5 +1,5 @@
 #!/bin/env python2.7
-VERSION = '1.0.11'
+VERSION = '1.0.12'
 PROGRAMS = 'readCounts.py LoH.py RNA2DNAlign.py exonicFilter.py snv_computation.py'
 if __name__ == '__main__':
     import sys

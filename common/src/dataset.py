@@ -580,12 +580,12 @@ class VCFFile(TXTFileTable):
                     if not eqstr:
                         vstr = "Y"
                     try:
-                        v = str(vstr)
+                        v = str(vstr).strip()
                         v = float(vstr)
                         v = int(vstr)
                     except:
                         pass
-                    n, t = self.infoheaders_[k]
+                    n, t = self.infoheaders_.get(k,(1,'String'))
                     if isinstance(n, int) and n > 1 and t in ('Integer', 'Float'):
                         if t == 'Integer':
                             vals = map(int, v.split(','))
@@ -599,7 +599,7 @@ class VCFFile(TXTFileTable):
                 for fns in self.baseheaders_[self.fmtpos + 1:]:
                     for k, vstr in zip(self.formatheaders_list_, r[fns].split(':')):
                         try:
-                            v = str(vstr)
+                            v = str(vstr).strip()
                             v = float(vstr)
                             v = int(vstr)
                         except:
@@ -692,6 +692,7 @@ class XLSXFileTable(FileTable):
         super(XLSXFileTable, self).__init__(*args, **kw)
 
     def set_headers(self):
+	import openpyxl
         self.headers_ = []
         book = openpyxl.reader.excel.load_workbook(filename=self.filename)
         for sheet_idx, sheet_name in enumerate(book.get_sheet_names()):
@@ -709,6 +710,7 @@ class XLSXFileTable(FileTable):
         assert len(self.headers_) > 0
 
     def rows(self):
+	import openpyxl
         book = openpyxl.reader.excel.load_workbook(filename=self.filename)
         for sheet_idx, sheet_name in enumerate(book.get_sheet_names()):
             if self.sheet != None and sheet_name != self.sheet:
@@ -728,6 +730,7 @@ class XLSXFileTable(FileTable):
                 yield dict(zip(self.headers_, row))
 
     def from_rows(self, rows):
+	import openpyxl
         wb = openpyxl.workbook.Workbook()
         assert(self.sheet != None)
         ws = wb.worksheets[0]

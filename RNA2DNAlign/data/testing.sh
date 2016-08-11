@@ -53,3 +53,5 @@ testcmd 13 -r 'example-SDNA.bam example-NRNA.bam example-TRNA.bam' -s example-SN
 testcmd 14 -r 'example-GDNA.bam example-SDNA.bam example-NRNA.bam example-TRNA.bam' -s example-SNV.tsv -m 3
 testcmd 15 -r 'example-*.bam' -s 'example-*.vcf' -t 4
 testcmd 16 -r 'example-*.bam' -s 'example-*.vcf' -t 0
+testcmd 17 -r 'example-*.bam' -s 'example-*.vcf' -m 3 -M 0.5
+testcmd 18 -r 'example-*.bam' -s 'example-*.vcf' -m 3 -M 100

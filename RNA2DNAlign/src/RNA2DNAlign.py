@@ -35,7 +35,7 @@ from util import *
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '1.0.5 (%s)' % (VERSION,)
+VERSION = '1.0.6 (%s)' % (VERSION,)
 
 
 def excepthook(etype, value, tb):
@@ -101,6 +101,8 @@ snvannot.add_option("-c", "--cosmic", type="file", dest="cosmic", default="",
                     filetypes=[("COSMIC Annotations", "*.tsv;*.tsv.gz")])
 readcounts.add_option("-m", "--minreads", type="int", dest="minreads", default=10, remember=True,
                       help="Minimum number of good reads at SNV locus per alignment file. Default=10.", name="Min. Reads")
+readcounts.add_option("-M", "--maxreads", type="float", dest="maxreads", default=None, remember=True,
+                      help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
 readcounts.add_option("-f", "--alignmentfilter", action="store_false", dest="filter", default=True, remember=True,
                       help="(Turn off) alignment filtering by length, edits, etc.", name="Filter Alignments")
 readcounts.add_option("-U", "--uniquereads", action="store_true", dest="unique", default=False, remember=True,
@@ -178,6 +180,8 @@ if not os.path.exists(outfile) or True:
             "-s", " ".join(snvfiles),
             "-o", outfile]
     args.extend(["-m", str(opt.minreads)])
+    if opt.maxreads != None:
+        args.extend(["-M", str(opt.maxreads)])
     args.extend(["-t", str(opt.tpb)])
     if not opt.filter:
         args.append("-f")

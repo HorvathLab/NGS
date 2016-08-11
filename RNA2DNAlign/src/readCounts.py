@@ -29,7 +29,7 @@ from chromreg import ChromLabelRegistry
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '1.0.5 (%s)' % (VERSION,)
+VERSION = '1.0.6 (%s)' % (VERSION,)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
@@ -69,6 +69,8 @@ parser.add_option("-r", "--readalignments", type="files", dest="alignments", def
                   filetypes=[("Read Alignment Files (indexed BAM)", "*.bam")])
 advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=10, remember=True,
                     help="Minimum number of good reads at SNV locus per alignment file. Default=10.", name="Min. Reads")
+advanced.add_option("-M", "--maxreads", type="float", dest="maxreads", default=None, remember=True,
+                    help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
 advanced.add_option("-F", "--full", action="store_true", dest="full", default=False, remember=True,
                     help="Output extra diagnostic read count fields. Default=False.", name="All Fields")
 advanced.add_option("-f", "--alignmentfilter", action="store_false", dest="filter", default=True, remember=True,
@@ -103,6 +105,8 @@ while True:
 progress = None
 if not opt.output:
     opt.quiet = True
+if opt.maxreads == None:
+    opt.maxreads = 1e+20
 progress = ProgressText(quiet=opt.quiet)
 
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable, BEDFile, VCFFile
@@ -350,25 +354,6 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
         counted = sum(map(lambda t: counts[(t[0], t[1], si)], [
                       (n, d) for n in 'ACGT' for d in 'FR']))
 
-        pcount = 0.5
-        n = nsnv + nref + nother
-        nprime = nsnv + nref + nother + 4 * pcount
-        q = float(nother + 2 * pcount) / (2 * nprime)
-        nothomoref = binom_test_high(nsnv, n, q)
-        nothomovar = binom_test_high(nref, n, q)
-        if nsnv > nref:
-            nothet = binom_test_high(nsnv, nsnv + nref, 0.5)
-            refdom = 1.0
-            vardom = nothet
-        elif nref > nsnv:
-            nothet = binom_test_high(nref, nsnv + nref, 0.5)
-            vardom = 1.0
-            refdom = nothet
-        else:
-            nothet = 1.0
-            vardom = 1.0
-            refdom = 1.0
-
         row = [ snvchr, snvpos, ref, alt ] + \
               [ os.path.split(alf)[1].rsplit('.', 1)[0] ] + \
               [nsnvf, nsnvr,
@@ -381,7 +366,7 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
                -1, -1, -1, -1, -1,
                notherf, notherr,
                nother,
-               nothomovar, nothomoref, nothet, vardom, refdom,
+	       -1, -1, -1, -1, -1,
                -1, -1, -1, -1, -1,
                duplicates_removed[si],
                badread[si, 'Good'],
@@ -395,6 +380,62 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
 progress.done()
 if not opt.quiet:
     print "SNVs/sec: %.2f"%(float(totalsnvs)/(time.time()-start),)
+
+# Determine the maxreads value, if percentile, otherwise let the defaultdict take care of it
+coverage = defaultdict(list)
+maxreads = defaultdict(lambda: int(opt.maxreads))
+if 0 < opt.maxreads < 1:
+    for r in map(lambda r: dict(zip(outheaders,r)),outrows):
+	coverage[r['AlignedReads']].append(r['GoodReads'])
+    for al in coverage:
+	n = len(coverage[al])
+	percind = int(round(n*opt.maxreads))
+	maxreads[al] = sorted(coverage[al])[percind]
+
+for i in range(len(outrows)):
+
+    #Exctract the counts and rescale if necessary
+    r = dict(zip(outheaders, outrows[i]))
+    al,nsnv,nref,nother,counted = map(r.get,["AlignedReads","SNVCount","RefCount","OtherCount","GoodReads"])
+    if counted > maxreads[al]:
+	factor = float(maxreads[al])/float(counted)
+	nsnv = int(round(factor*nsnv))
+	nref = int(round(factor*nref))
+	nother = int(round(factor*nother))
+
+    #Compute p-values
+    pcount = 0.5
+    n = nsnv + nref + nother
+    nprime = nsnv + nref + nother + 4 * pcount
+    q = float(nother + 2 * pcount) / (2 * nprime)
+    nothomoref = binom_test_high(nsnv, n, q)
+    nothomovar = binom_test_high(nref, n, q)
+    if nsnv > nref:
+        nothet = binom_test_high(nsnv, nsnv + nref, 0.5)
+        refdom = 1.0
+        vardom = nothet
+    elif nref > nsnv:
+        nothet = binom_test_high(nref, nsnv + nref, 0.5)
+        vardom = 1.0
+        refdom = nothet
+    else:
+        nothet = 1.0
+        vardom = 1.0
+        refdom = 1.0
+
+    # And store in the output rows...
+    pos = outheaders.index("NotHomoRefpV")
+    outrows[i][pos] = nothomoref
+    pos = outheaders.index("NotHetpV")
+    outrows[i][pos] = nothet
+    pos = outheaders.index("NotHomoVarpV")
+    outrows[i][pos] = nothomovar
+    pos = outheaders.index("VarDompV")
+    outrows[i][pos] = vardom
+    pos = outheaders.index("RefDompV")
+    outrows[i][pos] = refdom
+
+# Now compute FDR and scores...
 
 pvkeys = filter(lambda h: h.endswith('pV'), outheaders)
 fdrkeys = filter(lambda h: h.endswith('FDR'), outheaders)
