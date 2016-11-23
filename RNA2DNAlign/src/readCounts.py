@@ -24,12 +24,12 @@ except NameError:
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText
 from util import *
 from fisher import *
-from pileups import SerialPileups, ThreadedPileups
+from pileups import SerialPileups, ThreadedPileups, MultiprocPileups
 from chromreg import ChromLabelRegistry
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '1.0.6 (%s)' % (VERSION,)
+VERSION = '1.0.7 (%s)' % (VERSION,)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
@@ -77,12 +77,12 @@ advanced.add_option("-f", "--alignmentfilter", action="store_false", dest="filte
                     help="(Turn off) alignment filtering by length, edits, etc.", name="Filter Alignments")
 advanced.add_option("-U", "--uniquereads", action="store_true", dest="unique", default=False, remember=True,
                     help="Consider only distinct reads.", name="Unique Reads")
-advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=1, remember=True,
-                    help="Worker threads per alignment file. Indicate no threading with 0. Default=1.", name="Threads/BAM")
+advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=0, remember=True,
+                    help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
-# advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
-#                     help="Debug.", name="Debug")
+advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
+                    help="Debug.", name="Debug")
 parser.add_option("-o", "--output", type="savefile", dest="output", remember=True,
                   help="Output file. Leave empty for console ouptut.", default="",
                   name="Output File", filetypes=[("All output formats", "*.xlsx;*.xls;*.csv;*.tsv;*.txt"),
@@ -284,7 +284,7 @@ else:
 if opt.tpb == 0:
     pileups = SerialPileups(snvdata, opt.alignments, readfilter, chrreg).iterator()
 else:
-    pileups = ThreadedPileups(snvdata, opt.alignments, readfilter, chrreg, threadsperbam=opt.tpb).iterator()
+    pileups = MultiprocPileups(snvdata, opt.alignments, readfilter, chrreg, procsperbam=opt.tpb).iterator()
 
 progress.stage("Count reads per SNV", len(snvdata))
 
@@ -300,10 +300,10 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
     snvchr1, snvpos1, ref1, alt1, total, reads, badread = pileups.next()
     assert(snvchr == snvchr1 and snvpos == snvpos1)
     
-##     if opt.debug:
-##         print snvchr,snvpos,ref,alt, \
-##               " ".join(map(str,map(lambda i: total[i],range(len(opt.alignments))))), \
-##               " ".join(map(str,map(lambda i: badread[(i, 'Good')],range(len(opt.alignments)))))
+    if opt.debug:
+         print snvchr,snvpos,ref,alt, \
+             " ".join(map(str,map(lambda i: total[i],range(len(opt.alignments))))), \
+             " ".join(map(str,map(lambda i: badread[(i, 'Good')],range(len(opt.alignments)))))
 
     goodreads = defaultdict(list)
     for al, pos, base, si in reads:

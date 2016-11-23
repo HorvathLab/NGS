@@ -24,11 +24,16 @@ try:
     scriptdir = dirname(realpath(__file__))
 except NameError:
     scriptdir = dirname(realpath(sys.argv[0]))
-sys.path.append(join(scriptdir, '..', '..', 'common', 'src'))
+scriptdir1 = realpath(join(scriptdir, '..', '..', 'common', 'src'))
+sys.path.append(scriptdir1)
 try:
     scriptextn = "." + os.path.split(sys.argv[0])[1].rsplit('.', 1)[1]
 except:
     scriptextn = ""
+
+from execute import Execute
+execprog = Execute(scriptdir,scriptdir1,extn=scriptextn)
+
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText
 from util import *
 
@@ -139,21 +144,6 @@ def makedirs(d):
         return
     os.makedirs(d)
 
-def execprog(prog, *args, **kw):
-    progpath = os.path.join(scriptdir, prog + scriptextn)
-    assert os.path.exists(progpath), "%s does not exist" % (progpath,)
-    if kw.get('verbose', True):
-        argstr = " ".join(
-            map(lambda a: a if " " not in a else '"%s"' % a, args))
-        print >>sys.stderr, "Executing:\n  %s %s" % (prog + scriptextn, argstr)
-    if progpath.endswith('.py'):
-        sys.argv = [progpath] + list(args)
-        execfile(progpath,{})
-    else:
-        status = subprocess.call([progpath] + list(args))
-        assert(status == 0)
-    return True
-
 # Apply exonic filter on SNVs if desired...
 snvfiles = []
 for snvfile in opt.snvs:
@@ -165,8 +155,8 @@ for snvfile in opt.snvs:
         makedirs(opt.output)
         outfile = join(opt.output, "." + basename + '.filtered.' + extn)
         if not os.path.exists(outfile) or True:
-            execprog("exonicFilter", "--exons", opt.exoncoords,
-                     "--input", snvfile, "--output", outfile)
+            execprog.execute("exonicFilter", "--exons", opt.exoncoords,
+                             "--input", snvfile, "--output", outfile)
         snvfiles.append(outfile)
     else:
         snvfiles.append(snvfile)
@@ -191,7 +181,7 @@ if not os.path.exists(outfile) or True:
         args.append("-q")
 
     makedirs(opt.output)
-    execprog("readCounts", *args)
+    execprog.execute("readCounts", *args)
 
 # Set up and apply snv_computation.py
 args = ["--counts", outfile]
@@ -204,7 +194,7 @@ args.extend(["--normaltransre",opt.normaltransre])
 args.extend(["--tumordnare",opt.tumordnare])
 args.extend(["--tumortransre",opt.tumortransre])
 
-execprog("snv_computation", *args)
+execprog.execute("snv_computation", *args)
 
 # Summarize events
 if os.path.exists(join(opt.output, "summary_result.txt")):
