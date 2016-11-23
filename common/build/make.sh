@@ -49,7 +49,11 @@ PROGS=`python2.7 $PACKAGE/src/version.py PROGRAMS`
 rm -rf $PACKAGE/bin
 export TCL_LIBRARY=/tools/EPD/lib/tcl8.5
 for p in $PROGS; do
-  /tools/EPD/bin/cxfreeze --include-path=common/src --include-modules=hashlib,ctypes,platform,pysam.TabProxies,numpy.core --target-dir=$PACKAGE/bin $PACKAGE/src/$p
+  if [ -f $PACKAGE/src/$p ]; then
+    /tools/EPD/bin/cxfreeze --include-path=common/src --include-modules=hashlib,ctypes,platform,pysam.TabProxies,numpy.core --target-dir=$PACKAGE/bin $PACKAGE/src/$p
+  elif [ -f common/src/$p]; then
+    /tools/EPD/bin/cxfreeze --include-path=common/src --include-modules=hashlib,ctypes,platform,pysam.TabProxies,numpy.core --target-dir=$PACKAGE/bin common/src/$p
+  fi
 done
 mkdir -p build/$PACKAGE-${VER}.${XX}
 for d in bin docs data scripts; do
