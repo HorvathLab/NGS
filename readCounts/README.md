@@ -12,6 +12,5 @@ Usage:
 File Formats:
 * [Input Files](docs/InputFiles.md)
 * [Output Files](docs/OutputFiles.md)
-* [Annotation Files](docs/AnnotationFiles.md)
 
 [Examples](docs/Examples.md)
