@@ -1,0 +1,72 @@
+##fileformat=VCFv4.1
+##samtoolsVersion=0.1.19-44428cd
+##reference=file:///lustre/groups/mgpc/Homo_sapiens/Ensembl/GRCh37/Sequence/Bowtie2Index/genome.fa
+##contig=<ID=1,length=249250621>
+##contig=<ID=10,length=135534747>
+##contig=<ID=11,length=135006516>
+##contig=<ID=12,length=133851895>
+##contig=<ID=13,length=115169878>
+##contig=<ID=14,length=107349540>
+##contig=<ID=15,length=102531392>
+##contig=<ID=16,length=90354753>
+##contig=<ID=17,length=81195210>
+##contig=<ID=18,length=78077248>
+##contig=<ID=19,length=59128983>
+##contig=<ID=2,length=243199373>
+##contig=<ID=20,length=63025520>
+##contig=<ID=21,length=48129895>
+##contig=<ID=22,length=51304566>
+##contig=<ID=3,length=198022430>
+##contig=<ID=4,length=191154276>
+##contig=<ID=5,length=180915260>
+##contig=<ID=6,length=171115067>
+##contig=<ID=7,length=159138663>
+##contig=<ID=8,length=146364022>
+##contig=<ID=9,length=141213431>
+##contig=<ID=MT,length=16569>
+##contig=<ID=X,length=155270560>
+##contig=<ID=Y,length=59373566>
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Raw read depth">
+##INFO=<ID=DP4,Number=4,Type=Integer,Description="# high-quality ref-forward bases, ref-reverse, alt-forward and alt-reverse bases">
+##INFO=<ID=MQ,Number=1,Type=Integer,Description="Root-mean-square mapping quality of covering reads">
+##INFO=<ID=FQ,Number=1,Type=Float,Description="Phred probability of all samples being the same">
+##INFO=<ID=AF1,Number=1,Type=Float,Description="Max-likelihood estimate of the first ALT allele frequency (assuming HWE)">
+##INFO=<ID=AC1,Number=1,Type=Float,Description="Max-likelihood estimate of the first ALT allele count (no HWE assumption)">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">
+##INFO=<ID=IS,Number=2,Type=Float,Description="Maximum number of reads supporting an indel and fraction of indel reads">
+##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes for each ALT allele, in the same order as listed">
+##INFO=<ID=G3,Number=3,Type=Float,Description="ML estimate of genotype frequencies">
+##INFO=<ID=HWE,Number=1,Type=Float,Description="Chi^2 based HWE test P-value based on G3">
+##INFO=<ID=CLR,Number=1,Type=Integer,Description="Log ratio of genotype likelihoods with and without the constraint">
+##INFO=<ID=UGT,Number=1,Type=String,Description="The most probable unconstrained genotype configuration in the trio">
+##INFO=<ID=CGT,Number=1,Type=String,Description="The most probable constrained genotype configuration in the trio">
+##INFO=<ID=PV4,Number=4,Type=Float,Description="P-values for strand bias, baseQ bias, mapQ bias and tail distance bias">
+##INFO=<ID=INDEL,Number=0,Type=Flag,Description="Indicates that the variant is an INDEL.">
+##INFO=<ID=PC2,Number=2,Type=Integer,Description="Phred probability of the nonRef allele frequency in group1 samples being larger (,smaller) than in group2.">
+##INFO=<ID=PCHI2,Number=1,Type=Float,Description="Posterior weighted chi^2 P-value for testing the association between group1 and group2 samples.">
+##INFO=<ID=QCHI2,Number=1,Type=Integer,Description="Phred scaled PCHI2.">
+##INFO=<ID=PR,Number=1,Type=Integer,Description="# permutations yielding a smaller PCHI2.">
+##INFO=<ID=QBD,Number=1,Type=Float,Description="Quality by Depth: QUAL/#reads">
+##INFO=<ID=RPB,Number=1,Type=Float,Description="Read Position Bias">
+##INFO=<ID=MDV,Number=1,Type=Integer,Description="Maximum number of high-quality nonRef reads in samples">
+##INFO=<ID=VDB,Number=1,Type=Float,Description="Variant Distance Bias (v2) for filtering splice-site artefacts in RNA-seq data. Note: this version may be broken.">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">
+##FORMAT=<ID=GL,Number=3,Type=Float,Description="Likelihoods for RR,RA,AA genotypes (R=ref,A=alt)">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="# high-quality bases">
+##FORMAT=<ID=DV,Number=1,Type=Integer,Description="# high-quality non-reference bases">
+##FORMAT=<ID=SP,Number=1,Type=Integer,Description="Phred-scaled strand bias P-value">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="List of Phred-scaled genotype likelihoods">
+##INFO=<ID=PR,Number=1,Type=Integer,Description="# permutations yielding a smaller PCHI2.">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	/lustre/groups/mgpc/RNAEDIT_Proj_B/NB-WXS-TCGA-Seq/merge_TPtr.sorted.bam
+1	7890010	.	A	G	125	.	DP=57;VDB=6.438848e-02;RPB=-3.430233e+00;AF1=0.5;AC1=1;DP4=22,12,14,6;MQ=43;FQ=128;PV4=0.77,0.42,0.13,1	GT:PL:GQ	0/1:155,0,255:99
+1	7890064	.	A	G	48	.	DP=7;VDB=2.845191e-02;AF1=1;AC1=2;DP4=0,0,1,2;MQ=50;FQ=-36	GT:PL:GQ	1/1:80,9,0:16
+1	36886117	.	C	T	222	.	DP=20;VDB=1.754524e-01;AF1=1;AC1=2;DP4=0,0,13,6;MQ=49;FQ=-84	GT:PL:GQ	1/1:255,57,0:99
+11	64575553	.	G	A	225	.	DP=47;VDB=1.612869e-01;RPB=-1.463384e+00;AF1=0.5;AC1=1;DP4=5,11,9,17;MQ=48;FQ=214;PV4=1,1,1,1	GT:PL:GQ	0/1:255,0,241:99
+13	46090371	.	A	G	207	.	DP=33;VDB=1.349048e-01;RPB=6.816104e-01;AF1=0.5;AC1=1;DP4=3,17,7,6;MQ=50;FQ=210;PV4=0.026,0.0059,1,0.2	GT:PL:GQ	0/1:237,0,255:99
+14	74340797	.	A	T	222	.	DP=60;VDB=2.825956e-01;RPB=-1.663101e+00;AF1=1;AC1=2;DP4=0,1,24,25;MQ=49;FQ=-143;PV4=1,0.35,0.44,1	GT:PL:GQ	1/1:255,116,0:99
+5	31423007	.	T	C	222	.	DP=48;VDB=3.548257e-01;AF1=1;AC1=2;DP4=0,0,9,39;MQ=49;FQ=-171	GT:PL:GQ	1/1:255,144,0:99
+6	57512678	.	G	A	222	.	DP=56;VDB=3.491521e-01;AF1=1;AC1=2;DP4=0,0,19,29;MQ=50;FQ=-171	GT:PL:GQ	1/1:255,144,0:99
+6	57512711	.	G	A	222	.	DP=38;VDB=2.228186e-01;AF1=1;AC1=2;DP4=0,0,16,22;MQ=50;FQ=-141	GT:PL:GQ	1/1:255,114,0:99
+19	54659124	.	G	A
+9	87366922	.	G	A	195	.	DP=86;VDB=1.623954e-01;RPB=1.756181e+00;AF1=0.5;AC1=1;DP4=39,24,16,7;MQ=49;FQ=198;PV4=0.62,1,0.4,0.44	GT:PL:GQ	0/1:225,0,255:99
