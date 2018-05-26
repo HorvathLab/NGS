@@ -3,9 +3,6 @@
 
 readCounts is currently available only as a Python source.
 
-RNA2DNAlign is available in two forms, a self-contained packaged binary
-for 64-bit Linux systems, and as Python source. We recommend the
-self-contained packaged binary for Linux systems.
 
 ## Python 2.7 readCounts ##
 
