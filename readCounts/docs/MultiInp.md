@@ -2,7 +2,7 @@
 
 ## Description
 
-readCounts enable the users to run multiple inputs which can be done through
+readCounts enables the users to run multiple inputs which can be done through
 writing a shell script as illustrated below:
 
 ### Running Multiple Inputs:
@@ -25,10 +25,10 @@ writing a shell script as illustrated below:
 
 ## Shell Script Description:
 
-The shell script is an example of how one can run multiple inputs (samples) to
-do so, firstly, you need to have a list which contains all of the inputs file
+The shell script is an example of how one can run multiple inputs (samples).To
+explain the actual script, firstly, you need to have a list which contains all of the inputs file
 names without the file extensions. Then, the list will go through a loop that
 iterates one
 sample(input) at a time. The readCounts will run the iterated input and once
-done it will go to the next input of list until it reaches the end of the list.
+done it will go to the next input of the list until it reaches the end of that list.
 
