@@ -17,4 +17,5 @@ File Formats:
 * [Input Files](docs/InputFiles.md)
 * [Output Files](docs/OutputFiles.md)
 
-[Examples](docs/Examples.md)
+Multiple Inputs:
+* [Multi Inputs](docs/MultiInp.md)
