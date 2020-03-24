@@ -1,4 +1,4 @@
-#!/bin/env python2.7
+#!/bin/env python3
 import sys
 import os
 import os.path
@@ -8,7 +8,7 @@ import traceback
 import re
 import csv
 import tempfile
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import shutil
 import atexit
 import subprocess
@@ -29,13 +29,13 @@ from chromreg import ChromLabelRegistry
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '1.0.7 (%s)' % (VERSION,)
+VERSION = '2.0.0 (%s)' % (VERSION,)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
-    print >>sys.stderr, "Type <Enter> to Exit...",
+    print("Type <Enter> to Exit...", end=' ', file=sys.stderr)
     sys.stderr.flush()
-    raw_input()
+    input()
 
 toremove = []
 
@@ -112,9 +112,9 @@ progress = ProgressText(quiet=opt.quiet)
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable, BEDFile, VCFFile
 
 progress.stage("Read SNV data", len(opt.snvs))
-snvheaders = filter(None, """
+snvheaders = [_f for _f in """
 CHROM POS REF ALT
-""".split())
+""".split() if _f]
 
 snvdata = {}
 # extrasnvheaders = []
@@ -152,7 +152,7 @@ for filename in opt.snvs:
 
     for r in snvs:
         chr = r[snvheaders[0]].strip()
-	snvchroms[filename].add(chr)
+        snvchroms[filename].add(chr)
         locus = int(r[snvheaders[1]].strip())
         ref = r[snvheaders[2]].strip()
         alt = r[snvheaders[3]].strip()
@@ -178,7 +178,7 @@ for snvfile in snvchroms:
     chrreg.add_labels(snvfile,snvchroms[snvfile])
 
 snvdata1 = {}
-for (sf, chr, locus, ref, alt), r in snvdata.iteritems():
+for (sf, chr, locus, ref, alt), r in snvdata.items():
     chrom = chrreg.label2chrom(sf,chr)
     assert(chrom)
     snvkey = (chrom,locus,ref,alt)
@@ -190,11 +190,11 @@ for bamfile in opt.alignments:
 
 chrreg.determine_chrom_order()
 
-snvdata = sorted(snvdata1.values(),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
+snvdata = sorted(list(snvdata1.values()),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
 # extrasnvheaders = filter(lambda h: h in usedsnvheaders, extrasnvheaders)
 progress.message("SNVs: %d\n" % len(snvdata))
 
-outheaders = snvheaders + filter(None, """
+outheaders = snvheaders + [_f for _f in """
 SNVCountForward
 SNVCountReverse
 RefCountForward
@@ -209,9 +209,9 @@ HetSc
 HomoRefSc
 VarDomSc
 RefDomSc
-""".split())
+""".split() if _f]
 
-debugging = filter(None, """
+debugging = [_f for _f in """
 OtherCountForward
 OtherCountReverse
 OtherCount
@@ -228,7 +228,7 @@ RefDomFDR
 RemovedDuplicateReads
 FilteredSNVLociReads
 SNVLociReads
-""".split())
+""".split() if _f]
 debugging.extend(sorted(BadRead.allheaders))
 
 outheaders.extend(debugging)
@@ -294,16 +294,16 @@ start = time.time()
 for snvchr, snvpos, ref, alt, snvextra in snvdata:
     
 ##     if opt.debug:
-## 	if totalsnvs % 100 == 0 and totalsnvs > 0:
-## 	    print "SNVs/sec: %.2f"%(float(totalsnvs)/(time.time()-start),)
+##         if totalsnvs % 100 == 0 and totalsnvs > 0:
+##             print "SNVs/sec: %.2f"%(float(totalsnvs)/(time.time()-start),)
 
-    snvchr1, snvpos1, ref1, alt1, total, reads, badread = pileups.next()
+    snvchr1, snvpos1, ref1, alt1, total, reads, badread = next(pileups)
     assert(snvchr == snvchr1 and snvpos == snvpos1)
     
     if opt.debug:
-         print snvchr,snvpos,ref,alt, \
-             " ".join(map(str,map(lambda i: total[i],range(len(opt.alignments))))), \
-             " ".join(map(str,map(lambda i: badread[(i, 'Good')],range(len(opt.alignments)))))
+         print(snvchr,snvpos,ref,alt, \
+             " ".join(map(str,[total[i] for i in range(len(opt.alignments))])), \
+             " ".join(map(str,[badread[(i, 'Good')] for i in range(len(opt.alignments))])))
 
     goodreads = defaultdict(list)
     for al, pos, base, si in reads:
@@ -334,25 +334,25 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
             counts[(base, "R" if al.is_reverse else "F", si)] += 1
     mincounted = 1e+20
     for si, alf in enumerate(opt.alignments):
-        counted = sum(map(lambda t: counts[(t[0], t[1], si)], [
-                      (n, d) for n in 'ACGT' for d in 'FR']))
+        counted = sum([counts[(t[0], t[1], si)] for t in [
+                      (n, d) for n in 'ACGT' for d in 'FR']])
         mincounted = min(counted, mincounted)
     if mincounted < opt.minreads:
         continue
 
     for si, alf in enumerate(opt.alignments):
-        nsnvf = sum(map(lambda nuc: counts[(nuc, "F", si)], map(str.strip,alt.split(','))))
-        nsnvr = sum(map(lambda nuc: counts[(nuc, "R", si)], map(str.strip,alt.split(','))))
+        nsnvf = sum([counts[(nuc, "F", si)] for nuc in list(map(str.strip,alt.split(',')))])
+        nsnvr = sum([counts[(nuc, "R", si)] for nuc in list(map(str.strip,alt.split(',')))])
         nsnv = nsnvr + nsnvf
         nreff = counts[(ref, "F", si)]
         nrefr = counts[(ref, "R", si)]
         nref = nreff + nrefr
         othernucs = set('ACGT') - set([ref] + alt.split(','))
-        notherf = sum(map(lambda nuc: counts[(nuc, "F", si)], othernucs))
-        notherr = sum(map(lambda nuc: counts[(nuc, "R", si)], othernucs))
+        notherf = sum([counts[(nuc, "F", si)] for nuc in othernucs])
+        notherr = sum([counts[(nuc, "R", si)] for nuc in othernucs])
         nother = notherf + notherr
-        counted = sum(map(lambda t: counts[(t[0], t[1], si)], [
-                      (n, d) for n in 'ACGT' for d in 'FR']))
+        counted = sum([counts[(t[0], t[1], si)] for t in [
+                      (n, d) for n in 'ACGT' for d in 'FR']])
 
         row = [ snvchr, snvpos, ref, alt ] + \
               [ os.path.split(alf)[1].rsplit('.', 1)[0] ] + \
@@ -362,11 +362,11 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
                counted,
                100.0 * (total[si] - badread[si, 'Good']) /
                float(total[si]) if total[si] != 0 else 0.0,
-	       float(nsnv)/(nsnv+nref),
+               float(nsnv)/(nsnv+nref),
                -1, -1, -1, -1, -1,
                notherf, notherr,
                nother,
-	       -1, -1, -1, -1, -1,
+               -1, -1, -1, -1, -1,
                -1, -1, -1, -1, -1,
                duplicates_removed[si],
                badread[si, 'Good'],
@@ -379,29 +379,29 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
     progress.update()
 progress.done()
 if not opt.quiet:
-    print "SNVs/sec: %.2f"%(float(totalsnvs)/(time.time()-start),)
+    print("SNVs/sec: %.2f"%(float(totalsnvs)/(time.time()-start),))
 
 # Determine the maxreads value, if percentile, otherwise let the defaultdict take care of it
 coverage = defaultdict(list)
 maxreads = defaultdict(lambda: int(opt.maxreads))
 if 0 < opt.maxreads < 1:
-    for r in map(lambda r: dict(zip(outheaders,r)),outrows):
-	coverage[r['AlignedReads']].append(r['GoodReads'])
+    for r in [dict(list(zip(outheaders,r))) for r in outrows]:
+        coverage[r['AlignedReads']].append(r['GoodReads'])
     for al in coverage:
-	n = len(coverage[al])
-	percind = int(round(n*opt.maxreads))
-	maxreads[al] = sorted(coverage[al])[percind]
+        n = len(coverage[al])
+        percind = int(round(n*opt.maxreads))
+        maxreads[al] = sorted(coverage[al])[percind]
 
 for i in range(len(outrows)):
 
     #Exctract the counts and rescale if necessary
-    r = dict(zip(outheaders, outrows[i]))
-    al,nsnv,nref,nother,counted = map(r.get,["AlignedReads","SNVCount","RefCount","OtherCount","GoodReads"])
+    r = dict(list(zip(outheaders, outrows[i])))
+    al,nsnv,nref,nother,counted = list(map(r.get,["AlignedReads","SNVCount","RefCount","OtherCount","GoodReads"]))
     if counted > maxreads[al]:
-	factor = float(maxreads[al])/float(counted)
-	nsnv = int(round(factor*nsnv))
-	nref = int(round(factor*nref))
-	nother = int(round(factor*nother))
+        factor = float(maxreads[al])/float(counted)
+        nsnv = int(round(factor*nsnv))
+        nref = int(round(factor*nref))
+        nother = int(round(factor*nother))
 
     #Compute p-values
     pcount = 0.5
@@ -437,13 +437,13 @@ for i in range(len(outrows)):
 
 # Now compute FDR and scores...
 
-pvkeys = filter(lambda h: h.endswith('pV'), outheaders)
-fdrkeys = filter(lambda h: h.endswith('FDR'), outheaders)
+pvkeys = [h for h in outheaders if h.endswith('pV')]
+fdrkeys = [h for h in outheaders if h.endswith('FDR')]
 allpvals = []
 n = len(outrows)
 for pvk in pvkeys:
     pos = outheaders.index(pvk)
-    allpvals.extend(map(itemgetter(pos), outrows))
+    allpvals.extend(list(map(itemgetter(pos), outrows)))
 # print allpvals
 allfdrs = fdr(allpvals)
 
@@ -453,7 +453,7 @@ for j, fdrk in enumerate(fdrkeys):
         outrows[i][pos1] = allfdrs[(j * n) + i]
 
 for i in range(len(outrows)):
-    r = dict(zip(outheaders, outrows[i]))
+    r = dict(list(zip(outheaders, outrows[i])))
     homovarsc = max(0.0, min(pvscore(r["NotHetFDR"]), pvscore(
         r["NotHomoRefFDR"])) - pvscore(r["NotHomoVarFDR"]))
     homorefsc = max(0.0, min(pvscore(r["NotHetFDR"]), pvscore(
@@ -475,5 +475,5 @@ for i in range(len(outrows)):
 
 progress.stage('Output results')
 output.from_rows(
-    map(lambda r: dict(zip(outheaders, r + [emptysym] * 50)), outrows))
+    [dict(list(zip(outheaders, r + [emptysym] * 50))) for r in outrows])
 progress.done()

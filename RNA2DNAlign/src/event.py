@@ -1,6 +1,6 @@
 
 from pkg_resources import resource_stream
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 import os.path, sys, inspect
 from operator import itemgetter
 

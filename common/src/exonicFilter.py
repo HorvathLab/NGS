@@ -39,18 +39,18 @@ def ReadVCF(file_name):
     
     with open((file_name), 'r') as f:
         reader = csv.reader((f), delimiter='\t')
-	inheader = True
+        inheader = True
         for row in reader:
             if row[0].startswith("#") and inheader:
                 fileheader.append('\t'.join(row))
             else:
-		inheader = False
+                inheader = False
                 chrom.add(row[0])
                 rows.append(row)
     return fileheader, chrom, rows
 
 def ReadTSV(filename):
-    snvheaders = filter(None, """CHROM POS REF ALT""".split())  
+    snvheaders = [_f for _f in """CHROM POS REF ALT""".split() if _f]  
     base, extn = filename.rsplit('.', 1)
     extn = extn.lower()
     if extn == 'csv':
@@ -76,12 +76,12 @@ def ReadTSV(filename):
     chrom = set()
     snvdata = []
     for r in snvs:
-        ri = map(r.get,snvs.headers())
+        ri = list(map(r.get,snvs.headers()))
         chrom.add(ri[0])
         snvdata.append(ri)
 
     return ["\t".join(snvs.headers())], chrom, snvdata
-												
+                                                                                                
 exoncoords = opt.exons
 filename = opt.input
 outfile = opt.output
@@ -91,7 +91,7 @@ if outfile.endswith('.vcf'):
 if not filename.endswith('.vcf'):
     assert(outfile.endswith('.tsv'))
 
-print "Reading", filename, "...",
+print("Reading", filename, "...", end=' ')
 sys.stdout.flush()
 
 if filename.rsplit('.',1)[-1].lower() == 'vcf':
@@ -117,7 +117,7 @@ for i in range(len(snvdata)-1,-1,-1):
 # Extra numeric chromosomes might make this more robust for organisms
 # with more chromosomes? Doesn't hurt normal (human) case either way.
 # Should we add mitochondria here too? What notation does UCSC use?
-exonlabels = map(str,range(1,100)) + ["X","Y","MT"]
+exonlabels = list(map(str,list(range(1,100)))) + ["X","Y","MT"]
 chrreg.add_labels(exoncoords,exonlabels)
 
 chrreg.default_chrom_order()
@@ -125,7 +125,7 @@ chrorder = chrreg.chrom_order
 
 snvdata.sort(key=lambda sd: (chrorder(sd[0]),sd[1]))
 
-print "done"
+print("done")
 
 #=========================================================================
 # A function called "all_filteration" which does take one argument;
@@ -151,7 +151,7 @@ def all_filteration(d):
             outpt.write("\n".join(fileheader) + '\n')
 
             variant_count = 0
-	    last_exonic_coords = (-1e+20,-1e+20,-1e+20)
+            last_exonic_coords = (-1e+20,-1e+20,-1e+20)
             reader = csv.reader(csvfile, delimiter='\t')
             
             for row in reader:   # This loop belongs to the exonic coordinates file
@@ -161,8 +161,8 @@ def all_filteration(d):
                 exonic_start_pos = int(row[1]) + 1
                 exonic_end_pos = int(row[2])
 
-		assert (chrorder(chrom_exonic_coord),exonic_start_pos,exonic_end_pos) >= last_exonic_coords, \
-			"Exon coordinates file is not correctly ordered by chromosome and start/end positions"
+                assert (chrorder(chrom_exonic_coord),exonic_start_pos,exonic_end_pos) >= last_exonic_coords, \
+                        "Exon coordinates file is not correctly ordered by chromosome and start/end positions"
 
                 if (variant_count < len(d)):
                     
@@ -170,13 +170,13 @@ def all_filteration(d):
                     variant_pos = d[variant_count][1]
                     
                     while ((chrom_exonic_coord == chrom_variant) and (exonic_end_pos > variant_pos)) or (chrorder(chrom_exonic_coord) > chrorder(chrom_variant)):
-	
+        
                         if (chrom_exonic_coord == chrom_variant):
 
                             if (exonic_start_pos <= variant_pos <= exonic_end_pos):
 
-				chrlab = chrreg.chrom2label(filename,d[variant_count][0])
-				chrpos = str(d[variant_count][1])
+                                chrlab = chrreg.chrom2label(filename,d[variant_count][0])
+                                chrpos = str(d[variant_count][1])
                                 outpt.writelines("\t".join([chrlab,chrpos] + d[variant_count][2:]) + '\n')
 
                         variant_count += 1
@@ -189,9 +189,9 @@ def all_filteration(d):
 
                 last_exonic_coords = (chrorder(chrom_exonic_coord),exonic_start_pos,exonic_end_pos)
 
-print "Filtering", filename, "...",
+print("Filtering", filename, "...", end=' ')
 sys.stdout.flush()
 
 all_filteration(snvdata)
 
-print "done"
+print("done")

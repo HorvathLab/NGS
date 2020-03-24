@@ -11,5 +11,5 @@ from pysamimport import pysam
 
 for filename in sys.argv[1:]:
     samfile = pysam.Samfile(filename, "rb")
-    assert samfile._hasIndex(), "Cannot open BAM index for file %s"%filename
-    print filename,"\n  "+", ".join(samfile.references)+"."
+    assert samfile.has_index(), "Cannot open BAM index for file %s"%filename
+    print(filename,"\n  "+", ".join(samfile.references)+".")

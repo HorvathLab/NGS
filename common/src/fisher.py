@@ -7,7 +7,7 @@ def memoize(f):
     cache = {}
 
     def decorated_function(*args, **kw):
-        key = (args, tuple(sorted(kw.iteritems())))
+        key = (args, tuple(sorted(kw.items())))
         if key not in cache:
             cache[key] = f(*args, **kw)
         return cache[key]
@@ -81,12 +81,12 @@ def fisher_exact(x, N, n, M, direction=None):
 
 def bonferroni(pvs):
     n = len(pvs)
-    return map(lambda pv: min(n * pv, 1), pvs)
+    return [min(n * pv, 1) for pv in pvs]
 
 
 def fdr(pvs):
     n = len(pvs)
-    ind = sorted(range(n), key=lambda i: pvs[i])
+    ind = sorted(list(range(n)), key=lambda i: pvs[i])
     fdr = [-1.0] * n
     for i in range(n):
         fdr[ind[i]] = min(pvs[ind[i]] * n / (i + 1), 1)
@@ -98,14 +98,14 @@ def fdr(pvs):
 if __name__ == '__main__':
     import sys
     tests = """
-	9 1 0 10
+        9 1 0 10
         1 9 6 4
         1 9 0 10
         7 1 0 5
         2000 1500 6711 5323
     """
     for l in tests.splitlines():
-        sl = map(int, l.split())
+        sl = list(map(int, l.split()))
         if len(sl) != 4:
             continue
         x = sl[0]
@@ -114,6 +114,6 @@ if __name__ == '__main__':
         M = sum(sl)
         v = (lod(x, N, n, M), fisher_exact_low(x, N, n, M),
              fisher_exact_high(x, N, n, M), fisher_exact(x, N, n, M))
-        print v[0], v[1], v[2], v[3]
+        print(v[0], v[1], v[2], v[3])
         if min(v[1:3]) == 0:
-            print "Problem with hypergeometic precision..."
+            print("Problem with hypergeometic precision...")

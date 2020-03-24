@@ -1,4 +1,4 @@
-#!/bin/env python2.7
+#!/bin/env python3
 import sys
 import os
 import os.path
@@ -9,30 +9,39 @@ import time
 import re
 import csv
 import tempfile
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import shutil
 import atexit
 import subprocess
 import time
 from collections import defaultdict, Counter
-from os.path import join, dirname, realpath
+from os.path import join, dirname, realpath, split
 try:
-    sys.path.append(join(dirname(realpath(__file__)),
-                         '..', '..', 'common', 'src'))
+    scriptdir = dirname(realpath(__file__))
 except NameError:
-    pass
+    scriptdir = dirname(realpath(sys.argv[0]))
+scriptdir1 = realpath(join(scriptdir, '..', '..', 'common', 'src'))
+sys.path.append(scriptdir1)
+try:
+    scriptextn = "." + os.path.split(sys.argv[0])[1].rsplit('.', 1)[1]
+except:
+    scriptextn = ""
+
+from execute import Execute
+execprog = Execute(scriptdir,scriptdir1,extn=scriptextn)
+
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText
 from util import *
 
 from version import VERSION
-VERSION = '1.8.0(%s)' % (VERSION,)
+VERSION = '2.0.0(%s)' % (VERSION,)
 
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
-    print >>sys.stderr, "Type <Enter> to Exit...",
+    print("Type <Enter> to Exit...", end=' ', file=sys.stderr)
     sys.stderr.flush()
-    raw_input()
+    input()
 sys.excepthook = excepthook
 
 toremove = []
@@ -68,14 +77,18 @@ parser.add_option("-r", "--readalignments", type="files", dest="alignments", def
                   help="Read alignments in BAM/SAM format. Required.", name="Read Alignments",
                   notNone=True, remember=True,
                   filetypes=[("Read Alignments (BAM/SAM Format)", "*.bam;*.sam")])
+advanced.add_option("-e", "--exoncoords", type="file", dest="exoncoords", default=None,
+                  help="Exon coordinates for SNV filtering. Optional.", name="Exon Coords.",
+                  remember=True,
+                  filetypes=[("Exonic Coordinates", "*.txt")])
 advanced.add_option("-d", "--distance", type="int", dest="dist", default=50, remember=True,
                     help="Upper bound on the distance between SNP locus and splice junction. Default: 50.",
                     name="Distance Bound")
 advanced.add_option("-R", "--readthrough", type="int", dest="readthrough", default=5, remember=True,
                     help="Number of bases aligning into intron. Default: 5bp.",
                     name="Read-Through")
-advanced.add_option("-M", "--matepairs", action="store_true", dest="mates", default=False, remember=True,
-                    help="Consider the mate-pair reads for the detection of splicing. Default=False.", name="Mates")
+# advanced.add_option("-M", "--matepairs", action="store_true", dest="mates", default=False, remember=True,
+#                     help="Consider the mate-pair reads for the detection of splicing. Default=False.", name="Mates")
 advanced.add_option("-F", "--full", action="store_true", dest="full", default=False, remember=True,
                     help="Output extra diagnostic read count fields. Default=False.", name="All Fields")
 advanced.add_option("-f", "--alignmentfilter", action="store_false", dest="filter", default=True, remember=True,
@@ -103,6 +116,8 @@ while True:
 
     break
 
+opts.mates = False
+
 progress = None
 if not opt.output:
     opt.quiet = True
@@ -112,17 +127,27 @@ import pysam
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable, BEDFile, VCFFile
 
 progress.stage("Read SNP data", len(opt.snps))
-snpheaders = filter(None, """
+snpheaders = [_f for _f in """
 CHROM POS REF ALT
-""".split())
+""".split() if _f]
 
-snpdata = {}
+snvdata = {}
+snvchroms = defaultdict(set)
 extrasnpheaders = []
 usedsnpheaders = set()
 for filename in opt.snps:
-
+    filename0 = filename
     base, extn = filename.rsplit('.', 1)
     extn = extn.lower()
+    tempfilename = None
+    if opt.exoncoords:
+        if extn != 'vcf':
+            extn = 'tsv'
+        tempfileno,tempfilename = tempfile.mkstemp(suffix="."+extn)
+        execprog.execute("exonicFilter", "--exons", opt.exoncoords,
+                         "--input", filename, "--output", tempfilename)
+        filename = tempfilename
+    
     if extn == 'csv':
         snps = CSVFileTable(filename=filename)
     elif extn == 'vcf':
@@ -151,6 +176,7 @@ for filename in opt.snps:
 
     for r in snps:
         chr = r[snpheaders[0]]
+        snvchroms[filename0].add(chr)
         locus = int(r[snpheaders[1]])
         ref = r[snpheaders[2]]
         alt = r[snpheaders[3]]
@@ -163,46 +189,70 @@ for filename in opt.snps:
         for h in r:
             if r.get(h):
                 usedsnpheaders.add(h)
-        cannonr = (",".join(map(lambda t: "%s:%s" % t, sorted(r.items()))))
-        snpkey = (chr, locus, ref, alt, cannonr)
+        # cannonr = (",".join(map(lambda t: "%s:%s" % t, sorted(r.items()))))
+        snpkey = (filename0, chr, locus, ref, alt)
         if snpkey not in snpdata:
-            snpdata[snpkey] = (chr, locus, ref, alt, r)
+            snpdata[snpkey] = r
 
+    if tempfilename != None:
+        os.unlink(tempfilename)
+    
     progress.update()
 progress.done()
-snpdata = sorted(snpdata.values())
-extrasnpheaders = filter(lambda h: h in usedsnpheaders, extrasnpheaders)
-progress.message("SNPs: %d" % len(snpdata))
+
+chrreg = ChromLabelRegistry()
+
+for snvfile in snvchroms:
+    chrreg.add_labels(snvfile,snvchroms[snvfile])
+
+snpdata1 = {}
+for (sf, chr, locus, ref, alt), r in snvdata.items():
+    chrom = chrreg.label2chrom(sf,chr)
+    assert(chrom)
+    snvkey = (chrom,locus,ref,alt)
+    if snvkey not in snvdata1:
+        snvdata1[snvkey] = (chrom,locus,ref,alt,r)
+
+for bamfile in opt.alignments:
+    chrreg.add_bamlabels(bamfile)
 
 progress.stage("Read splice junction data", len(opt.junctions))
 juncdata = set()
+juncchrom = defaultdict(set)
 for juncfile in opt.junctions:
     junc = BEDFile(filename=juncfile)
     for r in junc:
         chr = r['chrom']
+        juncchrom[juncfile].add(chr)
         st = int(r['chromStart'])
         ed = int(r['chromEnd'])
-        bs = map(int, r['blockSizes'].split(','))
+        bs = list(map(int, r['blockSizes'].split(',')))
         assert(len(bs) == 2)
         gap = (st + bs[0], ed - bs[1])
-        key = (chr, gap)
+        key = (juncfile, chr, gap)
         juncdata.add(key)
     progress.update()
 progress.done()
-juncdata = sorted((chr, gap[i], gap) for i in (0, 1) for chr, gap in juncdata)
+
+for juncfile in juncchroms:
+    chrreg.add_labels(juncfile,juncchroms[juncfile])
+
+juncdata1 = set()
+for jf, chr, gap in juncdata:
+    chrom = chrreg.label2chrom(jf,chr)
+    juncdata1.add((chrom, gap))
+
+chrreg.determine_chrom_order()
+
+snpdata = sorted(list(snvdata1.values()),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
+
+extrasnpheaders = [h for h in extrasnpheaders if h in usedsnpheaders]
+progress.message("SNPs: %d" % len(snpdata))
+
+juncdata = sorted(((chr, gap[i], gap) for i in (0, 1) for chr, gap in juncdata1), key=lambda j: (chrreg.chrom_order(j[0]),j[1],j[2]))
 progress.message("Exon/Intron junctions: %d" % len(juncdata))
 
-samfiles = []
-for al in opt.alignments:
-    if al.lower().endswith('.bam'):
-        samfile = pysam.Samfile(al, "rb")
-    elif al.lower().endswith('.sam'):
-        samfile = pysam.Samfile(al, "r")
-    else:
-        raise RuntimeError("Unexpected alignments file extension: %s." % al)
-    samfiles.append(samfile)
-
-outheaders = snpheaders + filter(None, """
+outheaders = snpheaders + [_f for _f in """
 NumofJuncs
 Distance
 Junctions
@@ -216,9 +266,9 @@ P-Value
 Bonferroni
 FDR
 %BadRead
-""".split())
+""".split() if _f]
 
-debugging = filter(None, """
+debugging = [_f for _f in """
 SNPMateCount
 NoSNPMateCount
 SNPCount
@@ -231,7 +281,7 @@ SpanningReads
 RemovedDuplicateReads
 FilteredReads
 SNPLociReads
-""".split())
+""".split() if _f]
 debugging.extend(sorted(BadRead.allheaders))
 
 outheaders.extend(debugging)
@@ -276,8 +326,6 @@ else:
 
 outrows = []
 
-# at this point we need to merge the two lists of loci.
-# for simplicity, for now, lets just do a nested loop.
 from fisher import fisher_exact, bonferroni, fdr, lod
 pvalues = []
 if opt.filter:
@@ -286,6 +334,12 @@ if opt.filter:
 else:
     alifilter = BasicFilter()
     matefilter = BasicFilter()
+
+if opt.tpb == 0:
+    pileups = SerialPileups(snpdata, opt.alignments, alifilter, chrreg, matedist=opt.dist).iterator()
+else:
+    pileups = MultiprocPileups(snpdata, opt.alignments, alifilter, chrreg, procsperbam=opt.tpb, matedist=opt.dist).iterator()
+
 juncindst = 0
 progress.stage("Count reads per SNP and splice junction", len(snpdata))
 for snpchr, snppos, ref, alt, snpextra in snpdata:
@@ -310,6 +364,9 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
 
     njunc = (juncinded - juncindst)
 
+    snvchr1, snvpos1, ref1, alt1, total, reads, badread = next(pileups)
+    assert(snvchr == snvchr1 and snvpos == snvpos1)
+
     reads = []
     total = 0
     badread = Counter()
@@ -321,7 +378,7 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
                 for pileupread in pileupcolumn.pileups:
                     try:
                         al, pos, base, nseg = alifilter.test(pileupread)
-                    except BadRead, e:
+                    except BadRead as e:
                         badread[e.message] += 1
                         continue
                     reads.append((al, pos, base, i, nseg, None))
@@ -337,7 +394,7 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
                 try:
                     matefilter.test(mate)
                     matedreads.append((read, qpos, base, sind, nseg, mate))
-                except BadRead, e:
+                except BadRead as e:
                     matedreads.append((read, qpos, base, sind, nseg, None))
             else:
                 matedreads.append((read, qpos, base, sind, nseg, None))
@@ -417,8 +474,8 @@ for snpchr, snppos, ref, alt, snpextra in snpdata:
             counts[mates] += counts[(base, mates)]
             counts[notmates] += counts[(base, notmates)]
 
-        nsnpi = sum(map(lambda nuc: counts[(nuc, notspliced)], alt.split(',')))
-        nsnpex = sum(map(lambda nuc: counts[(nuc, spliced)], alt.split(',')))
+        nsnpi = sum([counts[(nuc, notspliced)] for nuc in alt.split(',')])
+        nsnpex = sum([counts[(nuc, spliced)] for nuc in alt.split(',')])
         nwti = counts[(ref, notspliced)]
         nwtex = counts[(ref, spliced)]
         p = emptysym
@@ -502,5 +559,5 @@ progress.done()
 
 progress.stage('Output results')
 output.from_rows(
-    map(lambda r: dict(zip(outheaders, r + [emptysym] * 50)), outrows))
+    [dict(list(zip(outheaders, r + [emptysym] * 50))) for r in outrows])
 progress.done()

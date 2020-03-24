@@ -1,4 +1,4 @@
-#!/bin/env python2.7
+#!/bin/env python3
 import sys
 import os
 import os.path
@@ -9,7 +9,7 @@ import time
 import re
 import csv
 import tempfile
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import shutil
 import atexit
 import subprocess
@@ -21,14 +21,14 @@ from optparse_gui import OptionParser, OptionGroup, GUI, \
     UserCancelledError, ProgressText
 
 from version import VERSION
-VERSION = '1.0.1(%s)' % (VERSION,)
+VERSION = '2.0.0(%s)' % (VERSION,)
 
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
-    print >>sys.stderr, "Type <Enter> to Exit...",
+    print("Type <Enter> to Exit...", end=' ', file=sys.stderr)
     sys.stderr.flush()
-    raw_input()
+    input()
 sys.excepthook = excepthook
 
 toremove = []
@@ -79,8 +79,8 @@ if not opt.output:
     opt.quiet = True
 progress = ProgressText(quiet=opt.quiet)
 
-sumkeys = filter(None, map(str.strip, """
-SNPJuncIntronCount SNPJuncNoIntronCount NoSNPJuncIntronCount NoSNPJuncNoIntronCount SNPMateCount NoSNPMateCount SNPCount NoSNPCount MatesCount NotMatesCount IntronCount NoIntronCount SpanningReads RemovedDuplicateReads SNPLociReads""".split()))
+sumkeys = [_f for _f in map(str.strip, """
+SNPJuncIntronCount SNPJuncNoIntronCount NoSNPJuncIntronCount NoSNPJuncNoIntronCount SNPMateCount NoSNPMateCount SNPCount NoSNPCount MatesCount NotMatesCount IntronCount NoIntronCount SpanningReads RemovedDuplicateReads SNPLociReads""".split()) if _f]
 countdata = defaultdict(dict)
 progress.stage("Read SNP/Junction counts")
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable
@@ -111,7 +111,7 @@ for filename in opt.counts:
     assert 'Junctions' in countheaders
 
     for r in counts:
-        for k in r.keys():
+        for k in list(r.keys()):
             if r.get(k) in ("", None):
                 del r[k]
         chr = r['CHROM']
@@ -137,7 +137,7 @@ for filename in opt.counts:
             junc = None
         key = (snp, junc)
         if key not in countdata:
-            countdata[key] = dict(r.iteritems())
+            countdata[key] = dict(iter(r.items()))
             countdata[key]['Samples'] = base
             for k in sumkeys:
                 if k in r:
@@ -177,7 +177,7 @@ outrows = []
 pvalues = []
 from fisher import fisher_exact, bonferroni, fdr, lod
 progress.stage("Compute statistics")
-for (snpstr, junc), r in sorted(countdata.iteritems()):
+for (snpstr, junc), r in sorted(countdata.items()):
     nsnpi = r.get('SNPJuncIntronCount', 0)
     nsnpex = r.get('SNPJuncNoIntronCount', 0)
     nwti = r.get('NoSNPJuncIntronCount', 0)
@@ -211,7 +211,7 @@ for (snpstr, junc), r in sorted(countdata.iteritems()):
     r['P-Value'] = pval
     r['LOD'] = lodval
 
-    row = dict(r.iteritems())
+    row = dict(iter(r.items()))
     outrows.append(row)
 
 bonf = bonferroni(pvalues)

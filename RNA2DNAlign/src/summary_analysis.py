@@ -74,13 +74,13 @@ def read_events(file):
         out.write("\n")
         try:
             out.write("#Most Frequent Chromosome:" + " chr" + " " +
-                      str(max(total.iteritems(), key=itemgetter(1))[0]))
+                      str(max(iter(total.items()), key=itemgetter(1))[0]))
         except ValueError:
             out.write("#Most Frequent Chromosome:")
         out.write("\n")
         try:
             out.write("#Least Frequent Chromosome:" + " chr" + " " +
-                      str(min(total.iteritems(), key=itemgetter(1))[0]))
+                      str(min(iter(total.items()), key=itemgetter(1))[0]))
         except ValueError:
             out.write("#Least Frequent Chromosome:")
         out.write("\n")

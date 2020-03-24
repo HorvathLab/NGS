@@ -8,7 +8,7 @@ import re
 from collections import defaultdict
 
 from version import VERSION
-VERSION = '1.0.6 (%s)' % (VERSION,)
+VERSION = '2.0.0 (%s)' % (VERSION,)
 
 from os.path import join, dirname, realpath, split
 try:
@@ -59,13 +59,13 @@ TRNA = {}; NRNA = {}; GDNA = {}; SDNA = {}
 
 from chromreg import ChromLabelRegistry
 chrreg = ChromLabelRegistry()
-labels = map(str,range(1,100)) + ["X","Y","MT"]
+labels = list(map(str,list(range(1,100)))) + ["X","Y","MT"]
 chrreg.add_labels(opt.counts,labels)
 chrreg.default_chrom_order()
 chrorder = lambda l: chrreg.chrom_order(chrreg.label2chrom(opt.counts,l))
 
 progress.stage("Parsing read-counts")
-f = open(opt.counts, 'r')
+f = open(opt.counts, mode='rt', encoding='utf8')
 reader = csv.DictReader(f, delimiter='\t')
 types2files = defaultdict(set)
 files2types = defaultdict(set)
@@ -89,32 +89,32 @@ f.close()
 progress.done()
 
 if sum(map(len,[GDNA,SDNA,NRNA,TRNA])) == 0:
-    print >>sys.stderr, "No read counts available for testing"
+    print("No read counts available for testing", file=sys.stderr)
     sys.exit(0)
 
 fatal = False
 for f in files2types:
     if len(files2types[f]) < 1:
-        print >>sys.stderr, "Filename %s does not match any read type regular expression."%(f,)
-	fatal = True
+        print("Filename %s does not match any read type regular expression."%(f,), file=sys.stderr)
+        fatal = True
     elif len(files2types[f]) > 1:
-        print >>sys.stderr, "Filename %s matches more than one read type regular expression."%(f,)
-	print >>sys.stderr, "Matching regular expressions: %s."%(", ".join(map(regex.get,files2types[f])))
-	fatal = True
+        print("Filename %s matches more than one read type regular expression."%(f,), file=sys.stderr)
+        print("Matching regular expressions: %s."%(", ".join(map(regex.get,files2types[f]))), file=sys.stderr)
+        fatal = True
 for t in "GDNA NRNA SDNA TRNA".split():
     if len(types2files[t]) < 1:
-	print >>sys.stderr, "Counts from %s %s reads are missing."%("normal" if t[0] in "NG" else "tumor",
-								    "DNA" if t[1]=="D" else "RNA")
+        print("Counts from %s %s reads are missing."%("normal" if t[0] in "NG" else "tumor",
+                                                                    "DNA" if t[1]=="D" else "RNA"), file=sys.stderr)
     elif len(types2files[t]) > 1:
-	print >>sys.stderr, "Counts from %s %s reads are found in more than one file."%("normal" if t[0] in "NG" else "tumor",
-								                        "DNA" if t[1]=="D" else "RNA")
-	fatal = True
+        print("Counts from %s %s reads are found in more than one file."%("normal" if t[0] in "NG" else "tumor",
+                                                                                        "DNA" if t[1]=="D" else "RNA"), file=sys.stderr)
+        fatal = True
 
 if fatal:
     sys.exit(1)
 
 from event import *
-sampsig = "".join(map(str,map(lambda t: 1*(len(types2files[t])>0),"GDNA SDNA NRNA TRNA".split())))
+sampsig = "".join(map(str,[1*(len(types2files[t])>0) for t in "GDNA SDNA NRNA TRNA".split()]))
 if sampsig == "1111":
     events = AllSamplesEvent
 elif sampsig == "1100":
@@ -133,17 +133,17 @@ cosmic_headers = []
 if opt.cosmic:
     progress.stage("Parsing COSMIC annotation file")
     if opt.cosmic.endswith('.gz'):
-        f = gzip.open(opt.cosmic, 'r')
+        f = gzip.open(opt.cosmic, mode='rt', encoding='utf8')
     else:
-        f = open(opt.cosmic, 'r')
+        f = open(opt.cosmic, mode='rt', encoding='utf8')
     reader = csv.DictReader(f, delimiter='\t')
     for cos in reader:
         if cos['Mutation genome position']:
-	     chr,locus = cos['Mutation genome position'].split(':',1)
-	     pos_st,pos_ed = locus.split('-',1)
-	     if pos_st != pos_ed:
-	         continue
-	     key = (chr,pos_st)
+             chr,locus = cos['Mutation genome position'].split(':',1)
+             pos_st,pos_ed = locus.split('-',1)
+             if pos_st != pos_ed:
+                 continue
+             key = (chr,pos_st)
              if key in events.keys:
                  for table in (GDNA,SDNA,NRNA,TRNA):
                      if key in table:
@@ -157,10 +157,10 @@ if opt.cosmic:
 darned_headers = []
 if opt.darned:
     progress.stage("Parsing DARNED annotation file")
-    with open(opt.darned, 'r') as f:
+    with open(opt.darned, mode='rt', encoding='utf8') as f:
         reader = csv.DictReader((f), delimiter='\t')
         for darn in reader:
-	    if darn['chrom'] and darn['coordinate']:
+            if darn['chrom'] and darn['coordinate']:
                 key = (darn['chrom'],darn['coordinate'])
                 for table in (GDNA,SDNA,NRNA,TRNA):
                     if key in table:
@@ -186,7 +186,7 @@ NotHomoVarFDR NotHomoRefFDR NotHetFDR VarDomFDR RefDomFDR
 
 progress.stage("Generating event reports")
 for ev in events.events:
-    wh = open(os.path.join(base,'Events_%s.tsv'%ev.abbrev),'w')
+    wh = open(os.path.join(base,'Events_%s.tsv'%ev.abbrev),mode='wt',encoding='utf8')
     event_headers = []
     event_headers.extend(headers)
     if ev.cosmic:

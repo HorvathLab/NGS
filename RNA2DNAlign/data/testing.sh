@@ -12,7 +12,7 @@ function testcmd() {
   rm -rf $BASE-$NUMBER
   mkdir -p $BASE-$NUMBER
   echo -n "Test $NUMBER: "
-  $SRC/RNA2DNAlign.py "$@" -o $BASE-$NUMBER > $BASE-$NUMBER/logfile.txt 2>&1
+  apython3 $SRC/RNA2DNAlign.py "$@" -o $BASE-$NUMBER > $BASE-$NUMBER/logfile.txt 2>&1
   if [ $? -eq 0 ]; then
     echo "Success"
     cksum `find $BASE-$NUMBER -type f | sort | grep -v logfile` > $BASE-$NUMBER.cksum.tmp
@@ -51,7 +51,6 @@ testcmd 11 -r 'example-GDNA.bam example-SDNA.bam' -s example-SNV.tsv -m 3
 testcmd 12 -r 'example-GDNA.bam example-NRNA.bam' -s example-SNV.tsv -m 3
 testcmd 13 -r 'example-SDNA.bam example-NRNA.bam example-TRNA.bam' -s example-SNV.tsv -m 3
 testcmd 14 -r 'example-GDNA.bam example-SDNA.bam example-NRNA.bam example-TRNA.bam' -s example-SNV.tsv -m 3
-testcmd 15 -r 'example-*.bam' -s 'example-*.vcf' -p 4
-testcmd 16 -r 'example-*.bam' -s 'example-*.vcf' -p 0
-testcmd 17 -r 'example-*.bam' -s 'example-*.vcf' -m 3 -M 0.5
-testcmd 18 -r 'example-*.bam' -s 'example-*.vcf' -m 3 -M 100
+testcmd 15 -r 'example-*.bam' -s 'example-*.vcf' 
+testcmd 16 -r 'example-*.bam' -s 'example-*.vcf' -m 3 -M 0.5
+testcmd 17 -r 'example-*.bam' -s 'example-*.vcf' -m 3 -M 100

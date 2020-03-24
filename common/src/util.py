@@ -74,8 +74,8 @@ class TooManyQueryGaps(BadRead):
 class MappingQualityTooLow(BadRead):
     header = "MappingQualityTooLow"
 
-BadRead.allheaders = map(lambda cls: cls[1].header, inspect.getmembers(sys.modules[
-                         __name__], lambda member: inspect.isclass(member) and issubclass(member, BadRead) and member != BadRead))
+BadRead.allheaders = [cls[1].header for cls in inspect.getmembers(sys.modules[
+                         __name__], lambda member: inspect.isclass(member) and issubclass(member, BadRead) and member != BadRead)]
 
 BAM_CMATCH = 0
 BAM_CREF_SKIP = 3
@@ -116,10 +116,10 @@ class ReadFilter(object):
                 raise TooManyHits()
         except KeyError:
             if self.NONH in self.warnings:
-                print >>sys.stderr, self.NONH + \
-                    ".\n         Cannot filter out reads that align to mutiple loci."
+                print(self.NONH + \
+                    ".\n         Cannot filter out reads that align to mutiple loci.", file=sys.stderr)
                 self.warnings.remove(self.NONH)
-        if any(map(lambda t: t[0] not in (BAM_CMATCH, BAM_CREF_SKIP), al.cigar)):
+        if any([t[0] not in (BAM_CMATCH, BAM_CREF_SKIP) for t in al.cigar]):
             raise BadCigar()
         segments = [t[1] for t in al.cigar if t[0] == BAM_CMATCH]
         if len(segments) > self.maxsegments:
@@ -129,8 +129,8 @@ class ReadFilter(object):
                 raise TooManyEdits()
         except KeyError:
             if self.NONM in self.warnings:
-                print >>sys.stderr, self.NONM + \
-                    ".\n         Cannot filter out reads with too many substitutions."
+                print(self.NONM + \
+                    ".\n         Cannot filter out reads with too many substitutions.", file=sys.stderr)
                 self.warnings.remove(self.NONM)
         return segments
 
@@ -142,7 +142,7 @@ class SNVPileupReadFilter(ReadFilter):
         self.maxedits = maxedits
         self.minpad = minpad
         self.minsubstdist = minsubstdist
-	super(SNVPileupReadFilter,self).__init__(**kw)
+        super(SNVPileupReadFilter,self).__init__(**kw)
 
     def findseg(self, pos, segments):
         i = 0
@@ -180,14 +180,14 @@ class SNVPileupReadFilter(ReadFilter):
                     raise TooManyEditsOtherThanSNV()
             except KeyError:
                 if self.NONM in self.warnings:
-                    print >>sys.stderr, self.NONM + \
-                        ".\n         Cannot filter out reference reads with one too many\n         substitutions."
+                    print(self.NONM + \
+                        ".\n         Cannot filter out reference reads with one too many\n         substitutions.", file=sys.stderr)
                     self.warnings.remove(self.NONM)
 
         except KeyError:
             if self.NOMD in self.warnings:
-                print >>sys.stderr, self.NOMD + \
-                    ".\n         Cannot filter out reads with edits too close to the SNV locus\n         or reference reads with one too many substitutions."
+                print(self.NOMD + \
+                    ".\n         Cannot filter out reads with edits too close to the SNV locus\n         or reference reads with one too many substitutions.", file=sys.stderr)
                 self.warnings.remove(self.NOMD)
 
         readbase = al.seq[pileupread.query_position]

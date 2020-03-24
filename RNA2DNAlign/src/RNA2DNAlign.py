@@ -1,4 +1,4 @@
-#!/bin/env python2.7
+#!/bin/env python3
 import tempfile
 import os
 import summary_analysis
@@ -12,7 +12,7 @@ import traceback
 import re
 import csv
 import tempfile
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import shutil
 import atexit
 import subprocess
@@ -20,19 +20,27 @@ import time
 import math
 from collections import defaultdict, Counter
 from os.path import join, dirname, realpath, split
-try:
-    scriptdir = dirname(realpath(__file__))
-except NameError:
+if getattr(sys, 'frozen', False):
+    scriptdir = dirname(realpath(sys.executable))
+    if not scriptdir.endswith('/bin'):
+        scriptdir = realpath(os.path.join(scriptdir,".."))
+    scriptdirs = [scriptdir]
+else:
     scriptdir = dirname(realpath(sys.argv[0]))
-scriptdir1 = realpath(join(scriptdir, '..', '..', 'common', 'src'))
-sys.path.append(scriptdir1)
+    scriptdir1 = realpath(join(scriptdir, '..', '..', 'common', 'src'))
+    sys.path.append(scriptdir1)
+    scriptdir2 = realpath(join(scriptdir, '..', '..', 'ReadCounts', 'src'))
+    scriptdirs = [scriptdir,scriptdir1,scriptdir2]
+
 try:
     scriptextn = "." + os.path.split(sys.argv[0])[1].rsplit('.', 1)[1]
 except:
     scriptextn = ""
 
+from pileups import SerialPileups, ThreadedPileups, MultiprocPileups
+from chromreg import ChromLabelRegistry
 from execute import Execute
-execprog = Execute(scriptdir,scriptdir1,extn=scriptextn)
+execprog = Execute(*scriptdirs,extn=scriptextn)
 
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText
 from util import *
@@ -40,14 +48,14 @@ from util import *
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '1.0.6 (%s)' % (VERSION,)
+VERSION = '2.0.0 (%s)' % (VERSION,)
 
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
-    print >>sys.stderr, "Type <Enter> to Exit...",
+    print("Type <Enter> to Exit...", end=' ', file=sys.stderr)
     sys.stderr.flush()
-    raw_input()
+    input()
 
 toremove = []
 
@@ -69,7 +77,7 @@ if GUI() and len(sys.argv) == 1:
 else:
     parser = OptionParser(version=VERSION)
     error_kwargs = {}
-						
+                                                
 exfilt = OptionGroup(parser, "Filtering")
 readcounts = OptionGroup(parser, "Read Counting")
 regexs = OptionGroup(parser, "Filename Matching")

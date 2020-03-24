@@ -1,10 +1,11 @@
 #!/bin/sh
+# set -x
+PYTHON="python3"
 if [ -d ../src ]; then
-  PROG=../src/RNA2DNAlign.py
+  PROG="$PYTHON ../src/RNA2DNAlign.py"
 else
   PROG=../bin/RNA2DNAlign
 fi
-rm -rf example-output
 DARNEDFILE="DARNED_hg19.txt"
 DARNED=""
 if [ -f $DARNEDFILE ]; then
@@ -15,4 +16,6 @@ COSMIC=""
 if [ -f $COSMICFILE ]; then
   COSMIC="-c $COSMICFILE"
 fi
+rm -rf example-output
+set -x
 $PROG -r "example-*.bam" -s "example-*.vcf" -m 3 -e UCSC_Human_hg19_RefSeq_CDS_exon_coordinates.txt $DARNED $COSMIC -o example-output
