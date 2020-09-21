@@ -22,14 +22,14 @@ try:
 except NameError:
     pass
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText
-from util import *
+from util import ReadFilterFactory, BadRead, ReadGroupFactory
 from fisher import *
 from pileups import SerialPileups, ThreadedPileups, MultiprocPileups
 from chromreg import ChromLabelRegistry
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '2.0.0 (%s)' % (VERSION,)
+VERSION = '%s' % (VERSION,)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
@@ -38,7 +38,6 @@ def excepthook(etype, value, tb):
     input()
 
 toremove = []
-
 
 def cleanup():
     for d in toremove:
@@ -58,6 +57,17 @@ else:
     parser = OptionParser(version=VERSION)
     error_kwargs = {}
 
+filterFactory = ReadFilterFactory()
+filterOptions = [t[0] for t in filterFactory.list()]
+
+groupFactory = ReadGroupFactory()
+groupOptions = [""] + [t[0] for t in groupFactory.list()]
+
+minreads_default = 10
+maxreads_default = None
+tpb_default = 0
+filter_default = "Basic"
+
 advanced = OptionGroup(parser, "Advanced")
 parser.add_option("-s", "--snvs", type="files", dest="snvs", default=None,
                   help="Single-Nucleotide-Variant files. Required.", name="SNV Files",
@@ -67,18 +77,24 @@ parser.add_option("-r", "--readalignments", type="files", dest="alignments", def
                   help="Read alignment files in indexed BAM format. Required.", name="Read Alignment Files",
                   notNone=True, remember=True,
                   filetypes=[("Read Alignment Files (indexed BAM)", "*.bam")])
-advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=10, remember=True,
+parser.add_option("-f", "--alignmentfilter", type="choice", dest="filter", default=filter_default, remember=True,
+                  help="Alignment filtering strategy. Default: Basic.", choices = filterOptions,
+                  name="Alignment Filter")
+advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=minreads_default, remember=True,
                     help="Minimum number of good reads at SNV locus per alignment file. Default=10.", name="Min. Reads")
-advanced.add_option("-M", "--maxreads", type="float", dest="maxreads", default=None, remember=True,
+advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=maxreads_default, remember=True,
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
 advanced.add_option("-F", "--full", action="store_true", dest="full", default=False, remember=True,
                     help="Output extra diagnostic read count fields. Default=False.", name="All Fields")
-advanced.add_option("-f", "--alignmentfilter", action="store_false", dest="filter", default=True, remember=True,
-                    help="(Turn off) alignment filtering by length, edits, etc.", name="Filter Alignments")
 advanced.add_option("-U", "--uniquereads", action="store_true", dest="unique", default=False, remember=True,
                     help="Consider only distinct reads.", name="Unique Reads")
-advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=0, remember=True,
+advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb_default, remember=True,
                     help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
+advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=None, remember=True,
+                    choices=groupOptions, name="Read Group",
+                    help="Additional read grouping based on read name/identifier strings or BAM-file RG. Default: None, group reads by BAM-file only.")
+advanced.add_option("--matrix", type="string", dest="matrix", default=None, remember=True,
+                    help="Output matrix of values, specify a string including one or more of the tokens: Ref, Var, VAF. Default: Loci and Read Group rows (no matrix).", name="Matrix")
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
 advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
@@ -100,14 +116,108 @@ while True:
     else:
         opt, args = parser.parse_args()
 
+    try:
+        if opt.maxreads not in (None,""):
+            opt.maxreads = float(opt.maxreads)
+        else:
+            opt.maxreads = None
+    except ValueError:
+        parser.error("Bad Max. Read option",**error_kwargs)
+        continue
+
     break
+
+readfilter = filterFactory.get(opt.filter)
+if opt.readgroup:
+    readgroup = groupFactory.get(opt.readgroup)
+else:
+    readgroup = None
+
+matrix = None
+if opt.matrix:
+    matrixstr = opt.matrix
+    matrixstr = matrixstr.replace("Ref","%(Ref)s")
+    matrixstr = matrixstr.replace("Var","%(Var)s")
+    matrixstr = matrixstr.replace("All","%(All)s")
+    matrixstr = matrixstr.replace("VAF","%(VAF)s")
+    matrix = (lambda d: matrixstr%d)
 
 progress = None
 if not opt.output:
     opt.quiet = True
+progress = ProgressText(quiet=opt.quiet)
+
+doublequote = lambda s: '"%s"'%(s,)
+indent = lambda s,n: "\n".join([(" "*n)+l for l in s.splitlines()])
+
+args = []
+args.extend(["-s",doublequote(" ".join(opt.snvs))])
+args.extend(["-r",doublequote(" ".join(opt.alignments))])
+if opt.filter != filter_default:
+    args.extend(["-f",doublequote(opt.filter)])
+args.extend(["-o",doublequote(opt.output)])
+if opt.minreads != minreads_default:
+    args.extend(["-m",str(opt.minreads)])
+if opt.maxreads != maxreads_default:
+    args.extend(["-M",str(opt.maxreads)])
+if readgroup != None:
+    args.extend(["-G",doublequote(opt.readgroup)])
+if opt.unique:
+    args.extend(["-U"])
+if opt.tpb != tpb_default:
+    args.extend(["-t",str(opt.tpb)])
+if opt.full:
+    args.extend(["-F"])
+if matrix:
+    args.extend(["--matrix",opt.matrix])
+if opt.quiet:
+    args.extend(["-q"])
+if opt.debug:
+    args.extend(["-d"])
+
+cmdargs = " ".join(args)
+
+execution_log = """
+readCounts Options:
+  SNV Files (-s):             %s
+  Read Files (-r):            %s
+  Outfile File (-o):          %s
+  Read/Alignment Filter (-f): %s
+%s
+
+  Advanced:
+    Min. Reads (-m)           %s
+    Max. Reads (-M):          %s
+    Unique Reads (-U):        %s
+    Read Groups (-G):         %s%s
+    Threads per BAM (-t):     %s
+    Full Headers (-F):        %s
+    Matrix Output (--matrix): %s
+    Quiet (-q):               %s
+    Debug (-d):               %s
+
+Command-Line: readCounts %s
+"""%(", ".join(opt.snvs),
+     ", ".join(opt.alignments),
+     opt.output,
+     opt.filter,
+     indent(readfilter.tostr(),10),
+     opt.minreads,
+     opt.maxreads,
+     opt.unique,
+     None if readgroup == None else opt.readgroup,
+     "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
+     opt.tpb,
+     opt.full,
+     None if not matrix else opt.matrix,
+     opt.quiet,
+     opt.debug,
+     cmdargs)
+
+progress.message(execution_log)
+
 if opt.maxreads == None:
     opt.maxreads = 1e+20
-progress = ProgressText(quiet=opt.quiet)
 
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable, BEDFile, VCFFile
 
@@ -192,7 +302,7 @@ chrreg.determine_chrom_order()
 
 snvdata = sorted(list(snvdata1.values()),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
 # extrasnvheaders = filter(lambda h: h in usedsnvheaders, extrasnvheaders)
-progress.message("SNVs: %d\n" % len(snvdata))
+progress.message("SNVs: %d" % len(snvdata))
 
 outheaders = snvheaders + [_f for _f in """
 SNVCountForward
@@ -234,7 +344,7 @@ debugging.extend(sorted(BadRead.allheaders))
 outheaders.extend(debugging)
 
 pos = outheaders.index("SNVCountForward")
-outheaders.insert(pos, 'AlignedReads')
+outheaders.insert(pos, 'ReadGroup')
 # for h in reversed(extrasnvheaders):
 #    outheaders.insert(pos,h)
 
@@ -244,29 +354,9 @@ if not opt.full:
         if dh in outheaders1:
             outheaders1.remove(dh)
 
+allrg = set()
+vafmatrix = defaultdict(dict)
 emptysym = None
-if opt.output:
-    filename = opt.output
-    base, extn = filename.rsplit('.', 1)
-    extn = extn.lower()
-    if extn == 'csv':
-        output = CSVFileTable(filename=filename, headers=outheaders1)
-    elif extn == 'tsv':
-        output = TSVFileTable(filename=filename, headers=outheaders1)
-    elif extn == 'xls':
-        output = XLSFileTable(
-            filename=filename, headers=outheaders1, sheet='Results')
-    elif extn == 'xlsx':
-        output = XLSXFileTable(
-            filename=filename, headers=outheaders1, sheet='Results')
-    elif extn == 'txt':
-        output = TXTFileTable(filename=filename, headers=outheaders1)
-    else:
-        raise RuntimeError("Unexpected output file extension: %s" % filename)
-else:
-    output = TXTFileTable(filename=sys.stdout, headers=outheaders1)
-    emptysym = "-"
-
 outrows = []
 
 # if opt.debug:
@@ -276,15 +366,10 @@ outrows = []
 #     snvdata = sorted(sorted(random.sample(snvdata,200))*5)
 #     snvdata = sorted(random.sample(snvdata,200))*5
 
-if opt.filter:
-    readfilter = SNVPileupReadFilter()
-else:
-    readfilter = BasicFilter()
-
 if opt.tpb == 0:
-    pileups = SerialPileups(snvdata, opt.alignments, readfilter, chrreg).iterator()
+    pileups = SerialPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup).iterator()
 else:
-    pileups = MultiprocPileups(snvdata, opt.alignments, readfilter, chrreg, procsperbam=opt.tpb).iterator()
+    pileups = MultiprocPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup, procsperbam=opt.tpb).iterator()
 
 progress.stage("Count reads per SNV", len(snvdata))
 
@@ -305,9 +390,14 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
              " ".join(map(str,[total[i] for i in range(len(opt.alignments))])), \
              " ".join(map(str,[badread[(i, 'Good')] for i in range(len(opt.alignments))])))
 
+    allsi = set()
     goodreads = defaultdict(list)
     for al, pos, base, si in reads:
         goodreads[base].append((si, al))
+        allsi.add(si)
+        # if not isinstance(si,int):
+        #     goodreads[base].append(((si[0],"Total"),al))
+        #     allsi.add((si[0],"Total"))
 
     # Deduplicate the reads based on the read sequence or the
     # start and end of the alignment or ???
@@ -332,15 +422,8 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
     for base in goodreads:
         for si, al in goodreads[base]:
             counts[(base, "R" if al.is_reverse else "F", si)] += 1
-    mincounted = 1e+20
-    for si, alf in enumerate(opt.alignments):
-        counted = sum([counts[(t[0], t[1], si)] for t in [
-                      (n, d) for n in 'ACGT' for d in 'FR']])
-        mincounted = min(counted, mincounted)
-    if mincounted < opt.minreads:
-        continue
 
-    for si, alf in enumerate(opt.alignments):
+    for si in sorted(allsi):
         nsnvf = sum([counts[(nuc, "F", si)] for nuc in list(map(str.strip,alt.split(',')))])
         nsnvr = sum([counts[(nuc, "R", si)] for nuc in list(map(str.strip,alt.split(',')))])
         nsnv = nsnvr + nsnvf
@@ -351,18 +434,35 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
         notherf = sum([counts[(nuc, "F", si)] for nuc in othernucs])
         notherr = sum([counts[(nuc, "R", si)] for nuc in othernucs])
         nother = notherf + notherr
-        counted = sum([counts[(t[0], t[1], si)] for t in [
-                      (n, d) for n in 'ACGT' for d in 'FR']])
+        counted = sum([counts[(n, d, si)] for n in 'ACGT' for d in 'FR'])
 
-        row = [ snvchr, snvpos, ref, alt ] + \
-              [ os.path.split(alf)[1].rsplit('.', 1)[0] ] + \
+        if matrix == None and counted < opt.minreads:
+            continue
+        
+        if isinstance(si,int):
+            alf = opt.alignments[si]
+            rg = os.path.split(alf)[1].rsplit('.', 1)[0]
+        elif len(opt.alignments) == 1:
+            rg = si[1]
+        else:
+            alf = opt.alignments[si[0]]
+            rg = os.path.split(alf)[1].rsplit('.', 1)[0] + ":"+si[1]
+
+        allrg.add(rg)
+        if matrix != None:
+            if (nref + nsnv) > 0:
+                vafmatrix[(snvchr, snvpos, ref, alt)][rg] = matrix(dict(Ref=nref,Var=nsnv,All=counted,VAF="%.6f"%(float(nsnv)/float(nsnv+nref),)))
+            else:
+                vafmatrix[(snvchr, snvpos, ref, alt)][rg] = matrix(dict(Ref=nref,Var=nsnv,All=counted,VAF="NA"))
+
+        row = [ snvchr, snvpos, ref, alt, rg ] + \
               [nsnvf, nsnvr,
                nreff, nrefr,
                nsnv, nref,
                counted,
                100.0 * (total[si] - badread[si, 'Good']) /
-               float(total[si]) if total[si] != 0 else 0.0,
-               float(nsnv)/(nsnv+nref),
+                           float(total[si]) if total[si] != 0 else 0.0,
+               float(nsnv)/(nsnv+nref) if (nsnv+nref)>0 else None,
                -1, -1, -1, -1, -1,
                notherf, notherr,
                nother,
@@ -374,6 +474,7 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
 
         for s in sorted(BadRead.allheaders):
             row.append(badread[si, s])
+
         outrows.append(row)
 
     progress.update()
@@ -386,7 +487,7 @@ coverage = defaultdict(list)
 maxreads = defaultdict(lambda: int(opt.maxreads))
 if 0 < opt.maxreads < 1:
     for r in [dict(list(zip(outheaders,r))) for r in outrows]:
-        coverage[r['AlignedReads']].append(r['GoodReads'])
+        coverage[r['ReadGroup']].append(r['GoodReads'])
     for al in coverage:
         n = len(coverage[al])
         percind = int(round(n*opt.maxreads))
@@ -396,7 +497,8 @@ for i in range(len(outrows)):
 
     #Exctract the counts and rescale if necessary
     r = dict(list(zip(outheaders, outrows[i])))
-    al,nsnv,nref,nother,counted = list(map(r.get,["AlignedReads","SNVCount","RefCount","OtherCount","GoodReads"]))
+    al,nsnv,nref,nother,counted = list(map(r.get,["ReadGroup","SNVCount","RefCount","OtherCount","GoodReads"]))
+
     if counted > maxreads[al]:
         factor = float(maxreads[al])/float(counted)
         nsnv = int(round(factor*nsnv))
@@ -454,12 +556,12 @@ for j, fdrk in enumerate(fdrkeys):
 
 for i in range(len(outrows)):
     r = dict(list(zip(outheaders, outrows[i])))
-    homovarsc = max(0.0, min(pvscore(r["NotHetFDR"]), pvscore(
-        r["NotHomoRefFDR"])) - pvscore(r["NotHomoVarFDR"]))
-    homorefsc = max(0.0, min(pvscore(r["NotHetFDR"]), pvscore(
-        r["NotHomoVarFDR"])) - pvscore(r["NotHomoRefFDR"]))
-    hetsc = max(0.0, min(pvscore(r["NotHomoRefFDR"]), pvscore(
-        r["NotHomoVarFDR"])) - pvscore(r["NotHetFDR"]))
+    homovarsc = max(0.0, min(pvscore(r["NotHetFDR"]),
+                             pvscore(r["NotHomoRefFDR"])) - pvscore(r["NotHomoVarFDR"]))
+    homorefsc = max(0.0, min(pvscore(r["NotHetFDR"]),
+                             pvscore(r["NotHomoVarFDR"])) - pvscore(r["NotHomoRefFDR"]))
+    hetsc = max(0.0, min(pvscore(r["NotHomoRefFDR"]),
+                         pvscore(r["NotHomoVarFDR"])) - pvscore(r["NotHetFDR"]))
     vardomsc = pvscore(r["VarDomFDR"])
     refdomsc = pvscore(r["RefDomFDR"])
     pos = outheaders.index("HomoVarSc")
@@ -473,7 +575,55 @@ for i in range(len(outrows)):
     pos = outheaders.index("RefDomSc")
     outrows[i][pos] = refdomsc
 
+
+if opt.matrix:
+    allrg = sorted(allrg)
+    outheaders1 = [ "SNV" ] + allrg
+    outheaders = outheaders1
+
+if opt.output:
+    filename = opt.output
+    base, extn = filename.rsplit('.', 1)
+    extn = extn.lower()
+    if extn == 'csv':
+        output = CSVFileTable(filename=filename, headers=outheaders1)
+    elif extn == 'tsv':
+        output = TSVFileTable(filename=filename, headers=outheaders1)
+    elif extn == 'xls':
+        output = XLSFileTable(
+            filename=filename, headers=outheaders1, sheet='Results')
+    elif extn == 'xlsx':
+        output = XLSXFileTable(
+            filename=filename, headers=outheaders1, sheet='Results')
+    elif extn == 'txt':
+        output = TXTFileTable(filename=filename, headers=outheaders1)
+    else:
+        raise RuntimeError("Unexpected output file extension: %s" % filename)
+else:
+    output = TXTFileTable(filename=sys.stdout, headers=outheaders1)
+    emptysym = "-"
+
+if opt.matrix:
+    outrows1 = []
+    last_snvkey = None
+    for row in outrows:
+        snvkey = "%s:%s_%s>%s"%(row[0],row[1],row[2],row[3])
+        if snvkey == last_snvkey:
+            continue
+        last_snvkey = snvkey
+        row1 = [ snvkey ]
+        for rg in allrg:
+            row1.append(vafmatrix[tuple(row[:4])].get(rg,matrix(dict(Ref=0,Var=0,All=0,VAF="NA"))))
+        outrows1.append(row1)
+    outrows = outrows1
+
 progress.stage('Output results')
+if opt.output:
+    outdir = os.path.split(opt.output)[0]
+    if outdir and not os.path.exists(outdir):
+        os.makedirs(outdir,exist_ok=True)
 output.from_rows(
     [dict(list(zip(outheaders, r + [emptysym] * 50))) for r in outrows])
 progress.done()
+
+    

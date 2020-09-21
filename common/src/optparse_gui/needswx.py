@@ -1,6 +1,6 @@
 
 import sys, os, os.path, fnmatch, types, threading, time
-import re, copy, io, csv, math, pickle
+import re, copy, io, csv, math, json
 from optparse_gui import OptionParser, UserCancelledError, Progress
 import optparse
 from configparser import ConfigParser
@@ -97,7 +97,7 @@ class MyFileBrowseButton( FileBrowseButton ):
         if dlg.ShowModal() == wx.ID_OK:
             s = io.StringIO()
             wr = csv.writer(s,delimiter=' ',quotechar='"',quoting=csv.QUOTE_MINIMAL)
-            if self.fileMode&wx.MULTIPLE:
+            if self.fileMode&wx.FD_MULTIPLE:
                 wr.writerow(dlg.GetPaths())
                 dir = os.path.split(dlg.GetPaths()[0])[0]
             else:
@@ -113,7 +113,7 @@ class MyFileBrowseButton( FileBrowseButton ):
                     config.add_section("LastFolder")
                 config.set("LastFolder",self.key,dir)
                 try:
-                    wh = open(self.dotfile,'wb')
+                    wh = open(self.dotfile,'w')
                     config.write(wh)
                     wh.close()
                 except IOError:
@@ -483,7 +483,7 @@ class OptionParserGUI( OptionParser ):
                     if o.dest and o.remember and config.has_option("LastValue",o.dest):
                         if set_values == None:
                             set_values = {}
-                        value = pickle.loads(config.get("LastValue",o.dest))
+                        value = json.loads(config.get("LastValue",o.dest))
                         if o.type == 'multichoice':
                             set_values[o.dest] = value.split(',')
                         elif o.type in ('savefile','savedir','file'):
@@ -565,11 +565,11 @@ class OptionParserGUI( OptionParser ):
         for g,o in self.iteropts():
             if o.remember:
                 if getattr(values,o.dest) not in (None,""):
-                    config.set("LastValue",o.dest,pickle.dumps((getattr(values,o.dest))))
+                    config.set("LastValue",o.dest,json.dumps(getattr(values,o.dest)))
                 else:
                     config.remove_option("LastValue",o.dest)
         try:
-            wh = open(self.dotfile,'wb')
+            wh = open(self.dotfile,'w')
             config.write(wh)
             wh.close()
         except IOError:
