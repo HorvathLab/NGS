@@ -14,6 +14,7 @@ if [ "$1" = "" ]; then
     exit 1;
 fi
 
+# Figure out if we are using the Python or binary distribution
 if [ -d ../src ]; then
   PROG="${PYTHON3:-python3} ../src/readCounts.py"
   PROG1="${PYTHON3:-python3} ../src/readCountsMatrix.py"
