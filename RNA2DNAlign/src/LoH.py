@@ -26,7 +26,7 @@ from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, Pro
 from util import *
 
 from version import VERSION
-VERSION = '2.0.0 (%s)' % (VERSION,)
+VERSION = '%s' % (VERSION,)
 
 
 def excepthook(etype, value, tb):

@@ -8,7 +8,7 @@ import re
 from collections import defaultdict
 
 from version import VERSION
-VERSION = '2.0.0 (%s)' % (VERSION,)
+VERSION = '%s' % (VERSION,)
 
 from os.path import join, dirname, realpath, split
 try:

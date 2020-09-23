@@ -93,8 +93,6 @@ advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=None, remember=True,
                     choices=groupOptions, name="Read Group",
                     help="Additional read grouping based on read name/identifier strings or BAM-file RG. Default: None, group reads by BAM-file only.")
-advanced.add_option("--matrix", type="string", dest="matrix", default=None, remember=True,
-                    help="Output matrix of values, specify a string including one or more of the tokens: Ref, Var, VAF. Default: Loci and Read Group rows (no matrix).", name="Matrix")
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
 advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
@@ -133,15 +131,6 @@ if opt.readgroup:
 else:
     readgroup = None
 
-matrix = None
-if opt.matrix:
-    matrixstr = opt.matrix
-    matrixstr = matrixstr.replace("Ref","%(Ref)s")
-    matrixstr = matrixstr.replace("Var","%(Var)s")
-    matrixstr = matrixstr.replace("All","%(All)s")
-    matrixstr = matrixstr.replace("VAF","%(VAF)s")
-    matrix = (lambda d: matrixstr%d)
-
 progress = None
 if not opt.output:
     opt.quiet = True
@@ -168,8 +157,6 @@ if opt.tpb != tpb_default:
     args.extend(["-t",str(opt.tpb)])
 if opt.full:
     args.extend(["-F"])
-if matrix:
-    args.extend(["--matrix",opt.matrix])
 if opt.quiet:
     args.extend(["-q"])
 if opt.debug:
@@ -192,7 +179,6 @@ readCounts Options:
     Read Groups (-G):         %s%s
     Threads per BAM (-t):     %s
     Full Headers (-F):        %s
-    Matrix Output (--matrix): %s
     Quiet (-q):               %s
     Debug (-d):               %s
 
@@ -209,7 +195,6 @@ Command-Line: readCounts %s
      "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
      opt.tpb,
      opt.full,
-     None if not matrix else opt.matrix,
      opt.quiet,
      opt.debug,
      cmdargs)
@@ -294,11 +279,13 @@ for (sf, chr, locus, ref, alt), r in snvdata.items():
     snvkey = (chrom,locus,ref,alt)
     if snvkey not in snvdata1:
         snvdata1[snvkey] = (chrom,locus,ref,alt,r)
+    # print(snvkey,snvdata1[snvkey])
 
 for bamfile in opt.alignments:
     chrreg.add_bamlabels(bamfile)
 
 chrreg.determine_chrom_order()
+# chrreg.default_chrom_order()
 
 snvdata = sorted(list(snvdata1.values()),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
 # extrasnvheaders = filter(lambda h: h in usedsnvheaders, extrasnvheaders)
@@ -354,8 +341,6 @@ if not opt.full:
         if dh in outheaders1:
             outheaders1.remove(dh)
 
-allrg = set()
-vafmatrix = defaultdict(dict)
 emptysym = None
 outrows = []
 
@@ -436,9 +421,6 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
         nother = notherf + notherr
         counted = sum([counts[(n, d, si)] for n in 'ACGT' for d in 'FR'])
 
-        if matrix == None and counted < opt.minreads:
-            continue
-        
         if isinstance(si,int):
             alf = opt.alignments[si]
             rg = os.path.split(alf)[1].rsplit('.', 1)[0]
@@ -447,13 +429,6 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
         else:
             alf = opt.alignments[si[0]]
             rg = os.path.split(alf)[1].rsplit('.', 1)[0] + ":"+si[1]
-
-        allrg.add(rg)
-        if matrix != None:
-            if (nref + nsnv) > 0:
-                vafmatrix[(snvchr, snvpos, ref, alt)][rg] = matrix(dict(Ref=nref,Var=nsnv,All=counted,VAF="%.6f"%(float(nsnv)/float(nsnv+nref),)))
-            else:
-                vafmatrix[(snvchr, snvpos, ref, alt)][rg] = matrix(dict(Ref=nref,Var=nsnv,All=counted,VAF="NA"))
 
         row = [ snvchr, snvpos, ref, alt, rg ] + \
               [nsnvf, nsnvr,
@@ -576,11 +551,6 @@ for i in range(len(outrows)):
     outrows[i][pos] = refdomsc
 
 
-if opt.matrix:
-    allrg = sorted(allrg)
-    outheaders1 = [ "SNV" ] + allrg
-    outheaders = outheaders1
-
 if opt.output:
     filename = opt.output
     base, extn = filename.rsplit('.', 1)
@@ -603,20 +573,6 @@ else:
     output = TXTFileTable(filename=sys.stdout, headers=outheaders1)
     emptysym = "-"
 
-if opt.matrix:
-    outrows1 = []
-    last_snvkey = None
-    for row in outrows:
-        snvkey = "%s:%s_%s>%s"%(row[0],row[1],row[2],row[3])
-        if snvkey == last_snvkey:
-            continue
-        last_snvkey = snvkey
-        row1 = [ snvkey ]
-        for rg in allrg:
-            row1.append(vafmatrix[tuple(row[:4])].get(rg,matrix(dict(Ref=0,Var=0,All=0,VAF="NA"))))
-        outrows1.append(row1)
-    outrows = outrows1
-
 progress.stage('Output results')
 if opt.output:
     outdir = os.path.split(opt.output)[0]
@@ -626,4 +582,3 @@ output.from_rows(
     [dict(list(zip(outheaders, r + [emptysym] * 50))) for r in outrows])
 progress.done()
 
-    

@@ -48,7 +48,7 @@ from util import *
 from operator import itemgetter
 
 from version import VERSION
-VERSION = '2.0.0 (%s)' % (VERSION,)
+VERSION = '%s' % (VERSION,)
 
 
 def excepthook(etype, value, tb):
