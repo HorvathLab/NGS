@@ -38,4 +38,4 @@ do
     -U \
     -t 20
 }
-done < "$INPUT"
+done < "$LINE"
