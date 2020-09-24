@@ -29,7 +29,7 @@ shift
 BASE=`basename "$BAM" .bam`
 
 set -x
-$PROG -r "$BAM" $@ -m 0 -G UMITools -o "${BASE}_counts.tsv" && \
-$PROG1 -c "${BASE}_counts.tsv" -m $MINREADS -o "${BASE}_VAF_matrix.tsv" && \
-$PROG1 -c "${BASE}_counts.tsv" -m 0 -o "${BASE}_counts_matrix.tsv"
+$PROG -r "$BAM" $@ -G UMITools -o "${BASE}_counts.tsv" && \
+$PROG1 -c "${BASE}_counts.tsv" -M "VAF" -m $MINREADS -o "${BASE}_VAF_matrix.tsv" && \
+$PROG1 -c "${BASE}_counts.tsv" -M "Ref:Var" -o "${BASE}_counts_matrix.tsv"
 

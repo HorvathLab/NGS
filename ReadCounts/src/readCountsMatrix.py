@@ -122,7 +122,7 @@ Command-Line: readCountsMatrix %s
 """%(", ".join(opt.counts),
      None if not matrix else opt.matrix,
      opt.minreads,
-     "" if opt.matrix not in ("Ref:Var",) else " (ignored)",
+     "" if opt.matrix not in ("Ref:Var",) or opt.minreads == 0 else " (ignored)",
      opt.output,
      opt.quiet,
      cmdargs)
