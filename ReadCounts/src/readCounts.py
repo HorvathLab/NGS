@@ -63,7 +63,7 @@ filterOptions = [t[0] for t in filterFactory.list()]
 groupFactory = ReadGroupFactory()
 groupOptions = [""] + [t[0] for t in groupFactory.list()]
 
-minreads_default = 0
+minreads_default = 10
 maxreads_default = None
 tpb_default = 0
 filter_default = "Basic"

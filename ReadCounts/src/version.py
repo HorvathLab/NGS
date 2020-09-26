@@ -1,6 +1,6 @@
-#!/bin/env python2.7
-VERSION = '2.1.3'
-PROGRAMS = 'readCounts.py phasedReadCounts.py readCountsMatrix.py'
+#!/bin/env python
+VERSION = '2.2.0'
+PROGRAMS = 'readCounts.py phasedReadCounts.py readCountsMatrix.py scReadCounts.py'
 INCLUDES = 'common'
 if __name__ == '__main__':
     import sys
