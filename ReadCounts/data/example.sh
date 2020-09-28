@@ -1,8 +1,6 @@
 #!/bin/sh
-# set -x
-PYTHON="python3"
 if [ -d ../src ]; then
-  PROG="$PYTHON ../src/readCounts.py"
+  PROG="${PYTHON:-python3} ../src/readCounts.py"
 else
   PROG=../bin/readCounts
 fi

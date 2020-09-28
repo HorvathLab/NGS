@@ -144,7 +144,6 @@ args.extend(["-s",doublequote(" ".join(opt.snvs))])
 args.extend(["-r",doublequote(" ".join(opt.alignments))])
 if opt.filter != filter_default:
     args.extend(["-f",doublequote(opt.filter)])
-args.extend(["-o",doublequote(opt.output)])
 if opt.minreads != minreads_default:
     args.extend(["-m",str(opt.minreads)])
 if opt.maxreads != maxreads_default:
@@ -161,6 +160,8 @@ if opt.quiet:
     args.extend(["-q"])
 if opt.debug:
     args.extend(["-d"])
+if opt.output:
+    args.extend(["-o",doublequote(opt.output)])
 
 cmdargs = " ".join(args)
 
@@ -168,9 +169,8 @@ execution_log = """
 readCounts Options:
   SNV Files (-s):             %s
   Read Files (-r):            %s
+  Read/Alignment Filter (-f): %s%s
   Outfile File (-o):          %s
-  Read/Alignment Filter (-f): %s
-%s
 
   Advanced:
     Min. Reads (-m)           %s
@@ -185,9 +185,9 @@ readCounts Options:
 Command-Line: readCounts %s
 """%(", ".join(opt.snvs),
      ", ".join(opt.alignments),
-     opt.output,
      opt.filter,
-     indent(readfilter.tostr(),10),
+     "" if readfilter == None else "\n"+indent(readfilter.tostr(),10),
+     opt.output,
      opt.minreads,
      opt.maxreads,
      opt.unique,

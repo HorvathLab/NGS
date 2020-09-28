@@ -99,12 +99,12 @@ doublequote = lambda s: '"%s"'%(s,)
 indent = lambda s,n: "\n".join([(" "*n)+l for l in s.splitlines()])
 
 args = []
-args.extend(["--counts",doublequote(" ".join(opt.counts))])
+args.extend(["-c",doublequote(" ".join(opt.counts))])
 if matrix:
-    args.extend(["--matrix",opt.matrix])
+    args.extend(["-M",opt.matrix])
 if opt.minreads != minreads_default:
-    args.extend(["--minreads",str(opt.minreads)])
-args.extend(["--output",doublequote(opt.output)])
+    args.extend(["-m",str(opt.minreads)])
+args.extend(["-o",doublequote(opt.output)])
 if opt.quiet:
     args.extend(["-q"])
 
@@ -112,19 +112,19 @@ cmdargs = " ".join(args)
 
 execution_log = """
 readCounts Options:
-  ReadCounts Files (--counts): %s
-  Matrix Output (--matrix):    %s
-  Min. Reads (--minreads)      %s%s
-  Outfile File (--output):     %s
-  Quiet (-q):                  %s
+  ReadCounts Files (-c): %s
+  Matrix Output (-M):    %s
+  Min. Reads (-m):       %s%s
+  Quiet (-q):            %s
+  Outfile File (-o):     %s
 
 Command-Line: readCountsMatrix %s
 """%(", ".join(opt.counts),
      None if not matrix else opt.matrix,
      opt.minreads,
      "" if opt.matrix not in ("Ref:Var",) or opt.minreads == 0 else " (ignored)",
-     opt.output,
      opt.quiet,
+     opt.output,
      cmdargs)
 
 progress.message(execution_log)

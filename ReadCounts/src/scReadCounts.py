@@ -85,6 +85,7 @@ minreads_default = 3
 maxreads_default = None
 tpb_default = 0
 filter_default = "Basic"
+readgroup_default = "UMITools"
 
 advanced = OptionGroup(parser, "Advanced")
 parser.add_option("-s", "--snvs", type="files", dest="snvs", default=None,
@@ -108,7 +109,7 @@ advanced.add_option("-U", "--uniquereads", action="store_true", dest="unique", d
                     help="Consider only distinct reads.", name="Unique Reads")
 advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb_default, remember=True,
                     help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
-advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default="UMITools", remember=True,
+advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=readgroup_default, remember=True,
                     choices=groupOptions, name="Read Group",
                     help="Additional read grouping based on read name/identifier strings or BAM-file RG. Default: None, group reads by BAM-file only.")
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
@@ -160,13 +161,12 @@ args.extend(["-s",doublequote(" ".join(opt.snvs))])
 args.extend(["-r",doublequote(" ".join(opt.alignments))])
 if opt.filter != filter_default:
     args.extend(["-f",doublequote(opt.filter)])
-args.extend(["-o",doublequote(opt.output)])
 if opt.minreads != minreads_default:
     args.extend(["-m",str(opt.minreads)])
 if opt.maxreads != maxreads_default:
     args.extend(["-M",str(opt.maxreads)])
-if readgroup != None:
-    args.extend(["-G",doublequote(opt.readgroup)])
+if opt.readgroup != readgroup_default:
+    args.extend(["-G",doublequote(opt.readgroup if readgropup != None else "")])
 if opt.unique:
     args.extend(["-U"])
 if opt.tpb != tpb_default:
@@ -175,6 +175,7 @@ if opt.full:
     args.extend(["-F"])
 if opt.quiet:
     args.extend(["-q"])
+args.extend(["-o",doublequote(opt.output)])
 
 cmdargs = " ".join(args)
 
@@ -182,9 +183,8 @@ execution_log = """
 scReadCounts Options:
   SNV Files (-s):             %s
   Read Files (-r):            %s
+  Read/Alignment Filter (-f): %s%s
   Outfile File (-o):          %s
-  Read/Alignment Filter (-f): %s
-%s
 
   Advanced:
     Min. Reads (-m)           %s (applied only to VAF matrix)
@@ -198,9 +198,9 @@ scReadCounts Options:
 Command-Line: scReadCounts %s
 """%(", ".join(opt.snvs),
      ", ".join(opt.alignments),
-     opt.output,
      opt.filter,
-     indent(readfilter.tostr(),10),
+     "" if readfilter == None else "\n"+indent(readfilter.tostr(),10),
+     opt.output,
      opt.minreads,
      opt.maxreads,
      opt.unique,
@@ -212,9 +212,6 @@ Command-Line: scReadCounts %s
      cmdargs)
 
 progress.message(execution_log)
-
-if opt.maxreads == None:
-    opt.maxreads = 1e+20
 
 args = []
 args.extend(["-s"," ".join(opt.snvs)])
