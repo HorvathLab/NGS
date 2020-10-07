@@ -19,6 +19,8 @@ from os.path import join, dirname, realpath
 try:
     sys.path.append(join(dirname(realpath(__file__)),
                          '..', '..', 'common', 'src'))
+    sys.path.append(join(dirname(realpath(__file__)),
+                         '..', '..', 'ReadCounts', 'src'))
 except NameError:
     pass
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText

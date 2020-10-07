@@ -1,9 +1,8 @@
 #!/bin/sh
-if [ -d ../src ]; then
-  PROG="${PYTHON:-python3} ../src/readCounts.py"
-else
-  PROG=../bin/readCounts
-fi
+
+# Clean up previous runs
 rm -rf example-output.tsv
+
+# Execute read counts
 set -x
-$PROG -r example-NRNA.bam -s example-NRNA.vcf -o example-output.tsv
+../bin/readCounts -r example-NRNA.bam -s example-NRNA.vcf -o example-output.tsv

@@ -30,7 +30,7 @@ fi
 PACKAGE=`readlink -f "$PACKAGE"`
 PACKAGE=`basename "$PACKAGE"`
 if [ ! -d "./$PACKAGE" ]; then
-    echo "Valid packages: SNPlice, RNA2DNAlign" 1>&2
+    echo "Valid packages: SNPlice, RNA2DNAlign, ReadCounts" 1>&2
     exit 1;
 fi
 VER=`apython3 $PACKAGE/src/version.py VERSION | tr -d -c '0-9.'`
@@ -38,6 +38,7 @@ OS=`uname`
 AR=`uname -m`
 XX="$OS-$AR"
 YY="Python-3.7"
+PROGS=`apython3 $PACKAGE/src/version.py PROGRAMS`
 
 # Source (Python-3.7) distribution
 rm -rf build/$PACKAGE-${VER}.${YY} dist/$PACKAGE-${VER}.${YY}.tgz
@@ -51,6 +52,11 @@ for d in src docs data scripts; do
   fi
  done
 done
+mkdir build/$PACKAGE-${VER}.${YY}/bin
+for p in $PROGS; do
+  base=`basename $p .py`
+  cp build/$PACKAGE-${VER}.${YY}/scripts/wrapper.sh build/$PACKAGE-${VER}.${YY}/bin/$base
+done
 rm build/$PACKAGE-${VER}.${YY}/scripts/wrapper.sh
 find build/$PACKAGE-${VER}.${YY} -name ".svn" -exec rm -rf {} \;
 find build/$PACKAGE-${VER}.${YY} -name "*.pyc" -exec rm -rf {} \;
@@ -60,7 +66,6 @@ find build/$PACKAGE-${VER}.${YY} -type d -name __pycache__ -exec rm -rf {} \;
 
 # Binary distribution
 rm -rf build/$PACKAGE-${VER}.${XX} dist/$PACKAGE-${VER}.${XX}.tgz
-PROGS=`apython3 $PACKAGE/src/version.py PROGRAMS`
 rm -rf $PACKAGE/bin
 # export TCL_LIBRARY=/tools/EPD/lib/tcl8.5
 mkdir -p $PACKAGE/bin

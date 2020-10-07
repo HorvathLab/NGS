@@ -36,7 +36,8 @@ if getattr(sys, 'frozen', False):
     scriptdirs = [scriptdir]
 else:
     scriptdir = dirname(realpath(sys.argv[0]))
-    scriptdirs = [scriptdir]
+    scriptdir1 = realpath(join(scriptdir, '..', '..', 'ReadCounts', 'src'))                                                 
+    scriptdirs = [scriptdir,scriptdir1]
 
 try:
     scriptextn = "." + os.path.split(sys.argv[0])[1].rsplit('.', 1)[1]

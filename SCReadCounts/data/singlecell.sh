@@ -1,12 +1,8 @@
 #!/bin/sh
-if [ -d ../src ]; then
-  scReadCounts="${PYTHON:-python3} ../src/scReadCounts.py"
-else
-  scReadCounts=../bin/scReadCounts
-fi
+
+# Clean up previous runs...
 rm -rf singlecell-output.tsv singlecell-output.cnt.matrix.tsv singlecell-output.vaf.matrix.tsv
 
-set -x
 #
 # Equivalent to running these three commands...
 #
@@ -15,6 +11,6 @@ set -x
 # readCountsMatrix -c "singlecell-output.tsv" -M VAF -m 5 -o "singlecell-output.vaf.matrix.tsv"
 #
 
-# scReadCounts -s "singlecell_222_5_chr17.txt" -r "singlecell_chr17.bam" -m 5 -o "singlecell-output.tsv"
-$scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 5 -o singlecell-output.tsv
+set -x
+../bin/scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 5 -o singlecell-output.tsv
 
