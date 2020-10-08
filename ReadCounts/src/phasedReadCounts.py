@@ -28,8 +28,8 @@ from pileups import SerialPileups, ThreadedPileups
 from chromreg import ChromLabelRegistry
 from operator import itemgetter
 
-from version import VERSION
-VERSION = '%s' % (VERSION,)
+from release import RELEASE, VERSION                                                                                        
+VERSION = "2.2.0 (%s:%s)"%(RELEASE,VERSION)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)

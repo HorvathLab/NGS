@@ -26,8 +26,8 @@ except NameError:
 from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, ProgressText
 from chromreg import ChromLabelRegistry
 
-from version import VERSION
-VERSION = '%s' % (VERSION,)
+from release import RELEASE, VERSION
+VERSION = "1.0.0 (%s:%s)"%(RELEASE,VERSION)                                                                                 
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)

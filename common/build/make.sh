@@ -33,17 +33,17 @@ if [ ! -d "./$PACKAGE" ]; then
     echo "Valid packages: SNPlice, RNA2DNAlign, ReadCounts" 1>&2
     exit 1;
 fi
-VER=`apython3 $PACKAGE/src/version.py VERSION | tr -d -c '0-9.'`
+VER=`apython3 $PACKAGE/src/release.py VERSION | tr -d -c '0-9.'`
 OS=`uname`
 AR=`uname -m`
 XX="$OS-$AR"
 YY="Python-3.7"
-PROGS=`apython3 $PACKAGE/src/version.py PROGRAMS`
+PROGS=`apython3 $PACKAGE/src/release.py PROGRAMS`
 
 # Source (Python-3.7) distribution
 rm -rf build/$PACKAGE-${VER}.${YY} dist/$PACKAGE-${VER}.${YY}.tgz
 mkdir -p build/$PACKAGE-${VER}.${YY}
-INCLUDES=`apython3 $PACKAGE/src/version.py INCLUDES`
+INCLUDES=`apython3 $PACKAGE/src/release.py INCLUDES`
 for d in src docs data scripts; do
  mkdir -p build/$PACKAGE-${VER}.${YY}/$d
  for p in $INCLUDES $PACKAGE; do
