@@ -16,6 +16,8 @@ class Execute(object):
             if os.path.exists(progpath1):
                 progpath = progpath1
                 break
+        if not progpath:
+            print(self.path,file=sys.stderr)
         assert progpath, "Exec: %s not found" % (prog + self.extn,)
         if kw.get('verbose', False):
             argstr = " ".join([a if " " not in a else '"%s"' % a for a in args])

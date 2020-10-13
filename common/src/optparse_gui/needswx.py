@@ -160,11 +160,11 @@ class OptparseDialog( wx.Dialog ):
         if wx.Platform != "__WXMSW__":
             sizer2.AddStretchSpacer(-1)
             btn = wx.ContextHelpButton(self)
-            sizer2.Add(btn, 0, wx.ALIGN_RIGHT|wx.ALL)
-        sizer.Add(sizer2,0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            sizer2.Add(btn, 0, wx.ALL)
+        sizer.Add(sizer2,0, wx.GROW|wx.ALL, 5)
         
         line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
-        sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.LEFT, 5)
+        sizer.Add(line, 0, wx.GROW|wx.RIGHT|wx.TOP|wx.LEFT, 5)
 
         nb = wx.Notebook(self, wx.ID_ANY)
         
@@ -177,10 +177,10 @@ class OptparseDialog( wx.Dialog ):
         else:
             self.args_ctrl = None
 
-        sizer.Add(nb, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.LEFT, 5)
+        sizer.Add(nb, 0, wx.GROW|wx.RIGHT|wx.TOP|wx.LEFT, 5)
 
         line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
-        sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP|wx.LEFT, 5)
+        sizer.Add(line, 0, wx.GROW|wx.RIGHT|wx.TOP|wx.LEFT, 5)
 
         btnsizer = wx.BoxSizer(wx.HORIZONTAL)
 

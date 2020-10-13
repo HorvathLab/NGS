@@ -162,15 +162,15 @@ class XLSXFileDataset(FileDataset):
         import openpyxl
         # openpyxl.shared.units.pixels_to_points(pixels)
         winpts = pixels * 0.14214
-        ws.cell(row=0, column=j)
+        ws.cell(row=1, column=j+1)
         ws.column_dimensions[
-            openpyxl.cell.get_column_letter(j + 1)].width = winpts
+            openpyxl.utils.cell.get_column_letter(j + 1)].width = winpts
 
     @staticmethod
     def setrowheight(ws, i, pixels):
         hinpts = pixels * 3. / \
             4.  # openpyxl.shared.units.pixels_to_points(pixels);
-        ws.cell(row=i, column=0)
+        ws.cell(row=i+1, column=1)
         ws.row_dimensions[i + 1].height = hinpts
 
     @staticmethod
@@ -186,8 +186,7 @@ class XLSXFileDataset(FileDataset):
             if value['type'] == 'url':
                 ws.cell(row=i, column=j).value = value['text']
                 ws.cell(row=i, column=j).hyperlink = value['url']
-                ws.cell(
-                    row=i, column=j).style.font.underline = openpyxl.style.Font.UNDERLINE_SINGLE
+                ws.cell(row=i, column=j).style.font.underline = openpyxl.style.Font.UNDERLINE_SINGLE
                 return
             if value['type'] == 'image':
                 img = openpyxl.drawing.Image(value['image'])
@@ -225,18 +224,17 @@ class XLSXFileDataset(FileDataset):
             else:
                 ws = wb.create_sheet()
             ws.title = n
-            ws.auto_filter = 'A1:%s1' % (
-                openpyxl.cell.get_column_letter(len(t.headers())),)
+            # ws.auto_filter = 'A1:%s1' % (
+            #     openpyxl.utils.cell.get_column_letter(len(t.headers())),)
             dcw = self.colwidth[n].get(None)
             for j, h in enumerate(t.headers()):
                 cw = self.colwidth[n].get(h, dcw)
                 if cw != None:
                     XLSXFileDataset.setcolwidth(ws, j, cw)
             for j, h in enumerate(t.headers()):
-                ws.cell(row=0, column=j).value = h
-                ws.cell(row=0, column=j).style.font.bold = True
-                ws.cell(
-                    row=0, column=j).style.borders.bottom.border_style = openpyxl.style.Border.BORDER_THIN
+                ws.cell(row=1, column=j+1).value = h
+                ws.cell(row=1, column=j+1).style.font.bold = True
+                ws.cell(row=1, column=j+1).style.borders.bottom.border_style = openpyxl.style.Border.BORDER_THIN
             drh = self.rowheight[n].get(None)
             for i, r in enumerate(t.rows()):
                 rh = self.rowheight[n].get(i, drh)
@@ -701,9 +699,9 @@ class XLSXFileTable(FileTable):
             if not self.sheet and sheet_idx != 0:
                 continue
             sheet = book.get_sheet_by_name(sheet_name)
-            ncol = sheet.get_highest_column()
+            ncol = sheet.max_column
             for i in range(ncol):
-                h = sheet.cell(row=0, column=i).value
+                h = sheet.cell(row=1, column=i+1).value
                 if not h:
                     break
                 self.headers_.append(str(h))
@@ -718,14 +716,14 @@ class XLSXFileTable(FileTable):
             if self.sheet == None and sheet_idx != 0:
                 continue
             sheet = book.get_sheet_by_name(sheet_name)
-            ncol = sheet.get_highest_column()
-            nrow = sheet.get_highest_row()
+            ncol = sheet.max_column
+            nrow = sheet.max_row
             for r in range(nrow):
                 if r == 0:
                     continue
                 row = []
                 for c in range(ncol):
-                    value = sheet.cell(row=r, column=c).value
+                    value = sheet.cell(row=r+1, column=c+1).value
                     row.append(value)
                 yield dict(list(zip(self.headers_, row)))
 
@@ -735,13 +733,13 @@ class XLSXFileTable(FileTable):
         assert(self.sheet != None)
         ws = wb.worksheets[0]
         ws.title = self.sheet
-        ws.auto_filter = 'A1:%s1' % (
-            openpyxl.cell.get_column_letter(len(self.headers_)),)
+        # ws.auto_filter = 'A1:%s1' % (
+        #     openpyxl.utils.cell.get_column_letter(len(self.headers_)),)
         for j, h in enumerate(self.headers_):
-            ws.cell(row=0, column=j).value = h
+            ws.cell(row=1, column=j+1).value = h
         for i, r in enumerate(rows):
             for j, h in enumerate(self.headers_):
-                XLSXFileDataset.writevalue(ws, i + 1, j, r.get(h))
+                XLSXFileDataset.writevalue(ws, i + 2, j+1, r.get(h))
         wb.save(filename=self.filename)
 
 

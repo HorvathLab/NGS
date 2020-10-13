@@ -21,29 +21,39 @@ if [ "$PACKAGE" = "" ]; then
 fi
 BASE=`dirname "$0"`
 BASE="$BASE/../.."
-BASE=`readlink -f "$BASE"`
+# BASE=`readlink -f "$BASE"`
 cd $BASE
 if [ ! -d "common" -o ! -d "common/build" ]; then
     echo "Please change directory to the base of the HorvathLabTools distribution" 1>&2
     exit 1;
 fi
-PACKAGE=`readlink -f "$PACKAGE"`
+# PACKAGE=`readlink -f "$PACKAGE"`
 PACKAGE=`basename "$PACKAGE"`
 if [ ! -d "./$PACKAGE" ]; then
     echo "Valid packages: SNPlice, RNA2DNAlign, ReadCounts" 1>&2
     exit 1;
 fi
-VER=`apython3 $PACKAGE/src/release.py VERSION | tr -d -c '0-9.'`
 OS=`uname`
 AR=`uname -m`
 XX="$OS-$AR"
 YY="Python-3.7"
-PROGS=`apython3 $PACKAGE/src/release.py PROGRAMS`
+
+if [ "$OS" = "Darwin" ]; then
+  PYTHON3=python3
+  PYINST="pyinstaller -w"
+  MD5SUM="md5 -r"
+else
+  PYTHON3=apython3
+  PYINST=./venv/bin/pyinstaller
+  MD5SUM=md5sum
+fi
+VER=`$PYTHON3 $PACKAGE/src/release.py VERSION | tr -d -c '0-9.'`
+PROGS=`$PYTHON3 $PACKAGE/src/release.py PROGRAMS`
 
 # Source (Python-3.7) distribution
 rm -rf build/$PACKAGE-${VER}.${YY} dist/$PACKAGE-${VER}.${YY}.tgz
 mkdir -p build/$PACKAGE-${VER}.${YY}
-INCLUDES=`apython3 $PACKAGE/src/release.py INCLUDES`
+INCLUDES=`$PYTHON3 $PACKAGE/src/release.py INCLUDES`
 for d in src docs data scripts; do
  mkdir -p build/$PACKAGE-${VER}.${YY}/$d
  for p in $INCLUDES $PACKAGE; do
@@ -74,12 +84,17 @@ for p in $PROGS; do
     base=`basename $p .py`
     rm -rf build/$base
     rm -f ${base}.spec
-    ./venv/bin/pyinstaller --hidden-import pkg_resources.py2_warn --hidden-import pysam.libctabixproxies --hidden-import json --distpath $PACKAGE/bin build/$PACKAGE-${VER}.${YY}/src/$p
-    # unzip -lv $PACKAGE/bin/$base/base_library.zip > $PACKAGE/bin/${base}_library.toc
-    rsync -av $PACKAGE/bin/$base/ $PACKAGE/bin/_bin
-    rm -rf $PACKAGE/bin/$base
+    rm -rf $PACKAGE/bin/$base $PACKAGE/bin/$base.app
+    $PYINST --hidden-import pkg_resources.py2_warn --hidden-import pysam.libctabixproxies --hidden-import json --distpath $PACKAGE/bin build/$PACKAGE-${VER}.${YY}/src/$p
+    if [ -d $PACKAGE/bin/$base.app ]; then
+      rsync -av $PACKAGE/bin/$base.app/ $PACKAGE/bin/_bin
+      mkdir -p $PACKAGE/bin/_bin/Contents/MacOS/tcl
+      mkdir -p $PACKAGE/bin/_bin/Contents/MacOS/tk
+    else
+      rsync -av $PACKAGE/bin/$base/ $PACKAGE/bin/_bin
+    fi
+    rm -rf $PACKAGE/bin/$base $PACKAGE/bin/$base.app
     cp common/scripts/wrapper.sh $PACKAGE/bin/$base
-    # /tools/anaconda3/bin/pyinstaller --hidden-import pysam.libctabixproxies --hidden-import json --distpath $PACKAGE/bin build/$PACKAGE-${VER}.${YY}/src/$p
     rm -rf build/$base
     rm -f ${base}.spec
   fi
@@ -108,13 +123,13 @@ rm build/$PACKAGE-${VER}.${XX}/scripts/wrapper.sh
 find build/$PACKAGE-${VER}.${XX} -name ".svn" -exec rm -rf {} \;
 find build/$PACKAGE-${VER}.${XX} -name "*.pyc" -exec rm -rf {} \;
 find build/$PACKAGE-${VER}.${XX} -name "*~" -exec rm -rf {} \;
-find build/$PACKAGE-${VER}.${XX} -type d -empty -exec rm -rf {} \;
+# find build/$PACKAGE-${VER}.${XX} -type d -empty -exec rm -rf {} \;
 find build/$PACKAGE-${VER}.${YY} -type d -name __pycache__ -exec rm -rf {} \;
 
 mkdir -p dist
 tar -czf dist/$PACKAGE-${VER}.${XX}.tgz -C build $PACKAGE-${VER}.${XX}
 tar -czf dist/$PACKAGE-${VER}.${YY}.tgz -C build $PACKAGE-${VER}.${YY}
-( cd dist; md5sum $PACKAGE-${VER}.*.tgz > $PACKAGE-${VER}.md5 )
+( cd dist; $MD5SUM $PACKAGE-${VER}.*.tgz > $PACKAGE-${VER}.md5 )
 if [ "$COMMIT" -eq 1 ]; then
   git commit -a -m "Release $PACKAGE-${VER} commit"; git push
 fi

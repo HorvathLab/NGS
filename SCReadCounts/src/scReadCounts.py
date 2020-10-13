@@ -31,7 +31,7 @@ from operator import itemgetter
 from os.path import join, dirname, realpath, split
 if getattr(sys, 'frozen', False):
     scriptdir = dirname(realpath(sys.executable))
-    if not scriptdir.endswith('/bin'):
+    if not scriptdir.endswith('/bin') and not scriptdir.endswith('/MacOS'):
         scriptdir = realpath(os.path.join(scriptdir,".."))
     scriptdirs = [scriptdir]
 else:
@@ -233,10 +233,18 @@ if opt.quiet:
     args.extend(["-q"])
 args = [ str(x) for x in args ]
 
-progress.message("\n>>>>>>>>>>>>>>>>>>>>>")
-progress.message("Execute readCounts...")
-progress.message(">>>>>>>>>>>>>>>>>>>>>\n")
-execprog.execute("readCounts",*args)
+if os.path.exists(opt.output):
+
+    progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    progress.message("Skipping readCounts, output file present.")
+    progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+
+else:
+
+    progress.message("\n>>>>>>>>>>>>>>>>>>>>>")
+    progress.message("Execute readCounts...")
+    progress.message(">>>>>>>>>>>>>>>>>>>>>\n")
+    execprog.execute("readCounts",*args)
 
 outbase,extn = opt.output.rsplit('.',1)
 outmatrix1 = outbase + '.cnt.matrix.' + extn
@@ -251,10 +259,18 @@ if opt.quiet:
 args.extend(["-o",outmatrix1])
 args = [ str(x) for x in args ]
 
-progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-progress.message("Execute readCountsMatrix for Ref:Var matrix...")
-progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
-execprog.execute("readCountsMatrix",*args)
+if os.path.exists(outmatrix1):
+
+    progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    progress.message("Skipping readCountsMatrix for Ref:Var, output file present.")
+    progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+
+else:
+
+    progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    progress.message("Execute readCountsMatrix for Ref:Var matrix...")
+    progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+    execprog.execute("readCountsMatrix",*args)
 
 args = []
 args.extend(["-c",opt.output])
@@ -265,8 +281,15 @@ if opt.quiet:
 args.extend(["-o",outmatrix2])
 args = [ str(x) for x in args ]
 
-progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-progress.message("Execute readCountsMatrix for VAF matrix...")
-progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
-execprog.execute("readCountsMatrix",*args)
+if os.path.exists(outmatrix2):
 
+    progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    progress.message("Skipping readCountsMatrix for VAF, output file present.")
+    progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+
+else:
+
+    progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    progress.message("Execute readCountsMatrix for VAF matrix...")
+    progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+    execprog.execute("readCountsMatrix",*args)

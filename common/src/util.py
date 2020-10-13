@@ -489,8 +489,17 @@ class MethodFactory(object):
     specialMethods = []
     def __init__(self):
         iniPath = []
-        iniPath.append(os.path.join(os.path.split(__file__)[0],self.iniFile))
-        iniPath.append(os.path.join(os.path.split(os.path.split(__file__)[0])[0],self.iniFile))
+
+        progdir = os.path.split(__file__)[0]
+        iniPath.append(os.path.join(progdir,self.iniFile))
+
+        progdir = os.path.split(progdir)[0]
+        iniPath.append(os.path.join(progdir,self.iniFile))
+
+        progdir = os.path.split(progdir)[0]
+        progdir = os.path.split(progdir)[0]
+        iniPath.append(os.path.join(progdir,self.iniFile))
+
         iniPath.append(os.path.join(os.path.expanduser("~"),self.iniFile))
         iniPath.append(os.path.join(os.path.expanduser("~"),"."+self.iniFile))
         iniPath.append(os.path.join(os.getcwd(),self.iniFile))
@@ -498,6 +507,7 @@ class MethodFactory(object):
         self.config.optionxform = str
         self.config.read(iniPath)
         if len(self.config.sections()) == 0:
+            print("Configuration file path:",iniPath,file=sys.stderr)
             raise RuntimeError("Can't find configuration file %s for %s"%(self.iniFile,self.__class__.__name__))
 
     def tovalue(self,vstr):

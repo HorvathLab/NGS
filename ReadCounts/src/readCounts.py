@@ -246,9 +246,12 @@ for filename in opt.snvs:
         #     extrasnvheaders.append(h)
 
     for r in snvs:
-        chr = r[snvheaders[0]].strip()
+        try:
+            chr = str(int(float(r[snvheaders[0]])))
+        except ValueError:
+            chr = r[snvheaders[0]].strip()
         snvchroms[filename].add(chr)
-        locus = int(r[snvheaders[1]].strip())
+        locus = int(float(r[snvheaders[1]]))
         ref = r[snvheaders[2]].strip()
         alt = r[snvheaders[3]].strip()
         if r.get('INFO:INDEL'):

@@ -5,7 +5,11 @@ PROG=`basename $0`
 if [ ! -d ${DIR}/../src ]; then
   LD_LIBRARY_PATH="${DIR}/_bin:${LD_LIBRARY_PATH}:"
   export LD_LIBRARY_PATH
-  exec "$DIR/_bin/$PROG" "$@"
+  if [ -d $DIR/_bin/Contents ]; then
+    exec "$DIR/_bin/Contents/MacOS/$PROG" "$@"
+  else
+    exec "$DIR/_bin/$PROG" "$@"
+  fi
 else
   if ${PYTHON3:-python3} </dev/null >/dev/null 2>&1; then
     exec ${PYTHON3:-python3} "$DIR/../src/${PROG}.py" "$@"

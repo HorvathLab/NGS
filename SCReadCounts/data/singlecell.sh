@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Clean up previous runs...
-rm -rf singlecell-output.tsv singlecell-output.cnt.matrix.tsv singlecell-output.vaf.matrix.tsv
+rm -f singlecell-output.tsv singlecell-output.cnt.matrix.tsv singlecell-output.vaf.matrix.tsv
 
 #
 # Equivalent to running these three commands...
@@ -13,4 +13,8 @@ rm -rf singlecell-output.tsv singlecell-output.cnt.matrix.tsv singlecell-output.
 
 set -x
 ../bin/scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 5 -o singlecell-output.tsv
+
+# Regenerate only the VAF matrix
+rm -f singlecell-output.vaf.matrix.tsv
+../bin/scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 10 -o singlecell-output.tsv
 
