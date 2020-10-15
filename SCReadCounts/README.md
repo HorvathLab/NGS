@@ -50,7 +50,9 @@ The remaining options provide detailed settings to better narrow the results and
   
 ## Download & Installation ##
 #### Download directly from the git repository: ####
-
+```
+$ git clone https://github.com/HorvathLab/NGS.git
+```
 #### Download from Nathan Edwards Lab: ####
 [Nathan Edwards Lab](http://edwardslab.bmcb.georgetown.edu/software/downloads/HorvathLab/)
 
