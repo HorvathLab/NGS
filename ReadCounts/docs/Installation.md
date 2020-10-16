@@ -27,81 +27,55 @@ ReadCounts is available as a self-contained binary package for 64-bit Linux and 
 ### MacOS ###
 1. Unpack the download.
     ```
-    tar xzf ReadCounts-*.Darwin-x86_64.tgz
-    cd ReadCounts-*.Darwin-x86_64
+    % tar xzf ReadCounts-*.Darwin-x86_64.tgz
+    % cd ReadCounts-*.Darwin-x86_64
     ```
 2. See the graphical user iterface.
     ```
-    bin/readCounts
+    % bin/readCounts
     ```
 3. Command-line help.
     ```
-    bin/readCounts -h
+    % bin/readCounts -h
     ```
 4. Run the examples.
     ```
-    cd data
-    ./example.sh
+    % cd data
+    % ./example.sh
     ```
 
 ## Python Source Installation ##
 
-1. Unpack the downloaded release:
-
+1. Unpack the downloaded:
     ```
-    tar xzf readCounts-*.tgz
-    ln -s readCounts-* readCounts
+    tar xzf ReadCounts-*.Python-3.7.tgz
+    cd ReadCounts-*.Python-3.7
     ```
-
-2. Locate your Python binary and ensure it is version 2.7:
-
+2. Install the necessary, and optional (if desired), Python 3 packages:
     ```
-    python --version
-
-    /path/to/python2.7 --version 
-    ``` 
-
-   We refer to the Python binary as `python` below, please substitute
-   whatever path and version numbers are required to run Python 2.7 on
-   your system. We recommend the Enthought Python Distribution (EPD) which
-   pre-installs all but the pysam third-party dependencies needed by readCounts.
-
-3. Ensure the necessary third-party Python modules are installed. pysam version >= 0.8.1 is required. 
-
+    cd src
+    pip3 install -r requirements.txt 
+    pip3 install -r optional_requirements.txt
+    cd ..
     ```
-    pysam, numpy, scipy
+3. If `python3` is not on your path or is called something else
     ```
-
-   For the configuration and execution GUI (optional):
-    
+    export PYTHON3=<path to python3>
     ```
-    wx
+    or
     ```
-
-   For Excel format SNV input files (optional):
-
+    setenv PYTHON3 <path to python3>
     ```
-    xlrd, openpyxl
+4. See the graphical user iterface.
     ```
-
-   The existence of required modules can be tested as follows (demonstrated here for `scipy`):
-
+    bin/readCounts
     ```
-    python2.7 -c "from scipy import __version__; print __version__"
+5. Command-line help.
     ```
-
-4. The readCounts program is located in the src subdirectory:
-
+    bin/readCounts -h
     ```
-    python ./readCounts/src/readCounts.py -h
-    
-    python ./readCounts/src/readCounts.py
+6. Run the examples.
     ```
-
-5. Test the installation using the provided example data:
-
-    ```
-    cd readCounts
-    python ./src/readCounts.py -r "data/example-*.bam" -s "data/example-SNV.tsv"
-    -o output.txt
+    cd data
+    ./example.sh
     ```
