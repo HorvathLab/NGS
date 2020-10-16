@@ -1,5 +1,5 @@
 
-ScReadCounts is a tool for cell-level estimation of reference and variant read counts from scRNA-seq data. ScReadCounts utilizes barcode information from pooled single cell alignments and, provided a list of SNV sites, estimates the variant and reference read counts, calculates variant allele fraction at user-defined treshold for minimum number of reads, and formats counts and derived values as cell-SNV matrices. The cell-SNV matrices can be used as inputs for a number of downstream analyses. 
+ScReadCounts is a computational tool for a cell-level assessment of the read counts bearing a particular nucleotide at genomic positions of interest from single cell RNA sequencing (scRNA-seq) data. 
 
 ScReadCounts is available as a self-contained binary package for 64-bit
 Linux systems and as Python source. The pysam package, plus a variety
@@ -8,16 +8,20 @@ be installed to use in Python source form. See the install
 instructions for more details. The self-contained binary package is
 appropriate for most Linux users.
 
-The SNVS (-s) and ALIGNMENTS (-r) options are used to provide the genome aligned reads and SNV loci to analyze. OUTPUT(-o) is required for the output matrix.
+Currently, scReadCounts has two programs. The program readCounts requires two input files: a pooled single cell alignment and a list of genomic positions of interest. readCounts utilizes the barcode information from the pooled single cell alignments and outputs the variant and reference read counts (n_var and n_ref, respectively), for each barcode (cell), in a comma separated text file. This file is then used as an input for the second program - readCountsMatrix - which, upon providing an output directory, generates two outputs: (1) a cell-position matrix with n_var and n_ref estimates, and (2) a cell-position matrix with the expressed variant allele fraction (VAF_RNA = n_var / (n_var + n_ref)) estimated at a user-defined threshold of minimum required sequencing reads (minR). readCountsMatrix is very fast and can be re-run multiple times at various minR thersholds.
 
-* -s SNVS, --snvs=SNVS 
-  *	Single-Nucleotide-Variant files. Required.
+Options (required):
 
-* -r ALIGNMENTS, --readalignments=ALIGNMENTS
-  * Read alignment files in indexed BAM format. Required.
+*	-r ALIGNMENTS, --readalignments= string:<filename> 
+* Alignment files in indexed BAM format. Required. 
+scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
 
-* -o OUTPUT, --output=OUTPUT
-  * Output file. Required.
+* -s SNVS, --snvs=string:<filename> 
+*	Single-Nucleotide-Variant files. Required. 
+The list of genomic positions of interest is accepted in a tab-separated format with no header, and contains the chromosome, position, reference and variant nucleotide. Examples of genomic positions of interest include single nucleotide variant (SNV) sites, somatic mutations, or RNA-editing loci. List of genomic positions of interest can be generated from a variant call on the corresponding datasets, or pre-defined from existing sources, such as COSMIC or dbSNP.
+
+*	-o OUTPUT, --output= string:<filename>
+*	Output file. Required.
 
 The remaining options provide detailed settings to better narrow the results and provide desired output formats. They are optional.
 
