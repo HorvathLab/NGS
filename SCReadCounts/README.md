@@ -13,7 +13,7 @@ Currently, scReadCounts has two programs. The program readCounts requires two in
 Options (required):
 
 
-* -r ALIGNMENTS, --readalignments= string:<filename> 
+* -r ALIGNMENTS, --readalignments= _string:_/<filename/>
     * Alignment files in indexed BAM format. Required. 
     * scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
 
