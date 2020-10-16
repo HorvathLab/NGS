@@ -12,16 +12,19 @@ Currently, scReadCounts has two programs. The program readCounts requires two in
 
 Options (required):
 
+
 *	-r ALIGNMENTS, --readalignments= string:<filename> 
-* Alignment files in indexed BAM format. Required. 
-scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
+  Alignment files in indexed BAM format. Required. 
+  scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
+
 
 * -s SNVS, --snvs=string:<filename> 
-*	Single-Nucleotide-Variant files. Required. 
-The list of genomic positions of interest is accepted in a tab-separated format with no header, and contains the chromosome, position, reference and variant nucleotide. Examples of genomic positions of interest include single nucleotide variant (SNV) sites, somatic mutations, or RNA-editing loci. List of genomic positions of interest can be generated from a variant call on the corresponding datasets, or pre-defined from existing sources, such as COSMIC or dbSNP.
+  Single-Nucleotide-Variant files. Required. 
+  The list of genomic positions of interest is accepted in a tab-separated format with no header, and contains the chromosome, position, reference and variant nucleotide. Examples of genomic positions of interest include single nucleotide variant (SNV) sites, somatic mutations, or RNA-editing loci. List of genomic positions of interest can be generated from a variant call on the corresponding datasets, or pre-defined from existing sources, such as COSMIC or dbSNP.
+
 
 *	-o OUTPUT, --output= string:<filename>
-*	Output file. Required.
+  Output file. Required.
 
 The remaining options provide detailed settings to better narrow the results and provide desired output formats. They are optional.
 
