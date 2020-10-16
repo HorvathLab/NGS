@@ -77,3 +77,7 @@ ReadCounts is available as a self-contained binary package for 64-bit Linux and 
     cd data
     ./example.sh
     ```
+
+## See Also
+
+[ReadCounts Home](..), [Input Files](InputFiles.md), [Output Files](OutputFiles.md)
