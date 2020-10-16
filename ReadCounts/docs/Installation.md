@@ -6,13 +6,34 @@ ReadCounts is available as a self-contained binary package for 64-bit Linux and 
 ## Binary Package Installation ##
 
 ### Linux ###
+1. Unpack the download.
     ```
     tar xzf ReadCounts-*.Linux-x86_64.tgz
     ```
-
+2. Run the examples.
+    ```
+    cd ReadCounts-*.Linux-x86_64/data
+    ./example.sh
+    ```
 ### MacOS ###
+1. Unpack the download.
     ```
     tar xzf ReadCounts-*.Darwin-x86_64.tgz
+    ```
+3. See the graphical user iterface.
+    ```
+    cd ReadCounts-*.Darwin-x86_64
+    bin/readCounts
+    ```
+3. Command-line help.
+    ```
+    cd ReadCounts-*.Darwin-x86_64
+    bin/readCounts -h
+    ```
+2. Run the examples.
+    ```
+    cd ReadCounts-*.Darwin-x86_64/data
+    ./example.sh
     ```
 
 ## Python Source Installation ##
