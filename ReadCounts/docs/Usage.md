@@ -1,25 +1,25 @@
-# readCounts Usage
+# ReadCounts Usage
 
 ## Synopsis
 
 ### Graphical User Interface:
 
-    readCounts.py
+    readCounts
 
 ### Command-line:
 
-    readCounts.py [options]
+    readCounts [options]
 
 ## Description
 
-readCounts a computational framework for assessing the read counts bearing particular nucleotides at genomic positions of interest, following a statistical test to recognize the allelic read-count patterns that show little deviation from expected behavior.
+ReadCounts tabulates the number of reads providing evidence for variant and reference nucleotides at specific genomic loci and applies statistical tests to recognize allelic read-counts consistent with homozygous and heterozygous loci.
 
 ## Graphical User Interface
 
 ![Options](readCounts2.jpg)
 
 Click the help icon (question mark) at the top right of the GUI and
-then an input field for help. Multiple files can be selected in the
+then an input field label for help. Multiple files can be selected in the
 file-chooser using Ctrl-Click or Shift-Click. Fields can be reset to
 their default values using the Reset button. Click OK to execute
 readCounts.
@@ -30,30 +30,34 @@ Additional GUI option tabs are documented below.
 
 SNVs, -s SNVS, --snvs=SNVS
 
-> Single-nucleotide-polymophisms (SNVs). Tabular and VCF format SNVs
-> are supported. Multiple files are specified inside quotes, separated
-> by spaces, and by using file globbing. See [Input
+> Single-nucleotide-variants (SNVs). Tabular and VCF format SNVs
+> are supported. Multiple SNV files can be selected from the chooser in the graphical user interface, and on the command-line specified inside quotes, separated
+> by spaces, or by using file globbing. See [Input
 > Files](InputFiles.md) for more information. Required.
 
 Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
 > Read alignments files in indexed BAM format, with extension
 > `.bam`. BAM index with extension `.bam.bai` must be located in the
-> same directory. Multiple files are specified inside quotes,
-> separated by spaces, and by using file globbing. See [Input
+> same directory. Multiple BAM files can be selected from the chooser in the graphical user interface, and on the command-line specified inside quotes,
+> separated by spaces, or by using file globbing. See [Input
 > Files](InputFiles.md) for more information. Required.
+
+Alignment Filter, -f FILTER, --alignmentfilter=FILTER
+
+> Alignment filtering strategy. See [Read Filtering](Filtering.md) for more details. Default: Basic.
 
 Output Folder, -o OUTPUT, --output=OUTPUT
 
-> Output file. Will be created if necessary. See [Output Files](OutputFiles.md) for more information on output files. Required. 
+> Output file. Will be created if necessary. See [Output Files](OutputFiles.md) for more information on output files. Optional. 
 
 --version
 
->Show program's version number and exit. 
+>Show version number and exit. 
 
 -h, --help
 
->Show program help and exit.
+>Show command-help and exit.
 
 ### Advanced
 
@@ -74,12 +78,7 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
 
 All Fields, -F, --full
 
-> Output extra diagnostic read count fields.Default=False.
-
-
-Filter Alignments, -f, --alignmentfilter
-
-> (Turn off) alignment filtering by length, edits, etc.
+> Output extra diagnostic read count fields. Default: Essential fields only. 
 
 Unique Reads, -U, --uniquereads   
 
@@ -87,7 +86,11 @@ Unique Reads, -U, --uniquereads
 
 Threads/BAM, -t TPB, --threadsperbam=TPB                   
 
-> Worker threads per alignment file. Indicate no threading with 0. Default=1.
+> Each worker thread is allocated one or more BAM files. Indicate no threading with 0. Default: 0.
+
+Read Group, -G READGROUP, --readgroup=READGROUP
+
+> Additional read grouping based on read name/identifier strings or BAM-file RG. [Read Grouping](Grouping.md) for more details. Default: None, group reads by BAM-file only.
 
 Quiet, -q, --quiet
 
