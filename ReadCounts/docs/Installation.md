@@ -64,7 +64,7 @@ ReadCounts is available as a self-contained binary package for 64-bit Linux and 
     ```
     setenv PYTHON3 <path to python3>
     ```
-4. See the graphical user iterface.
+4. See the graphical user iterface (if wxPython is installed).
     ```
     bin/readCounts
     ```
