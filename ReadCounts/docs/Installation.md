@@ -1,10 +1,21 @@
 
-# readCounts Installation #
+# ReadCounts Installation #
 
-readCounts is currently available only as a Python source.
+ReadCounts is available as a self-contained binary package for 64-bit Linux and MacOS systems and as Python source. The pysam package, plus a variety of common third-party python packages including numpy and scipy must be installed to use ReadCounts in Python source form. See the install instructions for more details. The self-contained binary package is appropriate for most Linux and MacOS users.
 
+## Binary Package Installation ##
 
-## Python 2.7 readCounts ##
+### Linux ###
+    ```
+    tar xzf ReadCounts-*.Linux-x86_64.tgz
+    ```
+
+### MacOS ###
+    ```
+    tar xzf ReadCounts-*.Darwin-x86_64.tgz
+    ```
+
+## Python Source Installation ##
 
 1. Unpack the downloaded release:
 
