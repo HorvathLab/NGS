@@ -16,7 +16,7 @@ ReadCounts tabulates the number of reads providing evidence for variant and refe
 
 ## Graphical User Interface
 
-<img src="readCounts.png" alt="ReadCounts" width="200"/>
+<img src="readCounts.png" alt="ReadCounts"/>
 
 Click the help icon (question mark) at the top right of the GUI and
 then an input field label for help. Multiple files can be selected in the
@@ -60,7 +60,7 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 >Show command-help and exit.
 
 ### Advanced
-<img src="readCounts-advanced.png" alt="Advanced" width="200"/>
+<img src="readCounts-advanced.png" alt="Advanced"/>
 
 Min. Reads, -m MINREADS, --minreads=MINREADS
 
