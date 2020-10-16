@@ -80,4 +80,4 @@ ReadCounts is available as a self-contained binary package for 64-bit Linux and 
 
 ## See Also
 
-[ReadCounts Home](..), [Input Files](InputFiles.md), [Output Files](OutputFiles.md)
+[ReadCounts Home](..), [Usage](ReadCounts.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md)
