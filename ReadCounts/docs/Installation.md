@@ -53,10 +53,8 @@ ReadCounts is available as a self-contained binary package for 64-bit Linux and 
     ```
 2. Install the necessary, and optional (if desired), Python 3 packages:
     ```
-    cd src
-    pip3 install -r requirements.txt 
-    pip3 install -r optional_requirements.txt
-    cd ..
+    pip3 install -r src/requirements.txt 
+    pip3 install -r src/optional_requirements.txt
     ```
 3. If `python3` is not on your path or is called something else
     ```
