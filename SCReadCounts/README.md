@@ -26,7 +26,7 @@ Arguments (required):
  * -o OUTPUT, --output=_string_:\<filename\>
     * Output file. Requires extension-specific filenames. Accecptable extensions: csv, tsv, txt, xls, xlsx
       eg: output.csv
-      Note: All the 3 outputs will have this extension.
+    * Note: All the 3 outputs will have this extension.
 
 The remaining options provide detailed settings to better narrow the results and provide desired output formats.
 Arguments (optional):
