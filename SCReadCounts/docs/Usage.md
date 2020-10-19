@@ -1,18 +1,20 @@
-# readCounts Usage
+# SCReadCounts Usage
 
 ## Synopsis
 
 ### Graphical User Interface:
 
-    readCounts.py
+    scReadCounts
 
 ### Command-line:
 
-    readCounts.py [options]
+    scReadCounts [options]
 
 ## Description
 
-readCounts a computational framework for assessing the read counts bearing particular nucleotides at genomic positions of interest, following a statistical test to recognize the allelic read-count patterns that show little deviation from expected behavior.
+ScReadCounts is a computational tool for a cell-level assessment of the read counts bearing a particular nucleotide at genomic positions of interest from single cell RNA sequencing (scRNA-seq) data.
+
+Currently, scReadCounts has two programs. The program readCounts requires two input files: a pooled single cell alignment and a list of genomic positions of interest. readCounts utilizes the barcode information from the pooled single cell alignments and outputs the variant and reference read counts (n_var and n_ref, respectively), for each barcode (cell), in a comma separated text file. This file is then used as an input for the second program - readCountsMatrix - which, upon providing an output directory, generates two outputs: (1) a cell-position matrix with n_var and n_ref estimates, and (2) a cell-position matrix with the expressed variant allele fraction (VAF_RNA = n_var / (n_var + n_ref)) estimated at a user-defined threshold of minimum required sequencing reads (minR). readCountsMatrix is very fast and can be re-run multiple times at various minR thersholds.
 
 ## Graphical User Interface
 
@@ -30,22 +32,17 @@ Additional GUI option tabs are documented below.
 
 SNVs, -s SNVS, --snvs=SNVS
 
-> Single-nucleotide-polymophisms (SNVs). Tabular and VCF format SNVs
-> are supported. Multiple files are specified inside quotes, separated
-> by spaces, and by using file globbing. See [Input
-> Files](InputFiles.md) for more information. Required.
+> Single-nucleotide-polymophisms (SNVs). Tabular and VCF format SNVs are supported. Multiple files are specified inside quotes, separated by spaces, and by using file globbing. The list of genomic positions of interest is accepted in a tab-separated format with no header, and contains the chromosome, position, reference and variant nucleotide. Examples of genomic positions of interest include single nucleotide variant (SNV) sites, somatic mutations, or RNA-editing loci. List of genomic positions of interest can be generated from a variant call on the corresponding datasets, or pre-defined from existing sources, such as COSMIC or dbSNP. See [Input Files](InputFiles.md) for more information. Required.
 
 Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
-> Read alignments files in indexed BAM format, with extension
-> `.bam`. BAM index with extension `.bam.bai` must be located in the
-> same directory. Multiple files are specified inside quotes,
-> separated by spaces, and by using file globbing. See [Input
-> Files](InputFiles.md) for more information. Required.
+> Read alignments files in indexed BAM format, with extension `.bam`. BAM index with extension `.bam.bai` must be located in the same directory. Multiple files are specified inside quotes, separated by spaces, and by using file globbing. scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment. See [Input Files](InputFiles.md) for more information. Required.
+
+scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
 
 Output Folder, -o OUTPUT, --output=OUTPUT
 
-> Output file. Will be created if necessary. See [Output Files](OutputFiles.md) for more information on output files. Required. 
+> Output file. Requires extension-specific filenames. Accecptable extensions: csv, tsv, txt, xls, xlsx eg: output.csv. Note: All the 3 outputs will have this extension. See [Output Files](OutputFiles.md) for more information on output files. Required.
 
 --version
 
@@ -53,7 +50,7 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 
 -h, --help
 
->Show program help and exit.
+> Show program help and exit.
 
 ### Advanced
 
@@ -61,7 +58,7 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 
 Min. Reads, -m MINREADS, --minreads=MINREADS
 
-> Minimum number of good reads at each SNV locus per alignment file. Default=10.   
+> Minimum number of good reads at each SNV locus per alignment file. Default=3.   
 
 Max. Reads, -m MAXREADS, --maxreads=MAXREADS
 
@@ -69,27 +66,29 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
                         most this many good reads at SNV locus per alignment
                         file. Values greater than 1 indicate absolute read
                         counts, otherwise the value indicates the coverage
-                        distribution percentile. Default=No maximum.
+                        distribution percentile. Default=No maximum. This affects only VAF calculations.
+                        
+Filter Alignments, -f FILTER, --alignmentfilter
 
+> Alignment filtering strategy. Default: Basic.
 
 All Fields, -F, --full
 
 > Output extra diagnostic read count fields.Default=False.
 
+Read Group, -G READGROUP, --readgroup
 
-Filter Alignments, -f, --alignmentfilter
-
-> (Turn off) alignment filtering by length, edits, etc.
+> Additional read grouping based on read name/identifier strings or BAM-file RG. Default: UMITools cell barcodes ("UMITools").
 
 Unique Reads, -U, --uniquereads   
 
-> Consider only distinct reads.  
+> Consider only distinct reads.
 
 Threads/BAM, -t TPB, --threadsperbam=TPB                   
 
-> Worker threads per alignment file. Indicate no threading with 0. Default=1.
+> Worker threads per alignment file. Default=0; indicates no threading.
 
 Quiet, -q, --quiet
 
-> Do not show readCounts progress.
+> Quiet. Default=verbose.
 
