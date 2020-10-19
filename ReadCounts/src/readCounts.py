@@ -29,7 +29,7 @@ from chromreg import ChromLabelRegistry
 from operator import itemgetter
 
 from release import RELEASE, VERSION
-VERSION = "2.2.0 (%s:%s)"%(RELEASE,VERSION)
+VERSION = "2.3.0 (%s:%s)"%(RELEASE,VERSION)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
