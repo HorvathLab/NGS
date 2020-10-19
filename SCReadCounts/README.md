@@ -44,16 +44,16 @@ Arguments (optional):
 * -t TPB, --threadsperbam=_int_:\<TPB\>
   * Worker threads per alignment file. Indicate no threading with 0. Default=0.
 
-* -F, --full
+* -F, --full _flag_
   * Output extra diagnostic read count fields. Default=False.
 
-* -U, --uniquereads
+* -U, --uniquereads _flag_
   * Consider only distinct reads.
 
-* -q, --quiet
+* -q, --quiet _flag_
   * Quiet.
 
-* -d, --debug
+* -d, --debug _flag_
   * Debug.
   
 ## Download & Installation ##
@@ -62,7 +62,7 @@ Arguments (optional):
 $ git clone https://github.com/HorvathLab/NGS.git
 ```
 #### Download from Nathan Edwards Lab: ####
-[Nathan Edwards Lab](http://edwardslab.bmcb.georgetown.edu/software/downloads/HorvathLab/)
+
 
 
 
