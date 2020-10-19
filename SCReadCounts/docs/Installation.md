@@ -1,67 +1,86 @@
 
-# readCounts Installation #
+# SCReadCounts Installation #
 
-readCounts is currently available only as a Python source.
+Similarly to readCounts, SCReadCounts is available as a self-contained binary package for 64-bit Linux and MacOS systems and as Python source. The self-contained binary package is appropriate for most Linux and MacOS users. The pysam package, plus a variety of common third-party python packages including numpy and scipy must be installed to use SCReadCounts in Python source form. See the install instructions below for more details. 
 
 
-## Python 2.7 readCounts ##
+## Binary Package Installation ##
 
-1. Unpack the downloaded release:
+### Linux ###
 
+1. Unpack the download.
     ```
-    tar xzf readCounts-*.tgz
-    ln -s readCounts-* readCounts
+    tar xzf SCReadCounts-1.0.0.Linux-x86_64.tgz
+    cd SCReadCounts-1.0.0.Linux-x86_64
     ```
-
-2. Locate your Python binary and ensure it is version 2.7:
-
+2. See the graphical user interface.
     ```
-    python --version
-
-    /path/to/python2.7 --version 
-    ``` 
-
-   We refer to the Python binary as `python` below, please substitute
-   whatever path and version numbers are required to run Python 2.7 on
-   your system. We recommend the Enthought Python Distribution (EPD) which
-   pre-installs all but the pysam third-party dependencies needed by readCounts.
-
-3. Ensure the necessary third-party Python modules are installed. pysam version >= 0.8.1 is required. 
-
+    bin/scReadCounts
     ```
-    pysam, numpy, scipy
+3. Command-line help.
+    ```
+    bin/scReadCounts -h
+    ```
+4. Run the examples.
+    ```
+    cd data
+    ./example.sh
     ```
 
-   For the configuration and execution GUI (optional):
+### MacOS ###
+1. Unpack the download.
+    ```
+    % tar xzf SCReadCounts-1.0.0.Darwin-x86_64.tgz
+    % cd SCReadCounts-1.0.0.Darwin-x86_64.tgz
+    ```
+2. See the graphical user interface.
+    ```
+    % bin/scReadCounts
+    ```
+3. Command-line help.
+    ```
+    % bin/scReadCounts -h
+    ```
+4. Run the examples.
+    ```
+    % cd data
+    % ./example.sh
+    ```
     
+## Python Source Installation ##
+
+1. Unpack the downloaded:
     ```
-    wx
+    tar xzf SCReadCounts-1.0.0.Python-3.7.tgz
+    cd SCReadCounts-1.0.0.Python-3.7.tgz
+    ```
+2. Install the necessary, and optional (if desired), Python 3 packages:
+    ```
+    pip3 install -r src/requirements.txt 
+    pip3 install -r src/optional_requirements.txt
+    ```
+3. If `python3` is not on your path or is called something else
+    ```
+    export PYTHON3=<path to python3>
+    ```
+    or
+    ```
+    setenv PYTHON3 <path to python3>
+    ```
+4. See the graphical user interface (if wxPython is installed).
+    ```
+    bin/scReadCounts
+    ```
+5. Command-line help.
+    ```
+    bin/scReadCounts -h
+    ```
+6. Run the examples.
+    ```
+    cd data
+    ./example.sh
     ```
 
-   For Excel format SNV input files (optional):
+## See Also
 
-    ```
-    xlrd, openpyxl
-    ```
-
-   The existence of required modules can be tested as follows (demonstrated here for `scipy`):
-
-    ```
-    python2.7 -c "from scipy import __version__; print __version__"
-    ```
-
-4. The readCounts program is located in the src subdirectory:
-
-    ```
-    python ./readCounts/src/readCounts.py -h
-    
-    python ./readCounts/src/readCounts.py
-    ```
-
-5. Test the installation using the provided example data:
-
-    ```
-    cd readCounts
-    python ./src/readCounts.py -r "data/example-*.bam" -s "data/example-SNV.tsv"
-    -o output.txt
-    ```
+[SCReadCounts Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md)
