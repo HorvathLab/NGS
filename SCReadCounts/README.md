@@ -24,7 +24,7 @@ Arguments (required):
 
  
  * -o OUTPUT, --output=_string_:\<filename\>
-    * Output file.
+    * Output file. Requires extension-specific filenames. Accecptable extensions: tsv, txt, 
 
 The remaining options provide detailed settings to better narrow the results and provide desired output formats.
 Arguments (optional):
@@ -34,15 +34,17 @@ Arguments (optional):
 
 * -m MINREADS, --minreads=_int_:\<reads\>
   * Minimum number of good reads at SNV locus per alignment file. Default=3.
+  * This affects only VAF calculations.
 
 * -M MAXREADS, --maxreads=_int_:\<reads\>
   * Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.
+  * This affects only VAF calculations.
 
 * -G READGROUP, --readgroup=_string_:\<READGROUP\>
   * Additional read grouping based on read name/identifier strings or BAM-file RG. Default: UMITools cell barcodes ("UMITools").
 
 * -t TPB, --threadsperbam=_int_:\<TPB\>
-  * Worker threads per alignment file. Indicate no threading with 0. Default=0.
+  * Worker threads per alignment file. Default=0; indicates no threading.
 
 * -F, --full _flag_
   * Output extra diagnostic read count fields. Default=False.
@@ -51,7 +53,8 @@ Arguments (optional):
   * Consider only distinct reads.
 
 * -q, --quiet _flag_
-  * Quiet.
+  * Quiet. Default=verbose.
+  
 
 * -d, --debug _flag_
   * Debug.
