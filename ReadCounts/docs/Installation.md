@@ -11,7 +11,7 @@ ReadCounts is available as a self-contained binary package for 64-bit Linux and 
     tar xzf ReadCounts-*.Linux-x86_64.tgz
     cd ReadCounts-*.Linux-x86_64
     ```
-2. See the graphical user iterface.
+2. See the graphical user interface.
     ```
     bin/readCounts
     ```
@@ -30,7 +30,7 @@ ReadCounts is available as a self-contained binary package for 64-bit Linux and 
     % tar xzf ReadCounts-*.Darwin-x86_64.tgz
     % cd ReadCounts-*.Darwin-x86_64
     ```
-2. See the graphical user iterface.
+2. See the graphical user interface.
     ```
     % bin/readCounts
     ```
@@ -64,7 +64,7 @@ ReadCounts is available as a self-contained binary package for 64-bit Linux and 
     ```
     setenv PYTHON3 <path to python3>
     ```
-4. See the graphical user iterface (if wxPython is installed).
+4. See the graphical user interface (if wxPython is installed).
     ```
     bin/readCounts
     ```
