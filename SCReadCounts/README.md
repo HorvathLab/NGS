@@ -32,16 +32,16 @@ Arguments (optional):
 * -f FILTER, --alignmentfilter=_string_:\<filter\_type\>
   * Alignment filtering strategy. Default: Basic.
 
-* -m MINREADS, --minreads=MINREADS
+* -m MINREADS, --minreads=_int_:\<reads\>
   * Minimum number of good reads at SNV locus per alignment file. Default=3.
 
-* -M MAXREADS, --maxreads=MAXREADS
+* -M MAXREADS, --maxreads=_int_:\<reads\>
   * Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.
 
-* -G READGROUP, --readgroup=READGROUP
+* -G READGROUP, --readgroup=_string_:\<READGROUP\>
   * Additional read grouping based on read name/identifier strings or BAM-file RG. Default: UMITools cell barcodes ("UMITools").
 
-* -t TPB, --threadsperbam=TPB
+* -t TPB, --threadsperbam=_int_:\<TPB\>
   * Worker threads per alignment file. Indicate no threading with 0. Default=0.
 
 * -F, --full
