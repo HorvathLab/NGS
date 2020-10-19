@@ -187,7 +187,7 @@ progress.done()
 
 allrg = sorted(allrg)
 chromsortkey = lambda c: (1e+20,c) if isinstance(c,str) else (c,"")
-allloci = sorted(vafmatrix,key=chromsortkey)
+allloci = sorted(vafmatrix,key=lambda t: (chromsortkey(t[0]),t[1]))
 outheaders = [ "SNV" ] + allrg
 emptysym = None
 

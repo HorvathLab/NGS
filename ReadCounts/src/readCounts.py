@@ -84,10 +84,8 @@ advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=min
                     help="Minimum number of good reads at SNV locus per alignment file. Default=10.", name="Min. Reads")
 advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=maxreads_default, remember=True,
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
-advanced.add_option("-F", "--full", action="store_true", dest="full", default=False, remember=True,
-                    help="Output extra diagnostic read count fields. Default=False.", name="All Fields")
-advanced.add_option("-U", "--uniquereads", action="store_true", dest="unique", default=False, remember=True,
-                    help="Consider only distinct reads.", name="Unique Reads")
+advanced.add_option("-E","--extended",type="multichoice",dest="extended",default=None, remember=True, 
+		    help="Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.", name="Extended Output", multichoices=["Genotype likelihood","Read filtering statistics"])
 advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb_default, remember=True,
                     help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=None, remember=True,
@@ -95,8 +93,8 @@ advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", defaul
                     help="Additional read grouping based on read name/identifier strings or BAM-file RG. Default: None, group reads by BAM-file only.")
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
-advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
-                    help="Debug.", name="Debug")
+# advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
+#                     help="Debug.", name="Debug")
 parser.add_option("-o", "--output", type="savefile", dest="output", remember=True,
                   help="Output file. Leave empty for console ouptut.", default="",
                   name="Output File", filetypes=[("All output formats", "*.xlsx;*.xls;*.csv;*.tsv;*.txt"),
@@ -125,11 +123,14 @@ while True:
 
     break
 
+opt.debug = False
 readfilter = filterFactory.get(opt.filter)
 if opt.readgroup:
     readgroup = groupFactory.get(opt.readgroup)
 else:
     readgroup = None
+if opt.extended and isinstance(opt.extended,str):
+    opt.extended = [ e.strip() for e in opt.extended.split(',') ]
 
 progress = None
 if not opt.output:
@@ -150,16 +151,12 @@ if opt.maxreads != maxreads_default:
     args.extend(["-M",str(opt.maxreads)])
 if readgroup != None:
     args.extend(["-G",doublequote(opt.readgroup)])
-if opt.unique:
-    args.extend(["-U"])
 if opt.tpb != tpb_default:
     args.extend(["-t",str(opt.tpb)])
-if opt.full:
-    args.extend(["-F"])
+if opt.extended:
+    args.extend(["-E",doublequote(",".join(opt.extended))])
 if opt.quiet:
     args.extend(["-q"])
-if opt.debug:
-    args.extend(["-d"])
 if opt.output:
     args.extend(["-o",doublequote(opt.output)])
 
@@ -175,12 +172,10 @@ readCounts Options:
   Advanced:
     Min. Reads (-m)           %s
     Max. Reads (-M):          %s
-    Unique Reads (-U):        %s
     Read Groups (-G):         %s%s
     Threads per BAM (-t):     %s
-    Full Headers (-F):        %s
+    Extended Output (-E):     %s
     Quiet (-q):               %s
-    Debug (-d):               %s
 
 Command-Line: readCounts %s
 """%(", ".join(opt.snvs),
@@ -190,13 +185,11 @@ Command-Line: readCounts %s
      opt.output,
      opt.minreads,
      opt.maxreads,
-     opt.unique,
      None if readgroup == None else opt.readgroup,
      "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
      opt.tpb,
-     opt.full,
+     ", ".join(opt.extended) if opt.extended else "None",
      opt.quiet,
-     opt.debug,
      cmdargs)
 
 progress.message(execution_log)
@@ -212,8 +205,6 @@ CHROM POS REF ALT
 """.split() if _f]
 
 snvdata = {}
-# extrasnvheaders = []
-# usedsnvheaders = set()
 snvchroms = defaultdict(set)
 for filename in opt.snvs:
 
@@ -242,8 +233,6 @@ for filename in opt.snvs:
     for h in snvs.headers():
         if h in snvheaders:
             continue
-        # if h not in extrasnvheaders:
-        #     extrasnvheaders.append(h)
 
     for r in snvs:
         try:
@@ -291,7 +280,6 @@ chrreg.determine_chrom_order()
 # chrreg.default_chrom_order()
 
 snvdata = sorted(list(snvdata1.values()),key=lambda s: (chrreg.chrom_order(s[0]),s[1],s[2],s[3]))
-# extrasnvheaders = filter(lambda h: h in usedsnvheaders, extrasnvheaders)
 progress.message("SNVs: %d" % len(snvdata))
 
 outheaders = snvheaders + [_f for _f in """
@@ -303,18 +291,15 @@ SNVCount
 RefCount
 GoodReads
 %BadRead
-R
+VAF
+""".split() if _f]
+
+glheaders = [_f for _f in """
 HomoVarSc
 HetSc
 HomoRefSc
 VarDomSc
 RefDomSc
-""".split() if _f]
-
-debugging = [_f for _f in """
-OtherCountForward
-OtherCountReverse
-OtherCount
 NotHomoVarpV
 NotHomoRefpV
 NotHetpV
@@ -325,34 +310,36 @@ NotHomoRefFDR
 NotHetFDR
 VarDomFDR
 RefDomFDR
-RemovedDuplicateReads
+""".split() if _f]
+
+outheaders.extend(glheaders)
+
+debugging = [_f for _f in """
+OtherCountForward
+OtherCountReverse
+OtherCount
 FilteredSNVLociReads
 SNVLociReads
 """.split() if _f]
-debugging.extend(sorted(BadRead.allheaders))
+debugging.extend(sorted(filter(lambda h: h != "BadRead",BadRead.allheaders)))
 
 outheaders.extend(debugging)
 
 pos = outheaders.index("SNVCountForward")
 outheaders.insert(pos, 'ReadGroup')
-# for h in reversed(extrasnvheaders):
-#    outheaders.insert(pos,h)
 
 outheaders1 = copy.copy(outheaders)
-if not opt.full:
+if opt.extended == None or 'Read filtering statistics' not in opt.extended:
     for dh in debugging:
+        if dh in outheaders1:
+            outheaders1.remove(dh)
+if opt.extended == None or 'Genotype likelihood' not in opt.extended:
+    for dh in glheaders:
         if dh in outheaders1:
             outheaders1.remove(dh)
 
 emptysym = None
 outrows = []
-
-# if opt.debug:
-#     import random
-#     random.seed(1234567)
-#     snvdata = sorted(random.sample(snvdata,10000))
-#     snvdata = sorted(sorted(random.sample(snvdata,200))*5)
-#     snvdata = sorted(random.sample(snvdata,200))*5
 
 if opt.tpb == 0:
     pileups = SerialPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup).iterator()
@@ -363,13 +350,8 @@ progress.stage("Count reads per SNV", len(snvdata))
 
 totalsnvs = 0
 start = time.time()
-# for i in range(len(snvdata)):
 for snvchr, snvpos, ref, alt, snvextra in snvdata:
     
-##     if opt.debug:
-##         if totalsnvs % 100 == 0 and totalsnvs > 0:
-##             print "SNVs/sec: %.2f"%(float(totalsnvs)/(time.time()-start),)
-
     snvchr1, snvpos1, ref1, alt1, total, reads, badread = next(pileups)
     assert(snvchr == snvchr1 and snvpos == snvpos1)
     
@@ -383,26 +365,6 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
     for al, pos, base, si in reads:
         goodreads[base].append((si, al))
         allsi.add(si)
-        # if not isinstance(si,int):
-        #     goodreads[base].append(((si[0],"Total"),al))
-        #     allsi.add((si[0],"Total"))
-
-    # Deduplicate the reads based on the read sequence or the
-    # start and end of the alignment or ???
-    duplicates_removed = Counter()
-    if opt.unique:
-        for base in goodreads:
-            seen = set()
-            retain = list()
-            for si, al in goodreads[base]:
-                if (si, al.seq) not in seen:
-                    retain.append((si, al))
-                    seen.add((si, al.seq))
-                else:
-                    duplicates_removed[si] += 1
-            goodreads[base] = retain
-
-    # goodreads now contains the relevant read alignments.
 
     totalsnvs += 1
 
@@ -446,7 +408,6 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
                nother,
                -1, -1, -1, -1, -1,
                -1, -1, -1, -1, -1,
-               duplicates_removed[si],
                badread[si, 'Good'],
                total[si]]
 

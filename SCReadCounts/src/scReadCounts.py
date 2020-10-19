@@ -104,10 +104,6 @@ advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=min
                     help="Minimum number of good reads at SNV locus per alignment file. Default=3.", name="Min. Reads")
 advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=maxreads_default, remember=True,
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
-advanced.add_option("-F", "--full", action="store_true", dest="full", default=False, remember=True,
-                    help="Output extra diagnostic read count fields. Default=False.", name="All Fields")
-advanced.add_option("-U", "--uniquereads", action="store_true", dest="unique", default=False, remember=True,
-                    help="Consider only distinct reads.", name="Unique Reads")
 advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb_default, remember=True,
                     help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=readgroup_default, remember=True,
@@ -168,12 +164,8 @@ if opt.maxreads != maxreads_default:
     args.extend(["-M",str(opt.maxreads)])
 if opt.readgroup != readgroup_default:
     args.extend(["-G",doublequote(opt.readgroup if readgropup != None else "")])
-if opt.unique:
-    args.extend(["-U"])
 if opt.tpb != tpb_default:
     args.extend(["-t",str(opt.tpb)])
-if opt.full:
-    args.extend(["-F"])
 if opt.quiet:
     args.extend(["-q"])
 args.extend(["-o",doublequote(opt.output)])
@@ -190,10 +182,8 @@ scReadCounts Options:
   Advanced:
     Min. Reads (-m)           %s (applied only to VAF matrix)
     Max. Reads (-M):          %s
-    Unique Reads (-U):        %s
     Read Groups (-G):         %s%s
     Threads per BAM (-t):     %s
-    Full Headers (-F):        %s
     Quiet (-q):               %s
 
 Command-Line: scReadCounts %s
@@ -204,11 +194,9 @@ Command-Line: scReadCounts %s
      opt.output,
      opt.minreads,
      opt.maxreads,
-     opt.unique,
      None if readgroup == None else opt.readgroup,
      "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
      opt.tpb,
-     opt.full,
      opt.quiet,
      cmdargs)
 
@@ -224,11 +212,7 @@ if opt.maxreads != maxreads_default:
     args.extend(["-M",opt.maxreads])
 if readgroup != None:
     args.extend(["-G",opt.readgroup])
-if opt.unique:
-    args.extend(["-U"])
 args.extend(["-t",opt.tpb])
-if opt.full:
-    args.extend(["-F"])
 if opt.quiet:
     args.extend(["-q"])
 args = [ str(x) for x in args ]

@@ -1,5 +1,5 @@
 
-import sys, os, os.path, textwrap
+import sys, os, os.path, textwrap, hashlib
 from pysamimport import pysam
 import re
 import inspect
@@ -82,6 +82,9 @@ class OrphanRead(BadRead):
 
 class OverlapRead(BadRead):
     header = "OverlapRead"
+
+class DuplicateRead(BadRead):
+    header = "DuplicateRead"
 
 BadRead.allheaders = [cls[1].header for cls in inspect.getmembers(sys.modules[
                          __name__], lambda member: inspect.isclass(member) and issubclass(member, BadRead) and member != BadRead)]
@@ -409,6 +412,22 @@ class OverlapFilter(ReadFilter):
                alignment.query_name in self._seen:
             raise OverlapRead()
         self._seen[alignment.query_name] = True
+        return alignment, query_pos, readbase
+    
+class UniqueReads(ReadFilter):
+
+    def __init__(self, removedups=False):
+        self._remove = removedups
+
+    def pileup_start(self,pileupcolumn):
+        self._seen = set()
+                
+    def extract_base(self, pileupread):
+        alignment, query_pos, readbase = self.extract_base_(pileupread)
+        seqhash = hashlib.md5(alignment.query_sequence).hexdigest().lower()
+        if self._remove and seqhash in self._seen:
+            raise DuplicateRead()
+        self._seen.add(seqhash)
         return alignment, query_pos, readbase
     
 class CompoundMethod(object):
