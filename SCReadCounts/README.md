@@ -10,86 +10,22 @@ appropriate for most Linux users.
 
 Currently, scReadCounts has two programs. The program readCounts requires two input files: a pooled single cell alignment and a list of genomic positions of interest. readCounts utilizes the barcode information from the pooled single cell alignments and outputs the variant and reference read counts (n_var and n_ref, respectively), for each barcode (cell), in a comma separated text file. This file is then used as an input for the second program - readCountsMatrix - which, upon providing an output directory, generates two outputs: (1) a cell-position matrix with n_var and n_ref estimates, and (2) a cell-position matrix with the expressed variant allele fraction (VAF_RNA = n_var / (n_var + n_ref)) estimated at a user-defined threshold of minimum required sequencing reads (minR). readCountsMatrix is very fast and can be re-run multiple times at various minR thersholds.
 
-Arguments (required):
-
-
-* -r ALIGNMENTS, --readalignments= _string:_\<filename\>
-    * Alignment files in indexed BAM format.
-    * scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
-
-
-* -s SNVS, --snvs=_string_:\<filename\>
-  * Single-Nucleotide-Variant files.
-  * The list of genomic positions of interest is accepted in a tab-separated format with no header, and contains the chromosome, position, reference and variant nucleotide. Examples of genomic positions of interest include single nucleotide variant (SNV) sites, somatic mutations, or RNA-editing loci. List of genomic positions of interest can be generated from a variant call on the corresponding datasets, or pre-defined from existing sources, such as COSMIC or dbSNP.
-
- 
- * -o OUTPUT, --output=_string_:\<filename\>
-    * Output file. Requires extension-specific filenames. Accecptable extensions: csv, tsv, txt, xls, xlsx
-      eg: output.csv
-    * Note: All the 3 outputs will have this extension.
-
-The remaining options provide detailed settings to better narrow the results and provide desired output formats.
-Arguments (optional):
-
-* -f FILTER, --alignmentfilter=_string_:\<filter\_type\>
-  * Alignment filtering strategy. Default: Basic.
-
-* -m MINREADS, --minreads=_int_:\<reads\>
-  * Minimum number of good reads at SNV locus per alignment file. Default=3.
-  * This affects only VAF calculations.
-
-* -M MAXREADS, --maxreads=_int_:\<reads\>
-  * Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Value greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.
-  * This affects only VAF calculations.
-
-* -G READGROUP, --readgroup=_string_:\<READGROUP\>
-  * Additional read grouping based on read name/identifier strings or BAM-file RG. Default: UMITools cell barcodes ("UMITools").
-
-* -t TPB, --threadsperbam=_int_:\<TPB\>
-  * Worker threads per alignment file. Default=0; indicates no threading.
-
-* -F, --full _flag_
-  * Output extra diagnostic read count fields. Default=False.
-
-* -U, --uniquereads _flag_
-  * Consider only distinct reads.
-
-* -q, --quiet _flag_
-  * Quiet. Default=verbose.
-  
-
-* -d, --debug _flag_
-  * Debug.
-  
-## Download & Installation ##
-#### Download directly from the git repository: ####
-```
-$ git clone https://github.com/HorvathLab/NGS.git
-```
-#### Download from Nathan Edwards Lab: ####
-
-
-
-
-## Tutorial ##
-#### To get the read counts of RNA seq “singlecell_chr17.bam” regarding the SNV loci in file “singlecell_222_5_chr17.txt” in the single cell setting and save the output in file “singlecell-output.tsv”. ####
-
-### Python ###
-Go to SCReadCounts directory (../NGS/SCReadCounts):
-
-```
-$ python3 src/scReadCounts.py -s data/singlecell_222_5_chr17.txt -r data/singlecell_chr17.bam -o data/singlecell-output.tsv
-```
-To access the VAF matrix.
-```
-$ less data/singlecell-output.vaf.matrix.tsv
-```
-
-## Help ##
-For full documentation see ()
 
 #### To get help on ScReadCount ####
 Go to ScReadCounts directory (../NGS/SCReadCounts):
 ```
 $ python3 src/scReadCounts.py –help
 ```
+
+Setup:
+* [Download](https://github.com/HorvathLab/NGS/releases/tag/SCReadCounts-1.0.0)
+* [Install](docs/Installation.md)
+
+Usage:
+* [SCReadCounts](docs/Usage.md)
+
+File Formats:
+* [Input Files](docs/InputFiles.md)
+* [Output Files](docs/OutputFiles.md)
+
+[Examples](docs/Examples.md)
