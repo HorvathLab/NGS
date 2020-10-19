@@ -24,7 +24,9 @@ Arguments (required):
 
  
  * -o OUTPUT, --output=_string_:\<filename\>
-    * Output file. Requires extension-specific filenames. Accecptable extensions: tsv, txt, 
+    * Output file. Requires extension-specific filenames. Accecptable extensions: csv, tsv, txt, xls, xlsx
+      eg: output.csv
+      Note: All the 3 outputs will have this extension.
 
 The remaining options provide detailed settings to better narrow the results and provide desired output formats.
 Arguments (optional):
@@ -37,7 +39,7 @@ Arguments (optional):
   * This affects only VAF calculations.
 
 * -M MAXREADS, --maxreads=_int_:\<reads\>
-  * Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.
+  * Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Value greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.
   * This affects only VAF calculations.
 
 * -G READGROUP, --readgroup=_string_:\<READGROUP\>
