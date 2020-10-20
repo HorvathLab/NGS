@@ -367,8 +367,8 @@ class EditPositionFilter(ReadFilter):
             raise SNVEdgeDist()
         
         try:
-            edits = re.split(r'(\d+)', al.get_tag('MD'))[1:-1]
-        except:
+            edits = re.split(r'(\d+)', alignment.get_tag('MD'))[1:-1]
+        except KeyError:
             raise NoMDTag()
         reference = False
         for i in range(0, len(edits) - 1, 2):
@@ -416,15 +416,15 @@ class OverlapFilter(ReadFilter):
     
 class UniqueReads(ReadFilter):
 
-    def __init__(self, removedups=False):
-        self._remove = removedups
+    def __init__(self, remove_dups=False):
+        self._remove = remove_dups
 
     def pileup_start(self,pileupcolumn):
         self._seen = set()
                 
     def extract_base(self, pileupread):
         alignment, query_pos, readbase = self.extract_base_(pileupread)
-        seqhash = hashlib.md5(alignment.query_sequence).hexdigest().lower()
+        seqhash = hashlib.md5(alignment.query_sequence.encode('utf8')).hexdigest().lower()
         if self._remove and seqhash in self._seen:
             raise DuplicateRead()
         self._seen.add(seqhash)
