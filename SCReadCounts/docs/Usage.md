@@ -8,7 +8,7 @@
 
 ### Command-line:
 
-    scReadCounts [options]
+    scReadCounts -r <bam_file> -s <snv_list_file> -o <output_file> [options]
 
 ## Description
 
