@@ -28,21 +28,21 @@ readCounts.
 
 Additional GUI option tabs are documented below.
 
-## Options
+## Required Arguments
 
 SNVs, -s SNVS, --snvs=SNVS
 
-> Single-nucleotide-polymophisms (SNVs). Tabular and VCF format SNVs are supported. Multiple files are specified inside quotes, separated by spaces, and by using file globbing. The list of genomic positions of interest is accepted in a tab-separated format with no header, and contains the chromosome, position, reference and variant nucleotide. Examples of genomic positions of interest include single nucleotide variant (SNV) sites, somatic mutations, or RNA-editing loci. List of genomic positions of interest can be generated from a variant call on the corresponding datasets, or pre-defined from existing sources, such as COSMIC or dbSNP. See [Input Files](InputFiles.md) for more information. Required.
+> Single-nucleotide-polymophisms (SNVs). Tabular and VCF format SNVs are supported. Multiple files are specified inside quotes, separated by spaces, and by using file globbing. The list of genomic positions of interest is accepted in a tab-separated format with no header, and contains the chromosome, position, reference and variant nucleotide. Examples of genomic positions of interest include single nucleotide variant (SNV) sites, somatic mutations, or RNA-editing loci. List of genomic positions of interest can be generated from a variant call on the corresponding datasets, or pre-defined from existing sources, such as COSMIC or dbSNP. See [Input Files](InputFiles.md) for more information.
 
 Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
-> Read alignments files in indexed BAM format, with extension `.bam`. BAM index with extension `.bam.bai` must be located in the same directory. Multiple files are specified inside quotes, separated by spaces, and by using file globbing. scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment. See [Input Files](InputFiles.md) for more information. Required.
+> Read alignments files in indexed BAM format, with extension `.bam`. BAM index with extension `.bam.bai` must be located in the same directory. Multiple files are specified inside quotes, separated by spaces, and by using file globbing. scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment. See [Input Files](InputFiles.md) for more information.
 
 scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
 
 Output Folder, -o OUTPUT, --output=OUTPUT
 
-> Output file. Requires extension-specific filenames. Accecptable extensions: csv, tsv, txt, xls, xlsx eg: output.csv. Note: All the 3 outputs will have this extension. See [Output Files](OutputFiles.md) for more information on output files. Required.
+> Output file. Requires extension-specific filenames. Accecptable extensions: csv, tsv, txt, xls, xlsx eg: output.csv. Note: All the 3 outputs will have this extension. See [Output Files](OutputFiles.md) for more information on output files.
 
 --version
 
@@ -52,13 +52,13 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 
 > Show program help and exit.
 
-### Advanced
+### Advanced Options
 
 ![Advanced](readCounts3.jpg)
 
 Min. Reads, -m MINREADS, --minreads=MINREADS
 
-> Minimum number of good reads at each SNV locus per alignment file. Default=3.   
+> Minimum number of good reads at each SNV locus per alignment file. Default=3. This affects only VAF calculations.  
 
 Max. Reads, -m MAXREADS, --maxreads=MAXREADS
 
