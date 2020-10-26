@@ -106,7 +106,6 @@ BasicFilter: skip_duplicate=True skip_secondary=True skip_qcfail=True skip_unmap
 ### MPileup
 
 ```
-
 [MPileup]
 Description: Filter reads in a manner similar to samtools/vcftools/bcftools
              mpileup command-line tool. Filters implement the --ff, -Q, -A,
