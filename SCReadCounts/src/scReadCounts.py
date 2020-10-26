@@ -82,7 +82,7 @@ filterOptions = [t[0] for t in filterFactory.list()]
 groupFactory = ReadGroupFactory()
 groupOptions = [""] + [t[0] for t in groupFactory.list()]
 
-minreads_default = 3
+minreads_default = 5
 maxreads_default = None
 tpb_default = 0
 filter_default = "Basic"
@@ -101,7 +101,7 @@ parser.add_option("-f", "--alignmentfilter", type="choice", dest="filter", defau
                   help="Alignment filtering strategy. Default: Basic.", choices = filterOptions,
                   name="Alignment Filter")
 advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=minreads_default, remember=True,
-                    help="Minimum number of good reads at SNV locus per alignment file. Default=3.", name="Min. Reads")
+                    help="Minimum number of good reads at SNV locus per alignment file. Default=5.", name="Min. Reads")
 advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=maxreads_default, remember=True,
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
 advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb_default, remember=True,
