@@ -1,12 +1,7 @@
-# readCount Output 
-
-readCounts output file are created inside of the directory specified by the user.
-
-## readCounts output file
+# ReadCounts Output 
 
 A tab-separated values file consisting of the computed read-counts. This file contains the read counts
-for each SNV locus in each BAM file and computes the various
-statistical tests below above:
+for each SNV locus in each read group (by default, each BAM file):
 
 CHROM
 > Chromosome identifier
@@ -20,7 +15,7 @@ REF
 ALT
 > Variant allele nucleotide
 
-AlignedReads
+ReadGroup
 > Name of the aligned reads file for the following read counts.
 
 SNPCountForward
@@ -41,8 +36,18 @@ SNPCount
 RefCount
 > Total number of reference reads.
 
-R
+GoodReads
+> Total number of reads considered.
+
+%BadReads
+> Proportion of reads not counted.
+
+VAF
 > Proportion of variant reads.
+
+## Extended Output Columns
+
+### Genotype Likelihood
 
 HomoVarSc
 > Score of locus as homozygous variant.
@@ -88,3 +93,54 @@ VarDomFDR
 
 RefDomFDR
 > Multiple-test corrected FDR significance of increased reference read counts with respect to heterozygous reference and variant null model.
+
+### Read filtering statistics
+
+OtherCountForward
+> Reads with unexpected nucleotides in the forward oriented aligned read.
+OtherCountReverse    
+> Reads with unexpected nucleotides in the reverse oriented aligned read.
+OtherCount 
+> Reads with unexpected nucleotides.
+FilteredSNVLociReads
+> Total number of reads that passed the read-filters.
+SNVLociReads    
+> Total number of reads covering the site.
+Alignment:IsDuplicate
+> Alignment has the duplicate flag. 
+Alignment:IsQCFail      
+> Alignment has the QCFail flag.
+Alignment:IsSecondary   
+> Alignment has the secondary flag.
+Alignment:IsUnmapped    
+> Alignment has the unmapped flag.
+BadCIGAROperation
+> Unexpected CIGAR string operation.
+BaseQualityTooLow
+> Base quality at locus is too low.
+DuplicateRead
+> Duplicate read
+GapInQueryAtSNVLocus
+> Gap in the alignment at the site of interest.
+MappingQualityTooLow
+> Mapping quality too low.
+MultipleAlignments
+> Read aligns to more than one region.
+OrphanRead
+> Read's mate pair is unmapped.
+OverlapRead
+> Paired-end read covers the site of iterest redundantly.
+QueryIndelAtSNVLocus    
+> Indel in the read at the site of interest.
+SNVLocusAtEndOfRead
+> Site of interest is too close to the start or end of the read.
+SubstitutionNearSNVLocus        
+> Site of interest is too close to another substitution. 
+TooManyEdits
+> Read alignment requires too many edits.
+TooManyEditsOtherThanSNV
+> Read alignment requires too many edits other than at the site of interest.
+TooManyQueryGaps
+> Read is aligned using too many gaps. 
+TooShort
+> Read is too short.
