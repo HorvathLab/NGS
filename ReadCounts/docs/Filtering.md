@@ -2,15 +2,15 @@
 
 The aligned reads covering a specific locus may, for a variety of
 reasons, not be a reliable observation of the reference or variant
-alleles at that site. The readCounts suite provides a flexible filtering 
+alleles at that site. The ReadCounts suite provides a flexible filtering 
 system that can be tailored as needed to ensure reliable allele counts.
 
 The available read-filtering strategies are defined in the file
-"filter.ini" in the readCounts distribution. New or modified
+"filter.ini" in the ReadCounts distribution. New or modified
 read-filtering strategies can be created, using the same format in
 a filter.ini in the current working directory. Named filtering
 strategies in the current working directory override those with the
-same name in the readCounts distribution.
+same name in the ReadCounts distribution.
 
 ## Read-Filtering Strategies
 
