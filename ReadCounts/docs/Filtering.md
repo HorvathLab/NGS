@@ -29,7 +29,7 @@ same name in the readCounts distribution.
 ### MPileup
 > Filter reads in a manner similar to samtools/vcftools/bcftools mpileup command-line tool. Filters implement the --ff, -Q, -A, and -x mpileup options.
 
-## Read-Filters
+## Read Filters
 
 ### BasicFilter
 > Parameters: skip_duplicate=True skip_secondary=True skip_qcfail=True skip_unmapped=True
@@ -38,46 +38,57 @@ same name in the readCounts distribution.
 
 ### SNVPileupReadFilter
 > Parameters: minpad=3 minsubstdist=3 maxedits=1 maxsegments=1 minlength=45 maxhits=1 mapq=4
+
 > Filter implementing the original ReadCounts filtering strategy. Deprecated.
 
 ### BaseQualityFilter
 > Parameters: min_base_quality=None
+
 > Minimum required base quality at the specific locus. Default: no minimum base quality. 
 
 ### MappingQualityFilter
 > Parmeters: min_mapping_quality=None
+
 > Minimum required mapping quality at the specific locus. Default: no minimum mapping quality. 
 
 ### ReadLengthFilter
 > Parameters: min_length=None
+
 > Minimum required length for the read. Default: No minimum length.
 
 ### EditsFilter
 > Parameters: max_edits=None
+
 > Maximum number of edits for the alignment. Includes the substitution observed in reads for the variant allele. References the NM tag. Default: No maximum number of edits. 
 
 ### HitsFilter
 > Parameters: max_hits=None
+
 > Maximum number of alignments placements for the read. References the NH tag. Default: No maximum number of hits. 
 
 ### EditPositionFilter
 > Parameters: min_edge_dist=None min_subst_dist=None max_other_edits=None
+
 > Filter reads based on a) the proximity of the site of interest to the beginning or end of the read, b) the proximity of the nearest edit to the site of interest, or c) total number of edits other than at the site of interest. Default: Keep all reads. 
 
 ### SegementsFilter
 > Parameters: max_segments=None
+
 > Maximum number of segments (separated by gaps) in the read alignment. Default: No maximum number of segments. 
 
 ### OverlapFilter
 > Pameters: remove=False
+
 > When a site of interest is covered by both reads of a read-pair, just one is retained. Default: Retain all reads. 
 
 ### OrphanFilter
 > Parameters: remove=False
+
 > When a paired-end read's mate is unmapped, do not count the read. Default: Ratain all reads. 
 
 ### UniqueReads
 > Parameters: remove_dups=False
+
 > Ensure exactly duplicate reads are counted exactly once. Default: Do not remove duplicate reads. 
 
 ## Examples
