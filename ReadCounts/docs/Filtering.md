@@ -1,8 +1,9 @@
-# readCounts Read Filtering
+# ReadCounts Read Filtering
 
 The aligned reads covering a specific locus may, for a variety of
 reasons, not be a reliable observation of the reference or variant
-alleles at that site. The readCounts suite provides a flexible filtering system that can be tailored as needed to ensure reliable allele counts.
+alleles at that site. The readCounts suite provides a flexible filtering 
+system that can be tailored as needed to ensure reliable allele counts.
 
 The available read-filtering strategies are defined in the file
 "filter.ini" in the readCounts distribution. New or modified
@@ -32,6 +33,7 @@ same name in the readCounts distribution.
 
 ### BasicFilter
 > Parameters: skip_duplicate=True skip_secondary=True skip_qcfail=True skip_unmapped=True
+
 > Optionally filter out alignments flagged as SECONDARY, DUPLICATE, UNMAPPED, or QCFAIL, and those with a gap or indel at SNV locus.  
 
 ### SNVPileupReadFilter
