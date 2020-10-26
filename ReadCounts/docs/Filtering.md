@@ -6,9 +6,9 @@ alleles at that site. The ReadCounts suite provides a flexible filtering
 system that can be tailored as needed to ensure reliable allele counts.
 
 The available read-filtering strategies are defined in the file
-"filter.ini" in the ReadCounts distribution. New or modified
+`filter.ini` in the ReadCounts distribution. New or modified
 read-filtering strategies can be created, using the same format in
-a filter.ini in the current working directory. Named filtering
+a `filter.ini` file in the current working directory. Named filtering
 strategies in the current working directory override those with the
 same name in the ReadCounts distribution.
 
