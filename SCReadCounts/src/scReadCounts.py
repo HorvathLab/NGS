@@ -86,7 +86,7 @@ minreads_default = 5
 maxreads_default = None
 tpb_default = 0
 filter_default = "Basic"
-readgroup_default = "UMITools"
+readgroup_default = "UMI-tools"
 
 advanced = OptionGroup(parser, "Advanced")
 parser.add_option("-s", "--snvs", type="files", dest="snvs", default=None,
