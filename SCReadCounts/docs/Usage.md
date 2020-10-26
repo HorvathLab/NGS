@@ -18,7 +18,7 @@ Currently, scReadCounts has two programs. The program readCounts requires two in
 
 ## Graphical User Interface
 
-![Options](readCounts2.jpg)
+<img src="scReadCounts.png" alt="scReadCounts Options"/>
 
 Click the help icon (question mark) at the top right of the GUI and
 then an input field for help. Multiple files can be selected in the
@@ -53,8 +53,7 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 > Show program help and exit.
 
 ### Advanced Options
-
-![Advanced](readCounts3.jpg)
+<img src="scReadCounts-advanced.png" alt="Advanced"/>
 
 Min. Reads, -m MINREADS, --minreads=MINREADS
 
