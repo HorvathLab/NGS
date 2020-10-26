@@ -74,14 +74,9 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
                         counts, otherwise the value indicates the coverage
                         distribution percentile. Default=No maximum.
 
+Extended Output, -E, --extended=EXTENDED
 
-All Fields, -F, --full
-
-> Output extra diagnostic read count fields. Default: Essential fields only. 
-
-Unique Reads, -U, --uniquereads   
-
-> Consider only distinct reads.  
+> Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.
 
 Threads/BAM, -t TPB, --threadsperbam=TPB                   
 

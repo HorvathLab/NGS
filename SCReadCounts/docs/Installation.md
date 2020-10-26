@@ -10,8 +10,8 @@ Similarly to readCounts, SCReadCounts is available as a self-contained binary pa
 
 1. Unpack the download.
     ```
-    tar xzf SCReadCounts-1.0.0.Linux-x86_64.tgz
-    cd SCReadCounts-1.0.0.Linux-x86_64
+    tar xzf SCReadCounts-*.Linux-x86_64.tgz
+    cd SCReadCounts-*.Linux-x86_64
     ```
 2. See the graphical user interface.
     ```
@@ -30,8 +30,8 @@ Similarly to readCounts, SCReadCounts is available as a self-contained binary pa
 ### MacOS ###
 1. Unpack the download.
     ```
-    % tar xzf SCReadCounts-1.0.0.Darwin-x86_64.tgz
-    % cd SCReadCounts-1.0.0.Darwin-x86_64.tgz
+    % tar xzf SCReadCounts-*.Darwin-x86_64.tgz
+    % cd SCReadCounts-*.Darwin-x86_64.tgz
     ```
 2. See the graphical user interface.
     ```
@@ -51,8 +51,8 @@ Similarly to readCounts, SCReadCounts is available as a self-contained binary pa
 
 1. Unpack the downloaded:
     ```
-    tar xzf SCReadCounts-1.0.0.Python-3.7.tgz
-    cd SCReadCounts-1.0.0.Python-3.7.tgz
+    tar xzf SCReadCounts-*.Python-3.7.tgz
+    cd SCReadCounts-*.Python-3.7.tgz
     ```
 2. Install the necessary, and optional (if desired), Python 3 packages:
     ```
