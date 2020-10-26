@@ -16,7 +16,7 @@ ReadCounts tabulates the number of reads providing evidence for variant and refe
 
 ## Graphical User Interface
 
-<img src="readCounts.png" alt="ReadCounts"/>
+<img src="readCounts.png" alt="readCounts Options"/>
 
 Click the help icon (question mark) at the top right of the GUI and
 then an input field label for help. Multiple files can be selected in the
