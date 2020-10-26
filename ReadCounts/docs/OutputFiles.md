@@ -98,49 +98,72 @@ RefDomFDR
 
 OtherCountForward
 > Reads with unexpected nucleotides in the forward oriented aligned read.
+
 OtherCountReverse    
 > Reads with unexpected nucleotides in the reverse oriented aligned read.
+
 OtherCount 
 > Reads with unexpected nucleotides.
+
 FilteredSNVLociReads
 > Total number of reads that passed the read-filters.
+
 SNVLociReads    
 > Total number of reads covering the site.
+
 Alignment:IsDuplicate
 > Alignment has the duplicate flag. 
+
 Alignment:IsQCFail      
 > Alignment has the QCFail flag.
+
 Alignment:IsSecondary   
 > Alignment has the secondary flag.
+
 Alignment:IsUnmapped    
 > Alignment has the unmapped flag.
+
 BadCIGAROperation
 > Unexpected CIGAR string operation.
+
 BaseQualityTooLow
 > Base quality at locus is too low.
+
 DuplicateRead
-> Duplicate read
+> Duplicate read.
+
 GapInQueryAtSNVLocus
 > Gap in the alignment at the site of interest.
+
 MappingQualityTooLow
 > Mapping quality too low.
+
 MultipleAlignments
 > Read aligns to more than one region.
+
 OrphanRead
 > Read's mate pair is unmapped.
+
 OverlapRead
 > Paired-end read covers the site of iterest redundantly.
+
 QueryIndelAtSNVLocus    
 > Indel in the read at the site of interest.
+
 SNVLocusAtEndOfRead
 > Site of interest is too close to the start or end of the read.
+
 SubstitutionNearSNVLocus        
 > Site of interest is too close to another substitution. 
+
 TooManyEdits
 > Read alignment requires too many edits.
+
 TooManyEditsOtherThanSNV
 > Read alignment requires too many edits other than at the site of interest.
+
 TooManyQueryGaps
 > Read is aligned using too many gaps. 
+
 TooShort
 > Read is too short.
