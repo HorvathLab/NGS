@@ -42,6 +42,7 @@ if [ "$OS" = "Darwin" ]; then
   PYTHON3=python3
   PYINST="pyinstaller -w"
   MD5SUM="md5 -r"
+  XX="macOS-$AR"
 else
   PYTHON3=apython3
   PYINST=./venv/bin/pyinstaller
