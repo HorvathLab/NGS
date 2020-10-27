@@ -8,7 +8,7 @@
 
 ### Command-line:
 
-    readCounts [options]
+    readCounts -r <bam_file> -s <snv_list_file> [options]
 
 ## Description
 
