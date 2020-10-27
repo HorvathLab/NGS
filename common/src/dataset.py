@@ -454,6 +454,10 @@ class TXTFileTable(FileTable):
             self.comment = kw['comment']
             del kw['comment']
         self.comment = re.compile(self.comment)
+        self.outputheaders = False
+        if 'outputheaders' in kw:
+            self.outputheaders = kw['outputheaders']
+            del kw['outputheaders']
         FileTable.__init__(self, *args, **kw)
 
     def rows(self):
@@ -471,6 +475,8 @@ class TXTFileTable(FileTable):
         delim = " "
         if self.delimeter != None:
             delim = self.delimeter
+        if self.outputheaders:
+            print(delim.join(self.headers_), file=wh)
         for r in rows:
             print(delim.join(map(str, list(map(r.get, self.headers_)))), file=wh)
         wh.close()

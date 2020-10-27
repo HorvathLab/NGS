@@ -163,17 +163,17 @@ for filename in opt.counts:
 
     for r in counts:
         try:
-             chr = int(r[headers[0]].strip())
+            chr = str(int(float(r[headers[0]])))
         except ValueError:
-             chr = r[headers[0]].strip()
-        locus = int(r[headers[1]].strip())
+            chr = r[headers[0]].strip()
+        locus = int(float(r[headers[1]]))
         ref = r[headers[2]].strip()
         alt = r[headers[3]].strip()
         snvkey = (filename, chr, locus, ref, alt)
         rg=r[headers[4]].strip()
-        nref = int(r[headers[5]].strip())
-        nsnv = int(r[headers[6]].strip())
-        nall = int(r[headers[7]].strip())
+        nref = int(float(r[headers[5]]))
+        nsnv = int(float(r[headers[6]]))
+        nall = int(float(r[headers[7]]))
         allrg.add(rg)
         if opt.matrix in ("Ref:Var",) or nall >= opt.minreads:
             if (nref+nsnv) == 0:
@@ -206,11 +206,11 @@ if opt.output:
         output = XLSXFileTable(
             filename=filename, headers=outheaders, sheet='Results')
     elif extn == 'txt':
-        output = TXTFileTable(filename=filename, headers=outheaders)
+        output = TXTFileTable(filename=filename, headers=outheaders, outputheaders=True)
     else:
         raise RuntimeError("Unexpected output file extension: %s" % filename)
 else:
-    output = TXTFileTable(filename=sys.stdout, headers=outheaders)
+    output = TXTFileTable(filename=sys.stdout, headers=outheaders, outputheaders=True)
     emptysym = "-"
 
 outrows = []
