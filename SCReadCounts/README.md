@@ -12,7 +12,7 @@ Currently, scReadCounts has two programs. The program readCounts requires two in
 
 
 Setup:
-* [Download](https://github.com/HorvathLab/NGS/releases/tag/SCReadCounts-1.1.0)
+* [Download](https://github.com/HorvathLab/NGS/releases/tag/SCReadCounts-1.1.1)
 * [Install](docs/Installation.md)
 
 Usage:
