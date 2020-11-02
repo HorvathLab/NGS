@@ -27,7 +27,7 @@ from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, Pro
 from chromreg import ChromLabelRegistry
 
 from release import RELEASE, VERSION
-VERSION = "1.0.0 (%s:%s)"%(RELEASE,VERSION)                                                                                 
+VERSION = "1.0.1 (%s:%s)"%(RELEASE,VERSION)                                                                                 
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
@@ -61,9 +61,9 @@ parser.add_option("-c", "--counts", type="files", dest="counts", default=None,
                   help="ReadCounts files. Required.", name="ReadCounts Files",
                   notNone=True, remember=True,
                   filetypes=[("ReadCounts Files", "*.csv;*.tsv;*.xls;*.xlsx;*.txt;")])
-parser.add_option("-M", "--matrix", type="choice", dest="matrix", default="Ref:Var", remember=True,
-                  help="Matrix output format: Ref:Var or VAF. Default: Ref:Var.", name="Matrix",
-                  choices=["Ref:Var","VAF"])
+parser.add_option("-M", "--matrix", type="choice", dest="matrix", default="Ref;Var", remember=True,
+                  help="Matrix output format: Ref;Var, Ref:Var, or VAF. Default: Ref;Var.", name="Matrix",
+                  choices=["Ref;Var","Ref:Var","VAF"])
 parser.add_option("-m", "--minreads", type="int", dest="minreads", default=minreads_default, remember=True,
                   help="Minimum number of good reads at SNV locus. Default=no minimum.", name="Min. Reads")
 parser.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
@@ -89,6 +89,8 @@ matrix = None
 if opt.matrix:
     if opt.matrix == "Ref:Var":
         matrix = (lambda d: "%(Ref)s:%(Var)s"%d)
+    elif opt.matrix == "Ref;Var":
+        matrix = (lambda d: "%(Ref)s;%(Var)s"%d)
     elif opt.matrix == "VAF":
         matrix = (lambda d: "%(VAF)s"%d)
 
@@ -124,7 +126,7 @@ Command-Line: readCountsMatrix %s
 """%(", ".join(opt.counts),
      None if not matrix else opt.matrix,
      opt.minreads,
-     "" if opt.matrix not in ("Ref:Var",) or opt.minreads == 0 else " (ignored)",
+     "" if opt.matrix not in ("Ref:Var","Ref;Var") or opt.minreads == 0 else " (ignored)",
      opt.quiet,
      opt.output,
      cmdargs)
@@ -175,7 +177,7 @@ for filename in opt.counts:
         nsnv = int(float(r[headers[6]]))
         nall = int(float(r[headers[7]]))
         allrg.add(rg)
-        if opt.matrix in ("Ref:Var",) or nall >= opt.minreads:
+        if opt.matrix in ("Ref:Var","Ref;Var") or nall >= opt.minreads:
             if (nref+nsnv) == 0:
                 vaf = "NA"
             else:

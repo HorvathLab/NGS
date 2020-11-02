@@ -48,7 +48,7 @@ from execute import Execute
 execprog = Execute(*scriptdirs,extn=scriptextn)     
 
 from release import RELEASE, VERSION                                                                                        
-VERSION = "1.1.0 (%s:%s)"%(RELEASE,VERSION)
+VERSION = "1.1.1 (%s:%s)"%(RELEASE,VERSION)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
@@ -232,11 +232,11 @@ else:
 
 outbase,extn = opt.output.rsplit('.',1)
 outmatrix1 = outbase + '.cnt.matrix.' + extn
-outmatrix2 = outbase + '.vaf.matrix.' + extn
+outmatrix2 = outbase + '.vaf-m%d.matrix.'%(opt.minreads,) + extn
 
 args = []
 args.extend(["-c",opt.output])
-args.extend(["-M","Ref:Var"])
+args.extend(["-M","Ref;Var"])
 args.extend(["-m",0])
 if opt.quiet:
     args.extend(["-q"])
@@ -246,13 +246,13 @@ args = [ str(x) for x in args ]
 if os.path.exists(outmatrix1):
 
     progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    progress.message("Skipping readCountsMatrix for Ref:Var, output file present.")
+    progress.message("Skipping readCountsMatrix for Ref;Var, output file present.")
     progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
 
 else:
 
     progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    progress.message("Execute readCountsMatrix for Ref:Var matrix...")
+    progress.message("Execute readCountsMatrix for Ref;Var matrix...")
     progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
     execprog.execute("readCountsMatrix",*args)
 

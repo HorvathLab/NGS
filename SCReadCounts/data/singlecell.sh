@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Clean up previous runs...
-rm -f singlecell-output.tsv singlecell-output.cnt.matrix.tsv singlecell-output.vaf.matrix.tsv
+rm -f singlecell-output.tsv singlecell-output.cnt.matrix.tsv singlecell-output.vaf-m*.matrix.tsv
 
 #
 # Equivalent to running these three commands...
