@@ -14,9 +14,9 @@ rm -f singlecell-output.tsv singlecell-output.cnt.matrix.tsv singlecell-output.v
 #
 
 set -x
-../bin/scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 3 -o singlecell-output.tsv
+../bin/scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 3 -o singlecell-output_min3.tsv
 
 # Regenerate only the VAF matrix
 rm -f singlecell-output.vaf.matrix.tsv
-../bin/scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 5 -o singlecell-output.tsv
+../bin/scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 5 -o singlecell-output_min5.tsv
 
