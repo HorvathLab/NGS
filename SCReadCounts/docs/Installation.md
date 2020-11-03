@@ -1,7 +1,7 @@
 
 # SCReadCounts Installation #
 
-Similarly to readCounts, SCReadCounts is available as a self-contained binary package for 64-bit Linux and MacOS systems and as Python source. The self-contained binary package is appropriate for most Linux and MacOS users. The pysam package, plus a variety of common third-party python packages including numpy and scipy must be installed to use SCReadCounts in Python source form. See the install instructions below for more details. 
+SCReadCounts is available as a self-contained binary package for 64-bit Linux systems, as Python source, and MacOS (Darwin). The self-contained binary package is appropriate for most Linux and MacOS users. The pythonic version requires pysam, numpy and scipy along with other packages (See the install instructions for more details). 
 
 
 ## Binary Package Installation ##
