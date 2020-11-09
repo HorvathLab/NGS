@@ -44,7 +44,7 @@ if [ "$OS" = "Darwin" ]; then
   MD5SUM="md5 -r"
   XX="macOS-$AR"
 else
-  PYTHON3=apython3
+  PYTHON3=./venv/bin/python
   PYINST=./venv/bin/pyinstaller
   MD5SUM=md5sum
 fi
@@ -55,9 +55,17 @@ PROGS=`$PYTHON3 $PACKAGE/src/release.py PROGRAMS`
 rm -rf build/$PACKAGE-${VER}.${YY} dist/$PACKAGE-${VER}.${YY}.tgz
 mkdir -p build/$PACKAGE-${VER}.${YY}
 INCLUDES=`$PYTHON3 $PACKAGE/src/release.py INCLUDES`
-for d in src docs data scripts; do
+for d in src scripts; do
  mkdir -p build/$PACKAGE-${VER}.${YY}/$d
  for p in $INCLUDES $PACKAGE; do
+  if [ -d $p/$d ]; then
+    rsync --copy-links -a $p/$d build/$PACKAGE-${VER}.${YY}
+  fi
+ done
+done
+for d in docs data; do
+ mkdir -p build/$PACKAGE-${VER}.${YY}/$d
+ for p in $PACKAGE; do
   if [ -d $p/$d ]; then
     rsync --copy-links -a $p/$d build/$PACKAGE-${VER}.${YY}
   fi
@@ -93,6 +101,7 @@ for p in $PROGS; do
       mkdir -p $PACKAGE/bin/_bin/Contents/MacOS/tk
     else
       rsync -av $PACKAGE/bin/$base/ $PACKAGE/bin/_bin
+      cp ./venv/lib/libstdc++.so.6 $PACKAGE/bin/_bin
     fi
     rm -rf $PACKAGE/bin/$base $PACKAGE/bin/$base.app
     cp common/scripts/wrapper.sh $PACKAGE/bin/$base
@@ -103,9 +112,17 @@ done
 
 mkdir -p build/$PACKAGE-${VER}.${XX}
 
-for d in bin docs data scripts; do
+for d in bin scripts; do
   mkdir -p build/$PACKAGE-${VER}.${XX}/$d
   for p in $INCLUDES $PACKAGE; do
+  if [ -d $p/$d ]; then
+    rsync --copy-links -a $p/$d build/$PACKAGE-${VER}.${XX}
+  fi
+  done
+done
+for d in docs data; do
+  mkdir -p build/$PACKAGE-${VER}.${XX}/$d
+  for p in $PACKAGE; do
   if [ -d $p/$d ]; then
     rsync --copy-links -a $p/$d build/$PACKAGE-${VER}.${XX}
   fi
