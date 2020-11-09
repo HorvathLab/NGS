@@ -99,6 +99,7 @@ for p in $PROGS; do
       rsync -av $PACKAGE/bin/$base.app/ $PACKAGE/bin/_bin
       mkdir -p $PACKAGE/bin/_bin/Contents/MacOS/tcl
       mkdir -p $PACKAGE/bin/_bin/Contents/MacOS/tk
+      sed "s/XXXXXXXXXX/$PACKAGE/" common/build/Info.plist > $PACKAGE/bin/_bin/Contents/Info.plist
     else
       rsync -av $PACKAGE/bin/$base/ $PACKAGE/bin/_bin
       cp ./venv/lib/libstdc++.so.6 $PACKAGE/bin/_bin
