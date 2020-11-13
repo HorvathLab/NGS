@@ -29,7 +29,7 @@ from chromreg import ChromLabelRegistry
 from operator import itemgetter
 
 from release import RELEASE, VERSION
-VERSION = "2.3.0 (%s:%s)"%(RELEASE,VERSION)
+VERSION = "2.3.2 (%s:%s)"%(RELEASE,VERSION)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
@@ -44,11 +44,14 @@ def cleanup():
         shutil.rmtree(d, ignore_errors=True)
 atexit.register(cleanup)
 
-if not GUI() and len(sys.argv) == 2 and sys.argv[1] == '--GUI':
+if len(sys.argv) == 2 and sys.argv[1] == '--GUI':
     from optparse_gui.needswx import *
     sys.exit(1)
 
-if GUI() and len(sys.argv) == 1:
+if len(sys.argv) == 1:
+    if not GUI():
+        print("Graphical user-interface unavailable.",file=sys.stderr)
+        sys.exit(1)
     from optparse_gui import OptionParserGUI
     parser = OptionParserGUI(version=VERSION)
     error_kwargs = {'exit': False}

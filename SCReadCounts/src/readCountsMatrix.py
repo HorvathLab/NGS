@@ -27,7 +27,7 @@ from optparse_gui import OptionParser, OptionGroup, GUI, UserCancelledError, Pro
 from chromreg import ChromLabelRegistry
 
 from release import RELEASE, VERSION
-VERSION = "1.0.1 (%s:%s)"%(RELEASE,VERSION)                                                                                 
+VERSION = "1.1.2 (%s:%s)"%(RELEASE,VERSION)                                                                                 
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)

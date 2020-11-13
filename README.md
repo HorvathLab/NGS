@@ -1,5 +1,5 @@
 ## [SCReadCounts](SCReadCounts#readme) 
-scReadCounts extracts VAF matrices for single-cell sequencing workflows from reads labelled with cell-barcodes. 
+SCReadCounts is a computational tool for a cell-level assessment of the read counts bearing a particular nucleotide at genomic positions of interest from single cell RNA sequencing (scRNA-seq) data. 
 ## [ReadCounts](ReadCounts#readme) 
 ReadCounts tabulates the number of reads providing evidence for variant and reference nucleotides at specific genomic loci and applies statistical tests to recognize allelic read-counts consistent with homozygous and heterozygous loci.
 ## [RNA2DNAlign](RNA2DNAlign#readme)

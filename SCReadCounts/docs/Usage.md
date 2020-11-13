@@ -56,7 +56,7 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 
 Min. Reads, -m MINREADS, --minreads=MINREADS
 
-> Minimum number of good reads at each SNV locus per alignment file. Default=3. This affects only VAF calculations.  
+> Minimum number of good reads at each SNV locus per alignment file. Default=5. This affects only VAF calculations.  
 
 Max. Reads, -m MAXREADS, --maxreads=MAXREADS
 
