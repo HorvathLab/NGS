@@ -17,13 +17,13 @@ Currently, SCReadCounts has two programs. The program readCounts requires two in
 
 ## Graphical User Interface
 
-<img src="scReadCounts.png" alt="scReadCounts Options"/>
+[Graphical User Interface](https://github.com/HorvathLab/NGS/blob/master/SCReadCounts/docs/Examples.md#graphical-user-interface)
 
 Click the help icon (question mark) at the top right of the GUI and
 then an input field for help. Multiple files can be selected in the
 file-chooser using Ctrl-Click or Shift-Click. Fields can be reset to
 their default values using the Reset button. Click OK to execute
-readCounts.
+SCReadCounts.
 
 Additional GUI option tabs are documented below.
 
@@ -52,7 +52,7 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 > Show program help and exit.
 
 ### Advanced Options
-<img src="scReadCounts-advanced.png" alt="Advanced"/>
+[Advanced Options](SCReadCounts_advanced.png)
 
 Min. Reads, -m MINREADS, --minreads=MINREADS
 
@@ -77,6 +77,7 @@ All Fields, -F, --full
 Read Group, -G READGROUP, --readgroup
 
 > Additional read grouping based on read name/identifier strings or BAM-file RG. Default: UMITools cell barcodes ("UMITools").
+> Can use regex to specify the pattern to look for (in the sequence identifier line of each read)
 
 Unique Reads, -U, --uniquereads   
 
