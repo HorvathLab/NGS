@@ -28,11 +28,11 @@ Example output files:
 
 3. Specify the [filtering option](https://github.com/HorvathLab/NGS/tree/master/ReadCounts/docs/filtering.md) by clicking on the `🠋` button.
 
-![Filtering Options](SCReadCounts_filter.png)
+   ![Filtering Options](SCReadCounts_filter.png)
 
 4. Specify the output directory by clicking on the `Browse` button, navigating to `SCReadCounts/data`, clicking `Create Folder`, entering "new_output", entering the name as `singlecell_GUI.tsv` and clicking `Save`.
 
-![Output name](SCReadCounts_output_options.png)
+   ![Output name](SCReadCounts_output_options.png)
 
 SCReadCounts will create the following files:
 * Counts(singlecell_GUI.tsv)
@@ -52,7 +52,7 @@ SCReadCounts will create the following files:
 
 4. Specify the output directory by clicking on the `Browse` button, navigating to `SCReadCounts/data`, clicking `Create Folder`, entering "new_output", entering the name as `singlecell_GUI.tsv` and clicking `Save`. You will be prompted with a message `A file named "singlecell_GUI.tsv" already exists. Do you want to replace it?`. Click on the `Replace` button.
 
-![Re-run](SCReadCounts_GUI_re-run.png)
+   ![Re-run](SCReadCounts_GUI_re-run.png)
 
 5. Click `OK` to execute the program.
 
