@@ -1,97 +1,62 @@
-# readCounts Examples
+# SCReadCounts Examples
 
-* [Command-line](https://github.com/HorvathLab/NGS/blob/master/RNA2DNAlign/docs/Examples.md#command-line)
-* [Graphical User Interface](https://github.com/HorvathLab/NGS/blob/master/RNA2DNAlign/docs/Examples.md#graphical-user-interface)
+* [Command-line](https://github.com/HorvathLab/NGS/blob/master/SCReadCounts/docs/Examples.md#command-line)
+* [Graphical User Interface](https://github.com/HorvathLab/NGS/blob/master/SCReadCounts/docs/Examples.md#graphical-user-interface)
 
 ## Command-line:
 
-### Example 1: BAM files and single SNV file in TSV format.
+### Example: BAM files and single SNV file in TSV format.
 
-    cd RNA2DNAlign/data
-    ../bin/RNA2DNAlign -r "example-*.bam" -s "example-SNV.tsv" -o example1
+    sh singlecell.sh
 
-### Example 2: BAM and VCF files for each dataset, exonic SNV filtering, and DARNED and COSMIC annotations using the supplied annotation files.
-
-    cd RNA2DNAlign/data
-    ../bin/RNA2DNAlign -r "example-GDNA.bam example-NRNA.bam example-SDNA.bam example-TRNA.bam" -s "example-*.vcf" -o example2 -e UCSC_Human_hg19_RefSeq_CDS_exon_coordinates.txt -d DARNED_hg19.txt -c CosmicMutantExport_hg19.tsv.gz
-
-Result files corresponding to this analysis are available in the `RNA2DNAlign/data` directory in the `example-output` directory. 
-
+Result files corresponding to this analysis are available [here](../data/output)
 Example output files: 
-* [Events_LOH.tsv](../data/example-output/Events_LOH.tsv)
-* [Events_RNAed.tsv](../data/example-output/Events_RNAed.tsv)
-* [Events_SOM.tsv](../data/example-output/Events_SOM.tsv)
-* [Events_T-RNAed.tsv](../data/example-output/Events_T-RNAed.tsv)
-* [Events_T-VSE.tsv](../data/example-output/Events_T-VSE.tsv)
-* [Events_T-VSL.tsv](../data/example-output/Events_T-VSL.tsv)
-* [Events_VSE.tsv](../data/example-output/Events_VSE.tsv)
-* [Events_VSL.tsv](../data/example-output/Events_VSL.tsv)
-* [readCounts.tsv](../data/example-output/readCounts.tsv)
-* [summary_result.txt](../data/example-output/summary_result.txt)
+* [Counts](../data/output/singlecell-output.tsv)
+* [Count matrix (Ref;Var)](../data/output/singlecell-output.cnt.matrix.tsv)
+* [VAF matrix with minR=3](../data/output/singlecell-output.vaf-m3.matrix.tsv)
+* [VAF matrix with minR=3](../data/output/singlecell-output.vaf-m5.matrix.tsv)
 
-### Example 3: BAM and VCF files for each dataset, exonic SNV filtering, and minimum reads per loci in each dataset of 3. 
-
-    cd RNA2DNAlign/data
-    ../bin/RNA2DNAlign -r "example-*.bam" -s "example-*.vcf" -o example3 -e UCSC_Human_hg19_RefSeq_CDS_exon_coordinates.txt -m 3
 
 ## Graphical User Interface
 
-### Example 1: BAM files and single SNV file in TSV format.
+### Example 1: BAM files and single SNV file in `txt` format with default minR value 5.
 
-1. Select the SNV file by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, selecting `example-SNV.tsv`, and clicking `OK`.
+1. Select the SNV file by clicking on the `Browse` button, navigating to `SCReadCounts/data`, selecting `singlecell_222_5_chr17.txt`, and clicking `OK`.
 
-![Image7](RNA2DNAlign7.png)
+2. Select the BAM files by clicking on the `Browse` button, navigating to `SCReadCounts/data`, selecting `singlecell_chr17.bam` (multiple BAM files can be selected using shift-click or control-click as needed), and clicking `OK`.
 
-2. Select the BAM files by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, selecting all the BAM files, using shift-click or control-click as needed, and clicking `OK`.
+3. Specify the [filtering option](https://github.com/HorvathLab/NGS/tree/master/ReadCounts/docs/filtering.md) by clicking on the `🠋` button.
 
-![Image8](RNA2DNAlign8.png)
+4. Specify the output directory by clicking on the `Browse` button, navigating to `SCReadCounts/data`, clicking `Create Folder`, entering "new_output", entering the name as `singlecell_GUI.tsv` and clicking `Save`.
 
-3. Specify the output directory by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, clicking `Create Folder`, entering "example1", and clicking `Open`.
+It will create the following files:
+* Counts(singlecell_GUI.tsv)
+* Count matrix (Ref;Var)(singlecell_GUI.cnt.matrix.tsv)
+* VAF matrix with minR=5 (singlecell_GUI.vaf-m5.matrix.tsv)
 
-![Image9](RNA2DNAlign9.png)
-
-4. Click `OK` to execute the program.
+5. Click `OK` to execute the program.
 
 ![Image10](RNA2DNAlign10.png)
 
-### Example 2: BAM and VCF files for each dataset, exonic SNV filtering, and DARNED and COSMIC annotations using the supplied annotation files.
 
-1. Select the VCF files by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, selecting all the VCF files, using shift-click or control-click as needed, and clicking `OK`.
+### Example 2: Re-running SCReadCounts with different minR value (10).
 
-![Image11](RNA2DNAlign11.png)
+1. Select the SNV file by clicking on the `Browse` button, navigating to `SCReadCounts/data`, selecting `singlecell_222_5_chr17.txt`, and clicking `OK`.
+
+2. Select the BAM files by clicking on the `Browse` button, navigating to `SCReadCounts/data`, selecting `singlecell_chr17.bam` (multiple BAM files can be selected using shift-click or control-click as needed), and clicking `OK`.
+
+3. Specify the [filtering option](https://github.com/HorvathLab/NGS/tree/master/ReadCounts/docs/filtering.md) by clicking on the `🠋` button.
+
+4. Specify the output directory by clicking on the `Browse` button, navigating to `SCReadCounts/data`, clicking `Create Folder`, entering "new_output", entering the name as `singlecell_GUI.tsv` and clicking `Save`. You will be prompted with a message `A file named "singlecell_GUI.tsv" already exists. Do you want to replace it?`. Click on the `Replace` button.
 
 
-2. Select the BAM files by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, selecting all the BAM files, using shift-click or control-click as needed, and clicking `OK`.
+5. Click `OK` to execute the program.
 
-![Image8](RNA2DNAlign8.png)
+Since the output files: `singlecell_GUI.tsv and singlecell_GUI.cnt.matrix.tsv` already exists (it doesn't change with respect to the "advanced" option of minR), only one new file will be created i.e. VAF with minR of 10 (singlecell_GUI.vaf-m10.matrix.tsv)
 
-3. Specify the output directory by clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, clicking `Create Folder`, entering "example2" and clicking `Open`.
-
-![Image12](RNA2DNAlign12.png)
-
-4. Specify exonic SNV filtering by selecting the `Filtering` tab, clicking on the `Browse` button, navigating to `RNA2DNAlign/data`, selecting "UCSC_Human_hg19_RefSeq_CDS_exon_coordinates.txt", and clicking `OK`.
-
-![Image13](RNA2DNAlign13.png)
-
-5. Specify DARNED and COSMIC annotation of SNP events on the `SNV Annotation` tab, selecting the files `DARNED_hg19.txt` and `CosmicMutantExport_hg19.tsv.gz`. 
-
-6. Click `OK` to execute the program.
-
-Result files corresponding to this analysis are available in the `RNA2DNAlign/data` directory in the `example-output` directory. 
-
-Example output files: 
-* [Events_LOH.tsv](../data/example-output/Events_LOH.tsv)
-* [Events_RNAed.tsv](../data/example-output/Events_RNAed.tsv)
-* [Events_SOM.tsv](../data/example-output/Events_SOM.tsv)
-* [Events_T-RNAed.tsv](../data/example-output/Events_T-RNAed.tsv)
-* [Events_T-VSE.tsv](../data/example-output/Events_T-VSE.tsv)
-* [Events_T-VSL.tsv](../data/example-output/Events_T-VSL.tsv)
-* [Events_VSE.tsv](../data/example-output/Events_VSE.tsv)
-* [Events_VSL.tsv](../data/example-output/Events_VSL.tsv)
-* [readCounts.tsv](../data/example-output/readCounts.tsv)
-* [summary_result.txt](../data/example-output/summary_result.txt)
+[Image10](RNA2DNAlign10.png)
 
 ## See Also
 
-[RNA2DNAlign Home](..), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
+[SCReadCounts Home](..), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
 
