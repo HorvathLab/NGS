@@ -1,0 +1,95 @@
+---
+title: "plot"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
+
+You can also use the `shinyApp` function to define an application inline rather then in an external directory.
+
+In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
+
+```{r eruptions}
+library(Seurat)
+library(ggplot2)
+
+sample_id <- 'SRR10156295'
+Gene_Seurat <- readRDS('SRR10156295_done.rds')
+```
+
+
+```{r eruptions}
+#SingleR
+library(SingleR)
+rna_re <- BlueprintEncodeData()
+b <- GetAssayData(Gene_Seurat)
+cluster <- Gene_Seurat@active.ident
+result_cluster <- SingleR(test = b, ref = rna_re, labels = rna_re$label.fine, method="cluster", clusters = cluster)
+Gene_Seurat[["SingleR.cluster.labels"]] <-
+  result_cluster$labels[match(Gene_Seurat[[]]["seurat_clusters"]$seurat_clusters, rownames(result_cluster))]
+DimPlot(Gene_Seurat, group.by =  "SingleR.cluster.labels", reduction = "umap", label = TRUE) + labs(title = sample_id)
+
+```
+
+
+```{r eruptions,  echo=FALSE}
+snv_choose <- '1:16640676_A>G'
+snv_matrix <- data.frame(fread ('SRR10156295_dedupped_wasp_Aligned.sortedByCoord.out_VAF_matrix.tsv'), row.names = 1)
+snv_choose_matrix <- snv_matrix[row.names(snv_matrix) %in% snv_choose,]
+#snv_choose <- names(snv_choose_matrix)[which(sapply(snv_choose_matrix, function(x) strsplit(x,':')[[1]][2] !=0))]
+names(snv_choose_matrix) <- paste0(names(snv_choose_matrix), '_1')
+#snv_choose_matrix[is.na(snv_choose_matrix)] <- '0'
+snv_choose_matrix <- snv_choose_matrix[names(snv_choose_matrix) %in% rownames(Gene_Seurat@meta.data)]
+gene_seurat_matrix <- Gene_Seurat@meta.data %>% rownames_to_column()
+Gene_Seurat<-AddMetaData(Gene_Seurat,Gene_Seurat@reductions$umap@cell.embeddings,col.name = colnames(Gene_Seurat@reductions$umap@cell.embeddings))
+tmp <- Gene_Seurat@meta.data %>% rownames_to_column()
+
+snv_choose_matrix <- as.data.frame(t(snv_choose_matrix)) %>% rownames_to_column()
+choose_seurat_matrix <- left_join(tmp, snv_choose_matrix, by = "rowname")
+class_avg <- choose_seurat_matrix %>%
+  group_by(SingleR.cluster.labels) %>%
+  summarise(
+    UMAP_1 = median(UMAP_1),
+    UMAP_2 = median(UMAP_2)
+  )
+
+```
+
+
+```{r eruptions}
+
+snv_idx <- length(gene_seurat_matrix)
+choose_seurat_matrix$choose <- 'NA'
+choose_seurat_matrix$choose[choose_seurat_matrix[[snv_choose]] == '0'] <- '0'
+choose_seurat_matrix$choose[choose_seurat_matrix[[snv_choose]] > 0 & choose_seurat_matrix[[snv_choose]] <=0.2] <- '0-0.2'
+choose_seurat_matrix$choose[choose_seurat_matrix[[snv_choose]] > 0.2 & choose_seurat_matrix[[snv_choose]] <=0.4] <- '0.2-0.4'
+choose_seurat_matrix$choose[choose_seurat_matrix[[snv_choose]] > 0.4 & choose_seurat_matrix[[snv_choose]] <= 0.6] <- '0.4-0.6'
+choose_seurat_matrix$choose[choose_seurat_matrix[[snv_choose]] > 0.6 & choose_seurat_matrix[[snv_choose]] <=0.8] <- '0.6-0.8'
+choose_seurat_matrix$choose[choose_seurat_matrix[[snv_choose]] > 0.8 & choose_seurat_matrix[[snv_choose]] <=1] <- '0.8-1'
+
+ggplot(choose_seurat_matrix , aes(x = UMAP_1, y=UMAP_2)) +
+  geom_point(aes(color= factor(choose)), alpha = 0.5) +
+  geom_text(aes(label = SingleR.cluster.labels), data = class_avg) + 
+  labs(title = paste0(snv_choose, '_', sample_id)) +
+  theme(text=element_text(family="Arial",size=16)) +
+  theme(panel.background = element_rect(fill='white', colour='black'), 
+        panel.grid=element_blank(), 
+        axis.ticks = element_line(color='black'), 
+        axis.line = element_line(colour = "black"), 
+        axis.title.x=element_text(colour='black', size=12, face = "italic"),
+        axis.title.y=element_text(colour='black', size=12, face = "italic"),
+        axis.text=element_text(colour='black',size=12,face = "italic"),
+        #legend.title=element_blank(),
+        legend.text=element_text(colour='black', size=12),
+        legend.key=element_blank()) + 
+  theme(plot.title = element_text(size=18,colour = "black",face = "italic")) +
+  scale_color_manual(values = c('darkgrey','pink','red','red1','red2','red3','grey') ,  name = 'VAF')  
+
+```

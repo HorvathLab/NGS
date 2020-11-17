@@ -1,0 +1,12 @@
+name: plot_shiny
+title: plot_shiny
+username:
+account: starrysky
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3253752
+bundleId: 3873463
+url: https://starrysky.shinyapps.io/plot_shiny/
+when: 1605653043.9492
+asMultiple: FALSE
+asStatic: FALSE
