@@ -11,7 +11,7 @@
 
 
 
-<title>plot</title>
+<title>scSNVis</title>
 
 
 <style type="text/css">
@@ -176,7 +176,7 @@ summary {
 
 
 
-<h1 class="title toc-ignore">plot</h1>
+<h1 class="title toc-ignore">scSNVis</h1>
 
 </div>
 
@@ -314,7 +314,7 @@ summary {
 <pre><code>## Warning: Using `as.character()` on a quosure is deprecated as of rlang 0.3.0.
 ## Please use `as_label()` or `as_name()` instead.
 ## This warning is displayed once per session.</code></pre>
-<p><img src="file540272d47d06_files/figure-html/eruptions1-1.png" width="672" /></p>
+<p><img src="file555c62e32098_files/figure-html/eruptions1-1.png" width="672" /></p>
 <pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre class="r"><code>snv_idx &lt;- length(gene_seurat_matrix)
 choose_seurat_matrix$choose &lt;- &#39;NA&#39;
@@ -342,7 +342,7 @@ ggplot(choose_seurat_matrix , aes(x = UMAP_1, y=UMAP_2)) +
         legend.key=element_blank()) + 
   theme(plot.title = element_text(size=18,colour = &quot;black&quot;,face = &quot;italic&quot;)) +
   scale_color_manual(values = c(&#39;darkgrey&#39;,&#39;pink&#39;,&#39;red&#39;,&#39;red1&#39;,&#39;red2&#39;,&#39;red3&#39;,&#39;grey&#39;) ,  name = &#39;VAF&#39;)  </code></pre>
-<p><img src="file540272d47d06_files/figure-html/eruptions3-1.png" width="672" /></p>
+<p><img src="file555c62e32098_files/figure-html/eruptions3-1.png" width="672" /></p>
 
 
 

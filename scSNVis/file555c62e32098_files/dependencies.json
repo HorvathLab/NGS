@@ -1,0 +1,511 @@
+{
+  "type": "list",
+  "attributes": {},
+  "value": [
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["name", "version", "src", "meta", "script", "stylesheet", "head", "attachment", "package", "all_files"]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["html_dependency"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["jquery"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["1.11.3"]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["file"]
+            }
+          },
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["/Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/jquery"]
+            }
+          ]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["jquery.min.js"]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "logical",
+          "attributes": {},
+          "value": [true]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["name", "version", "src", "meta", "script", "stylesheet", "head", "attachment", "package", "all_files"]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["html_dependency"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["bootstrap"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["3.3.5"]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["file"]
+            }
+          },
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["/Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/bootstrap"]
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["viewport"]
+            }
+          },
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["width=device-width, initial-scale=1"]
+            }
+          ]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["js/bootstrap.min.js", "shim/html5shiv.min.js", "shim/respond.min.js"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["css/bootstrap.min.css"]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "logical",
+          "attributes": {},
+          "value": [true]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["name", "version", "src", "meta", "script", "stylesheet", "head", "attachment", "package", "all_files"]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["html_dependency"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["jquery"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["1.11.3"]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["file"]
+            }
+          },
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["/Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/jquery"]
+            }
+          ]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["jquery.min.js"]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "logical",
+          "attributes": {},
+          "value": [true]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["name", "version", "src", "meta", "script", "stylesheet", "head", "attachment", "package", "all_files"]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["html_dependency"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["navigation"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["1.1"]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["file"]
+            }
+          },
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["/Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/navigation-1.1"]
+            }
+          ]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["tabsets.js"]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "logical",
+          "attributes": {},
+          "value": [true]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["name", "version", "src", "meta", "script", "stylesheet", "head", "attachment", "package", "all_files"]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["html_dependency"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["highlightjs"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["9.12.0"]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["file"]
+            }
+          },
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["/Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/highlightjs"]
+            }
+          ]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["highlight.js"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["default.css"]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "logical",
+          "attributes": {},
+          "value": [true]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["name", "version", "src", "meta", "script", "stylesheet", "head", "attachment", "package", "all_files"]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["html_dependency"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["anchor-sections"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["1.0"]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["file"]
+            }
+          },
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["/Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmd/h/anchor-sections"]
+            }
+          ]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["anchor-sections.js"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["anchor-sections.css"]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "logical",
+          "attributes": {},
+          "value": [true]
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "attributes": {
+        "names": {
+          "type": "character",
+          "attributes": {},
+          "value": ["name", "version", "src", "meta", "script", "stylesheet", "head", "attachment", "package", "all_files"]
+        },
+        "class": {
+          "type": "character",
+          "attributes": {},
+          "value": ["html_dependency"]
+        }
+      },
+      "value": [
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["rmarkdown-performance"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["0.1"]
+        },
+        {
+          "type": "list",
+          "attributes": {
+            "names": {
+              "type": "character",
+              "attributes": {},
+              "value": ["file"]
+            }
+          },
+          "value": [
+            {
+              "type": "character",
+              "attributes": {},
+              "value": ["/var/folders/qy/flyqvkln23l4lpl4gxfdhgjm0000gn/T//Rtmp7QBUax/file555c62e32098_files"]
+            }
+          ]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["rmd_perf.js"]
+        },
+        {
+          "type": "character",
+          "attributes": {},
+          "value": ["rmd_perf.css"]
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "NULL"
+        },
+        {
+          "type": "logical",
+          "attributes": {},
+          "value": [true]
+        }
+      ]
+    }
+  ]
+}
