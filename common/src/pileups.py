@@ -42,6 +42,8 @@ class SerialPileups(Pileups):
                             for pileupread in pileupcolumn.pileups:
                                 if self.readgroups != None:
                                     grp = (i,self.readgroups.group(pileupread.alignment))
+                                    if grp[1] == None:
+                                        continue
                                     total[grp] += 1
                                 else:
                                     grp = i

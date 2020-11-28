@@ -658,15 +658,15 @@ class ReadNameWord(ReadGroup):
 
 class ReadTagValue(ReadGroup):
 
-    def __init__(self, tag):
+    def __init__(self, tag, default=None):
         self._tag = tag
+        self._default = default
 
     def group(self, alignment):
-        grp = None
         try:
             grp = str(alignment.opt(self._tag))
-        except:
-            pass 
+        except KeyError:
+            grp = self._default
         return grp
 
 class RGTag(ReadTagValue):
