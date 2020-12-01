@@ -628,48 +628,54 @@ class ReadGroupFactory(MethodFactory):
 
 class ReadNameRegex(ReadGroup):
 
-    def __init__(self, regex, regexgrp=1):
+    def __init__(self, regex, regexgrp=1, missing=None):
         super(ReadNameRegex,self).__init__()
         self._regex = re.compile(regex)
         self._regexgrp = int(regexgrp)
+        self._default = missing
 
     def group(self, alignment):
         name = alignment.query_name
         m = self._regex.search(name)
         if m:
-            return m.group(self._regexgrp)
-        return None
+            try:
+                return m.group(self._regexgrp)
+            except IndexError:
+                pass
+        return self._default
 
 class ReadNameWord(ReadGroup):
 
-    def __init__(self, field_index, field_sep='_'):
+    def __init__(self, field_index, field_sep='_', missing=None):
         super(ReadNameWord,self).__init__()
         self._index = field_index
         self._sep = field_sep
+        self._default = missing
 
     def group(self, alignment):
         name = alignment.query_name
         words = name.split(self._sep)
         try:
             return words[self._index]
-        except:
+        except IndexError:
             pass
-        return None
+        return self._default
 
 class ReadTagValue(ReadGroup):
 
-    def __init__(self, tag, default=None):
+    def __init__(self, tag, missing=None):
         self._tag = tag
-        self._default = default
+        self._default = missing
 
     def group(self, alignment):
         try:
-            grp = str(alignment.opt(self._tag))
+            return str(alignment.opt(self._tag))
         except KeyError:
-            grp = self._default
-        return grp
+            pass
+        return self._default
 
 class RGTag(ReadTagValue):
 
-    def __init__(self):
-        super(RGTag,self).__init__(tag="RG")
+    def __init__(self,**kw):
+        kw['tag'] = "RG"
+        super(RGTag,self).__init__(**kw)
