@@ -13,16 +13,16 @@ option_list <- list(
   make_option(c("-c", "--corr"), action = "store", type ="character", 
               default = NULL, help= "File containing correlations to plot"),
   make_option(c("-g", "--ge"), action="store", type = "character", default=NULL,
-              help="Gene expression (Gene-cell) matrix"),
+              help="Gene expression (Gene-cell) matrix file"),
   make_option(c("-v", "--vaf"), action = "store", type ="character", 
-              default = NULL, help= "VAF matrix"),
+              default = NULL, help= "VAF matrix file"),
   make_option(c("-t", "--top"), action = "store", type ="numeric", 
               default = 50, help= "Provide the number of correlations to plot. DEFAULT: 50"),
   make_option(c("-o", "--outpref"), action = "store", type ="character", 
-              default = "Top50", help= "Output prefix for the TIFF file with correlations")
+              default = "Top50", help= "Output prefix for the TIFF file with correlation plots. DEFAULT: Top<number of correlations to plot>.tiff")
 )
 
-opt <- parse_args(OptionParser(option_list=option_list, description = "-s options are necessary!!!!", usage = "usage: Rscript Plot_scReQTLS_inbulk.R -s <sample_list>"))
+opt <- parse_args(OptionParser(option_list=option_list, description = "-c, -g, -v, and -o options are necessary!!!!", usage = "usage: Rscript Plot_scReQTLS_inbulk.R -c <correlation_file.txt> -v <vaf_matrix_file.txt> -g <gene_expression_matrix_file.txt> -o <output_prefix> -t <top_#_correlations>"))
 
 #read_in correlations to plot
 in_file = fread(opt$corr)
@@ -54,7 +54,7 @@ p = ggscatter(df_star, x = "SNP", y = "gene",
               cor.coef.size = 5,
               cor.coeff.args = list(method = "spearman", label.sep = "\n"))
 
-tiff(filename = paste0(opt$outpref, "_top_", opt$top, ".tiff"), width = 25, height = 40, units = "in", res = 120)
+tiff(filename = ifelse(opt$top != 50 & opt$outpref == "Top50", paste0(gsub("50", opt$top, opt$outpref), ".tiff"), paste0(opt$outpref, "_top_", opt$top, ".tiff")), width = 25, height = 40, units = "in", res = 120)
 facet(p, facet.by = "id", ncol = 5, scales = "free_y")
 dev.off()
 
