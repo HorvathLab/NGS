@@ -23,7 +23,7 @@ To plot the scReQTLs, run the [Plot_scReQTLs_inbulk.R](https://github.com/Horvat
 ## Inputs
 ### Required Arguments
 #### -c <correlation\_file.txt>:
-The correlation file produced after running the[\(run_matrix_ReQTL.R\)](https://github.com/HorvathLab/ReQTL/#run_matrix_reqtlr) script.
+The correlation file produced after running the [\(run_matrix_ReQTL.R\)](https://github.com/HorvathLab/ReQTL/#run_matrix_reqtlr) script.
 #### -v <vaf\_matrix\_file.txt>:
 The VAF matrix file produced by [SCReadCounts](https://github.com/HorvathLab/NGS/tree/master/SCReadCounts).
 #### -g <gene\_expression\_matrix\_file.txt>:
