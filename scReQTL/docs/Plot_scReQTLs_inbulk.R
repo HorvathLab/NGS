@@ -18,15 +18,17 @@ option_list <- list(
               default = NULL, help= "VAF matrix file"),
   make_option(c("-t", "--top"), action = "store", type ="numeric", 
               default = 50, help= "Provide the number of correlations to plot. DEFAULT: 50"),
+  make_option(c("-f", "--fdr"), action = "store", type ="numeric", 
+              default = 0.05, help= "Retain correlations with FDR below this threshold. DEFAULT: 0.05"),
   make_option(c("-o", "--outpref"), action = "store", type ="character", 
               default = "Top_50_scReQTLs", help= "Output prefix for the TIFF file with correlation plots. DEFAULT: Top<number of correlations to plot>.tiff")
 )
 
-opt <- parse_args(OptionParser(option_list=option_list, description = "-c, -g, -v, and -o options are necessary!!!!", usage = "usage: Rscript Plot_scReQTLS_inbulk.R -c <correlation_file.txt> -v <vaf_matrix_file.txt> -g <gene_expression_matrix_file.txt> -o <output_prefix> -t <top_#_correlations>"))
+opt <- parse_args(OptionParser(option_list=option_list, description = "-c, -g, -v, and -o options are necessary!!!!", usage = "usage: Rscript Plot_scReQTLS_inbulk.R -c <correlation_file.txt> -v <vaf_matrix_file.txt> -g <gene_expression_matrix_file.txt> -o <output_prefix> -t <top_#_correlations> -f <FDR_threshold>"))
 
 #read_in correlations to plot
 in_file = fread(opt$corr)
-in_file = in_file %>% filter(FDR < 0.05)
+in_file = in_file %>% filter(FDR < opt$fdr)
 in_file = in_file %>% head(opt$top)
 
 to_plot = in_file %>% dplyr::select(SNP, gene)
