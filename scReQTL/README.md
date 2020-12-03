@@ -16,7 +16,7 @@ The scReQTL-specific steps include the following steps:
     1. Harmonize matrices [\(harmonize_matrices.R\)](https://github.com/HorvathLab/ReQTL/#harmonize_matricesr)
     2. Run matrix scReQTL [\(run_matrix_ReQTL.R\)](https://github.com/HorvathLab/ReQTL/#run_matrix_reqtlr)
     3. Annotate cis-trans scReQTLs [\(annotate_cis_trans.R\)](https://github.com/HorvathLab/ReQTL/#annotate_cis_transr)
-    4. Plot the scReQTLs [\(Plot_scReQTLs_inbulk.R\)](README.md#plotting-screqtls)
+    4. Plot the scReQTLs [\(Plot_scReQTLs.R\)](README.md#plotting-screqtls)
 
 # Executing Scripts
 
