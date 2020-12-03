@@ -137,6 +137,8 @@ from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXT
 
 progress.stage("Read ReadCounts input files", len(opt.counts))
 headers = "CHROM POS REF ALT ReadGroup RefCount SNVCount GoodReads".split()
+# NOTE: This *MUST* correspond to the columns in the readCounts .txt file output
+txtheaders = "CHROM   POS     REF     ALT     ReadGroup       SNVCountForward SNVCountReverse RefCountForward RefCountReverse SNVCount   RefCount GoodReads".split()
 
 allrg = set()
 vafmatrix = defaultdict(dict)
@@ -154,7 +156,7 @@ for filename in opt.counts:
     elif extn == 'xlsx':
         counts = XLSXFileTable(filename=filename)
     elif extn == 'txt':
-        counts = TXTFileTable(filename=filename, headers=headers)
+        counts = TXTFileTable(filename=filename, headers=txtheaders)
     else:
         raise RuntimeError("Unexpected ReadCounts file extension: %s" % filename)
 
@@ -209,6 +211,7 @@ if opt.output:
             filename=filename, headers=outheaders, sheet='Results')
     elif extn == 'txt':
         output = TXTFileTable(filename=filename, headers=outheaders, outputheaders=True)
+        emptysym = "-"
     else:
         raise RuntimeError("Unexpected output file extension: %s" % filename)
 else:
