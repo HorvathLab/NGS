@@ -1,8 +1,8 @@
-# readCount Output 
+# SCReadCount Output 
 
-readCounts output file are created inside of the directory specified by the user.
+SCReadCounts output file are created inside of the directory specified by the user.
 
-## readCounts output file
+## SCReadCounts output file
 
 A tab-separated values file consisting of the computed read-counts. This file contains the read counts
 for each SNV locus in each BAM file and computes the various

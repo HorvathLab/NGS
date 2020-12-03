@@ -41,7 +41,7 @@ scReadCounts accepts alignment files generated with popular aligning tools; the 
 
 Output Folder, -o OUTPUT, --output=OUTPUT
 
-> Output file. Requires extension-specific filenames. Accecptable extensions: csv, tsv, txt, xls, xlsx eg: output.csv. Note: All the 3 outputs will have this extension. See [Output Files](OutputFiles.md) for more information on output files.
+> Output file. Requires extension-specific filenames. Accecptable extensions: csv, tsv, xls, xlsx eg: output.csv. Note: All the 3 outputs will have this extension. See [Output Files](OutputFiles.md) for more information on output files.
 
 --version
 
