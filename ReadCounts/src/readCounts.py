@@ -534,6 +534,7 @@ if opt.output:
             filename=filename, headers=outheaders1, sheet='Results')
     elif extn == 'txt':
         output = TXTFileTable(filename=filename, headers=outheaders1)
+        emptysym = "-"
     else:
         raise RuntimeError("Unexpected output file extension: %s" % filename)
 else:
@@ -546,6 +547,6 @@ if opt.output:
     if outdir and not os.path.exists(outdir):
         os.makedirs(outdir,exist_ok=True)
 output.from_rows(
-    [dict(list(zip(outheaders, r + [emptysym] * 50))) for r in outrows])
+    [dict(list(zip(outheaders, list(map(lambda v: emptysym if (v == None) else v,r)) + [emptysym] * 50))) for r in outrows])
 progress.done()
 
