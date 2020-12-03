@@ -5,11 +5,11 @@ More info on ReQTL([paper](https://doi.org/10.1093/bioinformatics/btz750); [meth
 
 # Workflow
 ![Pipeline](https://github.com/HorvathLab/NGS/blob/master/scReQTL/docs/pipeline.png?raw=true)
-The picture above illustrates our workflow in a concise manner.
+The scReQTL workflow includes three major components: scRNA-seq data processing, VAF<sub>RNA</sub> assessment, and SNV-GE correlation by cell type. Processing includes barcode and UMI processing, alignment, GE estimation and cell type classification, and can employ a variety of publicly available tools. 
 
-This tutorial goes through following steps:
+The scReQTL-specific steps include the following steps:
 
-1. Producing VAFs through [SCReadCounts](https://github.com/HorvathLab/NGS/tree/master/SCReadCounts).
+1. Producing VAF<sub>RNA</sub> values through [SCReadCounts](https://github.com/HorvathLab/NGS/tree/master/SCReadCounts).
 2. Gene-cell matrices pre-processing, clustering and assigning cell-types using [Seurat_and_SingleR](https://github.com/hliu5259/scReQTL).
 3. scReQTL:
     1. Harmonize matrices [\(harmonize_matrices.R\)](https://github.com/HorvathLab/ReQTL/#harmonize_matricesr)
