@@ -1,7 +1,8 @@
 # Introduction
-scReQTL is a strategy formulated when a method published in our lab&mdash;ReQTL\(RNA-eQTL\)&mdash;is applied on the data obtained through single-cell RNA sequencing technologies.
 
-More info on ReQTL([paper](https://doi.org/10.1093/bioinformatics/btz750); [method](https://github.com/HorvathLab/ReQTL)).
+ScReQTL is an application to assess the correlation between gene expression and expression of biallelic SNV loci (Variant Allele Fraction, VAF<sub>RNA</sub>)located within transcribed genomic regions from scRNA-seq data.
+
+More info on this [paper](https://www.biorxiv.org/content/10.1101/2020.07.13.200956v1) and the parent method on bulk RNA-seq data ReQTL([paper](https://doi.org/10.1093/bioinformatics/btz750);[method](https://github.com/HorvathLab/ReQTL)).
 
 # Workflow
 ![Pipeline](https://github.com/HorvathLab/NGS/blob/master/scReQTL/docs/pipeline.png?raw=true)
