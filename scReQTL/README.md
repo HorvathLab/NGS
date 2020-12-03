@@ -18,6 +18,15 @@ The scReQTL-specific steps include the following steps:
     3. Annotate cis-trans scReQTLs [\(annotate_cis_trans.R\)](https://github.com/HorvathLab/ReQTL/#annotate_cis_transr)
     4. Plot the scReQTLs [\(Plot_scReQTLs_inbulk.R\)](README.md#plotting-screqtls)
 
+# Executing Scripts
+
+## harmonize_matrices.R
+
+## run_matrix_ReQTL.R
+
+## annotate_cis_trans.R
+
+## Plot_scReQTLs.R
 # Plotting scReQTLs
 To plot the scReQTLs, run the [Plot_scReQTLs_inbulk.R](https://github.com/HorvathLab/NGS/tree/master/scReQTL/docs/Plot_scReQTLs_inbulk.R) as `Rscript Plot_scReQTLs_inbulk.R -c <correlation_file.txt> -v <vaf_matrix_file.txt> -g <gene_expression_matrix_file.txt> -o <output_prefix> -t <top_#_correlations> -f <FDR_threshold>`
 
