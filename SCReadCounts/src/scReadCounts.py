@@ -48,7 +48,7 @@ from execute import Execute
 execprog = Execute(*scriptdirs,extn=scriptextn)     
 
 from release import RELEASE, VERSION                                                                                        
-VERSION = "1.1.2 (%s:%s)"%(RELEASE,VERSION)
+VERSION = "%s (%s:%s)"%(VERSION,RELEASE,VERSION)
 
 def excepthook(etype, value, tb):
     traceback.print_exception(etype, value, tb)
