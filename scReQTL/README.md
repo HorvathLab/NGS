@@ -28,7 +28,7 @@ The scReQTL-specific steps include the following steps:
 
 ## Plot_scReQTLs.R
 # Plotting scReQTLs
-To plot the scReQTLs, run the [Plot_scReQTLs_inbulk.R](https://github.com/HorvathLab/NGS/tree/master/scReQTL/docs/Plot_scReQTLs_inbulk.R) as `Rscript Plot_scReQTLs_inbulk.R -c <correlation_file.txt> -v <vaf_matrix_file.txt> -g <gene_expression_matrix_file.txt> -o <output_prefix> -t <top_#_correlations> -f <FDR_threshold>`
+To plot the scReQTLs, run the [Plot_scReQTLs.R](https://github.com/HorvathLab/NGS/tree/master/scReQTL/docs/Plot_scReQTLs.R) as `Rscript Plot_scReQTLs_inbulk.R -c <correlation_file.txt> -v <vaf_matrix_file.txt> -g <gene_expression_matrix_file.txt> -o <output_prefix> -t <top_#_correlations> -f <FDR_threshold>`
 
 ## Inputs
 ### Required Arguments
