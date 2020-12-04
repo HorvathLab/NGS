@@ -166,7 +166,7 @@ if opt.minreads != minreads_default:
 if opt.maxreads != maxreads_default:
     args.extend(["-M",str(opt.maxreads)])
 if opt.readgroup != readgroup_default:
-    args.extend(["-G",doublequote(opt.readgroup if readgropup != None else "")])
+    args.extend(["-G",doublequote(opt.readgroup if readgroup != None else "")])
 if opt.tpb != tpb_default:
     args.extend(["-t",str(opt.tpb)])
 if opt.quiet:
