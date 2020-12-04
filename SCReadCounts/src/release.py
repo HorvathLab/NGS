@@ -1,6 +1,6 @@
 #!/bin/env python
 RELEASE = "SCReadCounts"
-VERSION = '1.1.3'
+VERSION = '1.1.4'
 PROGRAMS = 'readCountsMatrix.py scReadCounts.py readCounts.py'
 INCLUDES = 'common ReadCounts'
 if __name__ == '__main__':
