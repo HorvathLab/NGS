@@ -84,7 +84,7 @@ Threads/BAM, -t TPB, --threadsperbam=TPB
 
 Read Group, -G READGROUP, --readgroup=READGROUP
 
-> Additional read grouping based on read name/identifier strings or BAM-file RG. [Read Grouping](Grouping.md) for more details. Default: None, group reads by BAM-file only.
+> Additional read grouping based on read name/identifier strings or BAM-file RG. See [Read Grouping](Grouping.md) for more details. Default: None, group reads by BAM-file only.
 
 Quiet, -q, --quiet
 
