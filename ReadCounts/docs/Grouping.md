@@ -20,32 +20,30 @@ same name in the ReadCounts distribution.
 ### UMI-tools
 > Pick out cell barcodes from read name/identifier added by umi_tools.
 
-### UB-Tag
-> UB tag from aligned read. Reads without a UB tag get value "XXXXXXXX"
-
 ### STARsolo
 > Cell barcodes added by STARsolo as CB tag in aligned read, reads without a CB tag dropped.
 
 ## Read-Grouping Operations
 
 ### ReadNameWord
-> Parameters: field_index=1 field_sep=_ missing=None
+> Parameters: field_index field_sep=_ missing=None
 
-> Split the read name into words according to field_sep, and retain word with index field_index. Field index starts at 0. If the read name does not have enough words, use the read group identifier specified by missing. If missing is not specified, ignore the read.
+> Split the read name into words according to `field_sep` (default: "_"), and retain word with index `field_index` (required). Field index starts at 0. If the read name does not have enough words, use the read group identifier specified by `missing` (default: not specified). If `missing` is not specified, drop the read.
 
 ### ReadNameRegex
-> Parameters: regex=None regexgrp=1 missing=None
+> Parameters: regex regexgrp=1 missing=None
 
-> Apply (Python) regular expression regex to the read name and extract matching group number regexgrp. If the regular expression doesn't match, use the read group identifier specified by missing. If missing is not specified, ignore the read.
+> Apply (Python) regular expression `regex` (required) to the read name and extract matching group number `regexgrp` (default: 1). If the regular expression doesn't match, use the read group identifier specified by `missing` (default: not specified). If `missing` is not specified, drop the read.
 
 ### ReadTagValue
-> Parameters: tag=None missing=None
+> Parameters: tag missing=None
 
-> Use the value in the BAM read tag specified. If the tag is missing, use the read group specified by identifier missing. If missing is not specified, ignore the read. 
+> Use the value in the BAM tag `tag` (required). If `tag` is missing, use the read group specified by identifier `missing` (default: not specified). If `missing` is not specified, drop the read. 
 
-[UMI-tools]
-Description: Pick out cell barcodes from read name/identifier added by umi_tools.
-ReadNameWord: field_index=1 field_sep=_
+### RGTag
+> Parameters: missing=None
+
+> Use the value in the BAM read-group tag "RG". If "RG" is missing, use the read group specified by identifier `missing` (default: not specified). If `missing` is not specified, drop the read. 
 
 ## Examples
 
@@ -55,6 +53,13 @@ ReadNameWord: field_index=1 field_sep=_
 [UMI-tools]
 Description: Pick out cell barcodes from read name/identifier added by umi_tools.
 ReadNameWord: field_index=1 field_sep=_
+```
+
+### STARsolo
+```
+[STARsolo]
+Description: Cell barcodes added by STARsolo in CB tag in aligned read, reads without a CB tag dropped.
+ReadTagValue: tag='CB'
 ```
 
 ### UMI-tools_Regex
@@ -71,9 +76,3 @@ Description: UB tag from aligned read, reads without a UB tag get value "XXXXXXX
 ReadTagValue: tag='UB' missing='XXXXXXXX'
 ```
 
-### STARsolo
-```
-[STARsolo]
-Description: Cell barcodes added by STARsolo in CB tag in aligned read, reads without a CB tag dropped.
-ReadTagValue: tag='CB'
-```

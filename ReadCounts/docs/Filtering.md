@@ -64,7 +64,7 @@ same name in the ReadCounts distribution.
 ### HitsFilter
 > Parameters: max_hits=None
 
-> Maximum number of alignments placements for the read. References the NH tag. Default: No maximum number of hits. 
+> Maximum number of alignment placements for the read. References the NH tag. Default: No maximum number of hits. 
 
 ### EditPositionFilter
 > Parameters: min_edge_dist=None min_subst_dist=None max_other_edits=None
