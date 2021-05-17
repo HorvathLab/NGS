@@ -1,7 +1,7 @@
 # SCReadCounts Read Grouping
 
 The counts for aligned reads are tabulated by BAM file and, if desired,
-by a group identifier extracted from each alignment record. Usecases
+by a group identifier extracted from each alignment record. Use cases
 include cell-barcodes added for single-cell sequencing. Read groups can
 be extracted from read headers by regular expression, splitting lines
 according to some separator character, or directly from BAM alignment
