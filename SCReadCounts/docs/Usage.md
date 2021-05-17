@@ -76,7 +76,7 @@ All Fields, -F, --full
 
 Read Group, -G READGROUP, --readgroup
 
-> Additional read grouping based on read name/identifier strings or BAM-file RG. Default: UMITools cell barcodes ("UMITools").
+> Additional read grouping based on read name/identifier strings or BAM-file RG. Default: UMITools cell barcodes ("UMITools"). Go [here](Grouping.md) for details.
 > Can use regex to specify the pattern to look for (in the sequence identifier line of each read)
 
 Unique Reads, -U, --uniquereads   
