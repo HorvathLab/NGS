@@ -81,9 +81,15 @@ else:
 
 filterFactory = ReadFilterFactory()
 filterOptions = [t[0] for t in filterFactory.list()]
+filterDesc = []
+for o,d in sorted(filterFactory.list()):
+    filterDesc.append("%s (%s)"%(o,d.strip('.')))
 
 groupFactory = ReadGroupFactory()
 groupOptions = [""] + [t[0] for t in groupFactory.list()]
+groupDesc = []
+for o,d in sorted(groupFactory.list()):
+    groupDesc.append("%s (%s)"%(o,d.strip('.')))
 
 minreads_default = 5
 maxreads_default = None
@@ -101,7 +107,7 @@ parser.add_option("-r", "--readalignments", type="files", dest="alignments", def
                   notNone=True, remember=True,
                   filetypes=[("Read Alignment Files (indexed BAM)", "*.bam")])
 parser.add_option("-f", "--alignmentfilter", type="choice", dest="filter", default=filter_default, remember=True,
-                  help="Alignment filtering strategy. Default: Basic.", choices = filterOptions,
+                  help="Alignment filtering strategy. Options: %s. Default: Basic."%(", ".join(filterDesc),), choices = filterOptions,
                   name="Alignment Filter")
 advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=minreads_default, remember=True,
                     help="Minimum number of good reads at SNV locus per alignment file. Default=5.", name="Min. Reads")
@@ -111,7 +117,7 @@ advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb
                     help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=readgroup_default, remember=True,
                     choices=groupOptions, name="Read Group",
-                    help="Additional read grouping based on read name/identifier strings or BAM-file RG. Default: None, group reads by BAM-file only.")
+                    help="Additional read grouping based on read name/identifier strings or BAM-file RG/CB. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
 parser.add_option("-o", "--output", type="savefile", dest="output", remember=True,
