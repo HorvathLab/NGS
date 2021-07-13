@@ -628,10 +628,16 @@ class ReadGroupFactory(MethodFactory):
 
 class ReadNameRegex(ReadGroup):
 
-    def __init__(self, regex, regexgrp=1, missing=None):
+    def __init__(self, regex, regexgrp=1, whitelist=None, missing=None):
         super(ReadNameRegex,self).__init__()
         self._regex = re.compile(regex)
         self._regexgrp = int(regexgrp)
+        self._whitelist = None
+        if whitelist:
+            try:
+                self._whitelist = set(open(whitelist).read().split())
+            except IOError:
+                raise IOError("Can't open read group whitelist file: %s"%(whitelist))
         self._default = missing
 
     def group(self, alignment):
@@ -639,37 +645,55 @@ class ReadNameRegex(ReadGroup):
         m = self._regex.search(name)
         if m:
             try:
-                return m.group(self._regexgrp)
+                value = m.group(self._regexgrp)
+                if self._whitelist == None or value in self._whitelist:
+                    return value
             except IndexError:
                 pass
         return self._default
 
 class ReadNameWord(ReadGroup):
 
-    def __init__(self, field_index, field_sep='_', missing=None):
+    def __init__(self, field_index, field_sep='_', whitelist=None, missing=None):
         super(ReadNameWord,self).__init__()
         self._index = field_index
         self._sep = field_sep
+        self._whitelist = None
+        if whitelist:
+            try:
+                self._whitelist = set(open(whitelist).read().split())
+            except IOError:
+                raise IOError("Can't open read group whitelist file: %s"%(whitelist))
         self._default = missing
 
     def group(self, alignment):
         name = alignment.query_name
         words = name.split(self._sep)
         try:
-            return words[self._index]
+            value = words[self._index]
+            if self._whitelist == None or value in self._whitelist:
+                return value
         except IndexError:
             pass
         return self._default
 
 class ReadTagValue(ReadGroup):
 
-    def __init__(self, tag, missing=None):
+    def __init__(self, tag, whitelist=None, missing=None):
         self._tag = tag
+        self._whitelist = None
+        if whitelist:
+            try:
+                self._whitelist = set(open(whitelist).read().split())
+            except IOError:
+                raise IOError("Can't open read group whitelist file: %s"%(whitelist))
         self._default = missing
 
     def group(self, alignment):
         try:
-            return str(alignment.opt(self._tag))
+            value = str(alignment.opt(self._tag))
+            if self._whitelist == None or value in self._whitelist:
+                return value
         except KeyError:
             pass
         return self._default

@@ -2,6 +2,7 @@
 set -x
 TAG=0
 COMMIT=0
+FORCE=0
 while true; do
     if [ "$1" = "tag" ]; then
 	TAG=1
@@ -10,6 +11,9 @@ while true; do
     elif [ "$1" = "commit" ]; then
 	COMMIT=1
 	shift;
+    elif [ "$1" = "force" ]; then
+        FORCE=1
+        shift
     else
         break
     fi
@@ -50,6 +54,11 @@ else
 fi
 VER=`$PYTHON3 $PACKAGE/src/release.py VERSION | tr -d -c '0-9.'`
 PROGS=`$PYTHON3 $PACKAGE/src/release.py PROGRAMS`
+
+if [ $FORCE -eq 0 -a -f dist/$PACKAGE-${VER}.${YY}.tgz ]; then
+  echo "Please increment version number in $PACKAGE/src/release.py" 1>&2
+  exit 1;
+fi
 
 # Source (Python-3.7) distribution
 rm -rf build/$PACKAGE-${VER}.${YY} dist/$PACKAGE-${VER}.${YY}.tgz
