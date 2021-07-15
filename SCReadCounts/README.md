@@ -7,15 +7,16 @@ Currently, SCReadCounts has two programs. The program scReadCounts requires two 
 
 SCReadCounts is a wrapper around readCounts and readCountsMatrix function to facilitate single-cell level assessment of read counts.
 
-Setup:
+**Setup:**
 * [Download](https://github.com/HorvathLab/NGS/releases/tag/SCReadCounts-1.1.5)
 * [Install](docs/Installation.md)
 
-Usage:
+**Usage:**
 * [SCReadCounts](docs/Usage.md)
+* [Discovery Mode]
 
-File Formats:
+**File Formats:**
 * [Input Files](docs/InputFiles.md)
 * [Output Files](docs/OutputFiles.md)
 
-[Examples](docs/Examples.md)
+**[Examples](docs/Examples.md)**
