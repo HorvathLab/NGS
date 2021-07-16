@@ -68,7 +68,7 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
                         
 Filter Alignments, -f FILTER, --alignmentfilter
 
-> Alignment filtering strategy. Default: Basic.
+> Alignment filtering strategy. See [Read Filtering](Filtering.md) for more details. Default: Basic.
 
 All Fields, -F, --full
 
