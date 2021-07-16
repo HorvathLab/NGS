@@ -13,7 +13,7 @@ SCReadCounts is a wrapper around readCounts and readCountsMatrix function to fac
 
 **Usage:**
 * [SCReadCounts](docs/Usage.md)
-* [Discovery Mode]
+* [Discovery Mode](docs/Discovery.md)
 
 **File Formats:**
 * [Input Files](docs/InputFiles.md)
