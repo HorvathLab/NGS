@@ -21,7 +21,7 @@ same name in the ReadCounts distribution.
 > Pick out cell barcodes from read name/identifier added by umi_tools.
 
 ### STARsolo
-> Cell barcodes added by STARsolo as CB tag in aligned read, reads without a CB tag dropped.
+> Cell barcodes added by STARsolo as CB tag in aligned read, reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped.
 
 ## Read-Grouping Operations
 
@@ -58,8 +58,8 @@ ReadNameWord: field_index=1 field_sep=_
 ### STARsolo
 ```
 [STARsolo]
-Description: Cell barcodes added by STARsolo in CB tag in aligned read, reads without a CB tag dropped.
-ReadTagValue: tag='CB'
+Description: Cell barcodes added by STARsolo in CB tag in aligned read, reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped.
+ReadTagValue: tag='CB' acceptlist='barcodes.tsv'
 ```
 
 ### UMI-tools_Regex

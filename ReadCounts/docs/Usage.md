@@ -78,13 +78,17 @@ Extended Output, -E, --extended=EXTENDED
 
 > Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.
 
-Threads/BAM, -t TPB, --threadsperbam=TPB                   
-
-> Each worker thread is allocated one or more BAM files. Indicate no threading with 0. Default: 0.
-
 Read Group, -G READGROUP, --readgroup=READGROUP
 
 > Additional read grouping based on read name/identifier strings or BAM-file RG. See [Read Grouping](Grouping.md) for more details. Default: None, group reads by BAM-file only.
+
+Valid Read Groups, -b BARCODES, --barcode_acceptlist BARCODES
+
+> File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list.
+
+Threads/BAM, -t TPB, --threadsperbam=TPB                   
+
+> Each worker thread is allocated one or more BAM files. Indicate no threading with 0. Default: 0.
 
 Quiet, -q, --quiet
 

@@ -12,14 +12,13 @@
 
 ## Description
 
-
 Currently, SCReadCounts has two programs. The program readCounts requires two input files: a pooled single cell alignment and a list of genomic positions of interest. readCounts utilizes the barcode information from the pooled single cell alignments and outputs the variant and reference read counts (n<sub>var</sub> and n<sub>ref</sub>, respectively), for each barcode (cell) present in the `barcodes.tsv` file, in a tab separated text file. This file is then used as an input for the second program - readCountsMatrix - which, upon providing an output prefix, generates two outputs: (1) a cell-position matrix with n_var and n_ref estimates, and (2) a cell-position matrix with the expressed variant allele fraction (VAF<sub>RNA</sub> = n<sub>var</sub> / (n<sub>var</sub> + n<sub>ref</sub>)). VAF<sub>RNA</sub> is estimated at a user-defined threshold of minimum required sequencing reads (minR); default minR = 5. readCountsMatrix is time-efficient and can be re-run multiple times at various minR thresholds.
 
-THe `barcodes.tsv` file is assumed to be present in the current working directory (from where the script is executed).
+Some methods for extracting cell-barcodes from the BAM files (see [Read Grouping](Grouping.md)) can use a file of cell-barcodes to restrict these to an acceptable list. The STARsolo cell-barcode read grouping method, for example, presumes valid cell-barcodes are in the file `barcodes.tsv` and the current working directory (from where the script is executed). See also, the Valid Read Groups options (-b, --barcode_acceptlist command-line options) below.
 
 ## Graphical User Interface
 
-[Graphical User Interface](https://github.com/HorvathLab/NGS/blob/master/SCReadCounts/docs/Examples.md#graphical-user-interface)
+<img src="SCReadCounts_basic.png" alt="scReadCounts Options"/>
 
 Click the help icon (question mark) at the top right of the GUI and
 then an input field for help. Multiple files can be selected in the
@@ -54,7 +53,8 @@ Output Folder, -o OUTPUT, --output=OUTPUT
 > Show program help and exit.
 
 ### Advanced Options
-[Advanced Options](SCReadCounts_advanced.png)
+
+<img src="SCReadCounts_advanced.png" alt="scReadCounts Advanced Options"/>
 
 Min. Reads, -m MINREADS, --minreads=MINREADS
 
@@ -78,16 +78,19 @@ All Fields, -F, --full
 
 Read Group, -G READGROUP, --readgroup
 
-> Additional read grouping based on read name/identifier strings or BAM-file RG. Default: UMITools cell barcodes ("UMITools"). Go [here](Grouping.md) for details.
-> Can use regex to specify the pattern to look for (in the sequence identifier line of each read)
+> Additional read grouping based on read name/identifier strings or BAM-file RG. See [Read Grouping](Grouping.md) for more details. Default: UMI-tools.
 
-Unique Reads, -U, --uniquereads   
+Read Group Values, -b BARCODES, --barcode_acceptlist BARCODES
 
-> Consider only distinct reads.
+> File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list. 
 
 Threads/BAM, -t TPB, --threadsperbam=TPB                   
 
 > Worker threads per alignment file. Default=0; indicates no threading.
+
+Force, -F, --force
+
+> Force all output files to be re-computed, even if already present. Default: False.
 
 Quiet, -q, --quiet
 
