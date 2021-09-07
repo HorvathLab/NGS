@@ -4,4 +4,4 @@ if [ "$1" = "" ]; then
    exit 1
 fi
 md5sum $1.*tgz > $1.md5
-gh release create $1 -F $1.txt $1.*tgz $1.md5
+gh release create $1 -t $1 -F $1.txt $1.*tgz $1.md5

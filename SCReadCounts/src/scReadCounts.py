@@ -72,12 +72,12 @@ if len(sys.argv) == 1:
         print("Graphical user-interface unavailable.",file=sys.stderr)
         sys.exit(1)
     from optparse_gui import OptionParserGUI
-    parser = OptionParserGUI(version=VERSION)                                                                                
-    error_kwargs = {'exit': False}                                                                                           
-    sys.excepthook = excepthook                                                                                              
-else:                                                                                                                        
-    parser = OptionParser(version=VERSION)                                                                                   
-    error_kwargs = {}                                                                                                        
+    parser = OptionParserGUI(version=VERSION)
+    error_kwargs = {'exit': False}
+    sys.excepthook = excepthook
+else:
+    parser = OptionParser(version=VERSION)
+    error_kwargs = {}
 
 filterFactory = ReadFilterFactory()
 filterOptions = [t[0] for t in filterFactory.list()]
@@ -117,7 +117,17 @@ advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb
                     help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=readgroup_default, remember=True,
                     choices=groupOptions, name="Read Group",
-                    help="Additional read grouping based on read name/identifier strings or BAM-file RG/CB. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
+                    help="Additional read grouping based on read name/identifier strings or BAM-file RG. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
+# advanced.add_option("--alignmentfilterparam", type="string", dest="filterparam", default="", remember=True,
+#                     help="Override parameters for selected alignment filter. Default: Do not override.", name="Alignment Filter Param.")
+# advanced.add_option("--readgroupparam", type="string", dest="readgroupparam", default="", remember=True,
+#                     help="Override parameters for selected read group. Default: Do not override.", name="Read Group Param.")
+advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist", default=None,
+                  help="File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list.", name="Valid Read Groups",
+                  remember=True,
+                  filetypes=[("Valid Read Groups File", "*.txt;*.tsv")])
+advanced.add_option("-F", "--force", action="store_true", dest="force", default=False, remember=True,
+                    help="Force all output files to be re-computed, even if already present. Default: False.", name="Force")
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
 parser.add_option("-o", "--output", type="savefile", dest="output", remember=True,
@@ -150,7 +160,13 @@ while True:
 
 readfilter = filterFactory.get(opt.filter)
 if opt.readgroup:
-    readgroup = groupFactory.get(opt.readgroup)
+    readgroupparam = ""
+    if opt.acceptlist != None:
+        if opt.acceptlist in ("","None","-"):
+            readgroupparam = "*:acceptlist=None"
+        else:
+            readgroupparam = "*:acceptlist='%s'"%(opt.acceptlist,)
+    readgroup = groupFactory.get(opt.readgroup,readgroupparam)
 else:
     readgroup = None
 
@@ -173,8 +189,12 @@ if opt.maxreads != maxreads_default:
     args.extend(["-M",str(opt.maxreads)])
 if opt.readgroup != readgroup_default:
     args.extend(["-G",doublequote(opt.readgroup if readgroup != None else "")])
+if opt.acceptlist != None and readgroup != None:
+    args.extend(["-b",doublequote(opt.acceptlist)])
 if opt.tpb != tpb_default:
     args.extend(["-t",str(opt.tpb)])
+if opt.force:
+    args.extend(["-F"])
 if opt.quiet:
     args.extend(["-q"])
 args.extend(["-o",doublequote(opt.output)])
@@ -221,12 +241,14 @@ if opt.maxreads != maxreads_default:
     args.extend(["-M",opt.maxreads])
 if readgroup != None:
     args.extend(["-G",opt.readgroup])
+    if opt.acceptlist:
+        args.extend(["-b",opt.acceptlist])
 args.extend(["-t",opt.tpb])
 if opt.quiet:
     args.extend(["-q"])
 args = [ str(x) for x in args ]
 
-if os.path.exists(opt.output):
+if os.path.exists(opt.output) and not opt.force:
 
     progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     progress.message("Skipping readCounts, output file present.")
@@ -238,6 +260,7 @@ else:
     progress.message("Execute readCounts...")
     progress.message(">>>>>>>>>>>>>>>>>>>>>\n")
     execprog.execute("readCounts",*args)
+    opt.force = True
 
 outbase,extn = opt.output.rsplit('.',1)
 outmatrix1 = outbase + '.cnt.matrix.' + extn
@@ -252,7 +275,7 @@ if opt.quiet:
 args.extend(["-o",outmatrix1])
 args = [ str(x) for x in args ]
 
-if os.path.exists(outmatrix1):
+if os.path.exists(outmatrix1) and not opt.force:
 
     progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     progress.message("Skipping readCountsMatrix for Ref;Var, output file present.")
@@ -274,7 +297,7 @@ if opt.quiet:
 args.extend(["-o",outmatrix2])
 args = [ str(x) for x in args ]
 
-if os.path.exists(outmatrix2):
+if os.path.exists(outmatrix2) and not opt.force:
 
     progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     progress.message("Skipping readCountsMatrix for VAF, output file present.")

@@ -27,8 +27,10 @@ def check_multichoice(option, opt, value):
 
 def check_file(option, opt, value):
     value = value.strip('"')
-    if not value:
-        return value
+    if value == "":
+        return None
+    if value.strip() in ("","-","None"):
+        return value.strip()
     value = os.path.expanduser(value)
     value = os.path.expandvars(value)
     value1 = glob.glob(value)

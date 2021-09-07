@@ -4,6 +4,7 @@ from pysamimport import pysam
 import re
 import inspect
 from configparser import SafeConfigParser
+from collections import defaultdict
 
 
 class BadRead(RuntimeError):
@@ -491,6 +492,26 @@ class CompoundFilter(CompoundMethod,ReadFilter):
 
 class ReadGroup(object):
 
+    def __init__(self, acceptlist=None, missing=None):
+        self._default = missing 
+        self.set_acceptlist(acceptlist)
+
+    def default(self):
+        return self._default
+
+    def accept(self,value):
+        if self._acceptlist == None or value in self._acceptlist:
+            return True
+        return False
+
+    def set_acceptlist(self,acceptlist=None):
+        self._acceptlist = None
+        if acceptlist:
+            try:
+                self._acceptlist = set(open(acceptlist).read().split())
+            except IOError:
+                raise IOError("Can't open read group acceptlist file: %s"%(acceptlist))
+
     def group(self, alignment):
         return None
 
@@ -558,10 +579,19 @@ class MethodFactory(object):
         methods.sort()
         return methods
 
-    def get(self,name):
+    def get(self,name,params=""):
 
         if not self.config.has_section(name):
             raise LookupError(self.nomethodError%(name,))
+
+        paramsbyopt = defaultdict(str)
+        for line in map(str.strip,params.split(';')):
+            if line == "":
+                continue
+            opt,rest = line.split(':',1)
+            opt = opt.strip()
+            value = rest.strip()
+            paramsbyopt[opt] = (paramsbyopt[opt] + " " + value).strip()
 
         method = self.compoundMethodClass()
         for opt,value in self.config.items(name):
@@ -571,9 +601,18 @@ class MethodFactory(object):
                 method.add_desc(value)
                 continue
             kwargs = dict()
-            kvpairs = re.split(r'\s+(\w+)=',' '+value)
-            for i in range(1,len(kvpairs),2):
+            kvpairs = []
+            if paramsbyopt[opt]:
+                kvpairs += re.split(r'\s+(\w+)=',' '+paramsbyopt[opt])[1:]
+            elif paramsbyopt["*"]:
+                kvpairs += re.split(r'\s+(\w+)=',' '+paramsbyopt["*"])[1:]                
+            kvpairs += re.split(r'\s+(\w+)=',' '+value)[1:]
+            seenk = set()
+            for i in range(0,len(kvpairs),2):
                 k = kvpairs[i]
+                if k in seenk:
+                    continue
+                seenk.add(k)
                 v = self.tovalue(kvpairs[i+1])
                 vstr = str(v)
                 if self.tovalue(kvpairs[i+1]) != self.tovalue(vstr):
@@ -628,17 +667,11 @@ class ReadGroupFactory(MethodFactory):
 
 class ReadNameRegex(ReadGroup):
 
-    def __init__(self, regex, regexgrp=1, whitelist=None, missing=None):
-        super(ReadNameRegex,self).__init__()
+    def __init__(self, regex, regexgrp=1, **kw):
+        super(ReadNameRegex,self).__init__(**kw)
         self._regex = re.compile(regex)
         self._regexgrp = int(regexgrp)
-        self._whitelist = None
-        if whitelist:
-            try:
-                self._whitelist = set(open(whitelist).read().split())
-            except IOError:
-                raise IOError("Can't open read group whitelist file: %s"%(whitelist))
-        self._default = missing
+        
 
     def group(self, alignment):
         name = alignment.query_name
@@ -646,57 +679,44 @@ class ReadNameRegex(ReadGroup):
         if m:
             try:
                 value = m.group(self._regexgrp)
-                if self._whitelist == None or value in self._whitelist:
+                if self.accept(value):
                     return value
             except IndexError:
                 pass
-        return self._default
+        return self.default()
 
 class ReadNameWord(ReadGroup):
 
-    def __init__(self, field_index, field_sep='_', whitelist=None, missing=None):
-        super(ReadNameWord,self).__init__()
+    def __init__(self, field_index, field_sep='_', **kw):
+        super(ReadNameWord,self).__init__(**kw)
         self._index = field_index
         self._sep = field_sep
-        self._whitelist = None
-        if whitelist:
-            try:
-                self._whitelist = set(open(whitelist).read().split())
-            except IOError:
-                raise IOError("Can't open read group whitelist file: %s"%(whitelist))
-        self._default = missing
 
     def group(self, alignment):
         name = alignment.query_name
         words = name.split(self._sep)
         try:
             value = words[self._index]
-            if self._whitelist == None or value in self._whitelist:
+            if self.whilelisted(value):
                 return value
         except IndexError:
             pass
-        return self._default
+        return self.default()
 
 class ReadTagValue(ReadGroup):
 
-    def __init__(self, tag, whitelist=None, missing=None):
+    def __init__(self, tag, **kw):
+        super(ReadTagValue,self).__init__(**kw)
         self._tag = tag
-        self._whitelist = None
-        if whitelist:
-            try:
-                self._whitelist = set(open(whitelist).read().split())
-            except IOError:
-                raise IOError("Can't open read group whitelist file: %s"%(whitelist))
-        self._default = missing
 
     def group(self, alignment):
         try:
             value = str(alignment.opt(self._tag))
-            if self._whitelist == None or value in self._whitelist:
+            if self.accept(value):
                 return value
         except KeyError:
             pass
-        return self._default
+        return self.default()
 
 class RGTag(ReadTagValue):
 

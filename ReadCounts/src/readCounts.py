@@ -94,12 +94,20 @@ advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=min
 advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=maxreads_default, remember=True,
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
 advanced.add_option("-E","--extended",type="multichoice",dest="extended",default=None, remember=True, 
-		    help="Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.", name="Extended Output", multichoices=["Genotype likelihood","Read filtering statistics"])
+               help="Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.", name="Extended Output", multichoices=["Genotype likelihood","Read filtering statistics"])
 advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb_default, remember=True,
                     help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=None, remember=True,
                     choices=groupOptions, name="Read Group",
                     help="Additional read grouping based on read name/identifier strings or BAM-file RG. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
+# advanced.add_option("--alignmentfilterparam", type="string", dest="filterparam", default="", remember=True,
+#                     help="Override parameters for selected alignment filter. Default: Do not override.", name="Alignment Filter Param.")
+# advanced.add_option("--readgroupparam", type="string", dest="readgroupparam", default="", remember=True,
+#                     help="Override parameters for selected read group. Default: Do not override.", name="Read Group Param.")
+advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist", default=None,
+                  help="File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list.", name="Valid Read Groups",
+                  remember=True,
+                  filetypes=[("Valid Read Groups File", "*.txt;*.tsv")])
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
 # advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
@@ -135,7 +143,13 @@ while True:
 opt.debug = False
 readfilter = filterFactory.get(opt.filter)
 if opt.readgroup:
-    readgroup = groupFactory.get(opt.readgroup)
+    readgroupparam = ""
+    if opt.acceptlist != None:
+        if opt.acceptlist in ("","None","-"):
+            readgroupparam = "*:acceptlist=None"
+        else:
+            readgroupparam = "*:acceptlist='%s'"%(opt.acceptlist,)
+    readgroup = groupFactory.get(opt.readgroup,readgroupparam)
 else:
     readgroup = None
 if opt.extended and isinstance(opt.extended,str):
@@ -160,6 +174,8 @@ if opt.maxreads != maxreads_default:
     args.extend(["-M",str(opt.maxreads)])
 if readgroup != None:
     args.extend(["-G",doublequote(opt.readgroup)])
+    if opt.acceptlist != None:
+        args.extend(["-b",doublequote(opt.acceptlist)])
 if opt.tpb != tpb_default:
     args.extend(["-t",str(opt.tpb)])
 if opt.extended:
