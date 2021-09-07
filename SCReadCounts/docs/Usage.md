@@ -13,7 +13,9 @@
 ## Description
 
 
-Currently, SCReadCounts has two programs. The program readCounts requires two input files: a pooled single cell alignment and a list of genomic positions of interest. readCounts utilizes the barcode information from the pooled single cell alignments and outputs the variant and reference read counts (n_var and n_ref, respectively), for each barcode (cell), in a tab separated text file. This file is then used as an input for the second program - readCountsMatrix - which, upon providing an output prefix, generates two outputs: (1) a cell-position matrix with n_var and n_ref estimates, and (2) a cell-position matrix with the expressed variant allele fraction (VAF_RNA = n_var / (n_var + n_ref)). VAF_RNA is estimated at a user-defined threshold of minimum required sequencing reads (minR); default minR = 5. readCountsMatrix is time-efficient and can be re-run multiple times at various minR thresholds.
+Currently, SCReadCounts has two programs. The program readCounts requires two input files: a pooled single cell alignment and a list of genomic positions of interest. readCounts utilizes the barcode information from the pooled single cell alignments and outputs the variant and reference read counts (n<sub>var</sub> and n<sub>ref</sub>, respectively), for each barcode (cell) present in the `barcodes.tsv` file, in a tab separated text file. This file is then used as an input for the second program - readCountsMatrix - which, upon providing an output prefix, generates two outputs: (1) a cell-position matrix with n_var and n_ref estimates, and (2) a cell-position matrix with the expressed variant allele fraction (VAF<sub>RNA</sub> = n<sub>var</sub> / (n<sub>var</sub> + n<sub>ref</sub>)). VAF<sub>RNA</sub> is estimated at a user-defined threshold of minimum required sequencing reads (minR); default minR = 5. readCountsMatrix is time-efficient and can be re-run multiple times at various minR thresholds.
+
+THe `barcodes.tsv` file is assumed to be present in the current working directory (from where the script is executed).
 
 ## Graphical User Interface
 
@@ -68,7 +70,7 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
                         
 Filter Alignments, -f FILTER, --alignmentfilter
 
-> Alignment filtering strategy. Default: Basic.
+> Alignment filtering strategy. See [Read Filtering](Filtering.md) for more details. Default: Basic.
 
 All Fields, -F, --full
 
