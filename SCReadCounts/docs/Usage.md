@@ -37,8 +37,8 @@ SNVs, -s SNVS, --snvs=SNVS
 Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
 > Read alignments files in indexed BAM format, with extension `.bam`. BAM index with extension `.bam.bai` must be located in the same directory. Multiple files are specified inside quotes, separated by spaces, and by using file globbing. scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment. See [Input Files](InputFiles.md) for more information.
-
-scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
+> 
+> scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
 
 Output Folder, -o OUTPUT, --output=OUTPUT
 
