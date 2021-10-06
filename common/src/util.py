@@ -697,7 +697,7 @@ class ReadNameWord(ReadGroup):
         words = name.split(self._sep)
         try:
             value = words[self._index]
-            if self.whilelisted(value):
+            if self.accept(value):
                 return value
         except IndexError:
             pass
