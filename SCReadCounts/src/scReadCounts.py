@@ -86,14 +86,14 @@ for o,d in sorted(filterFactory.list()):
     filterDesc.append("%s (%s)"%(o,d.strip('.')))
 
 groupFactory = ReadGroupFactory()
-groupOptions = [""] + [t[0] for t in groupFactory.list()]
+groupOptions = ["","None","-"] + [t[0] for t in groupFactory.list()]
 groupDesc = []
 for o,d in sorted(groupFactory.list()):
     groupDesc.append("%s (%s)"%(o,d.strip('.')))
 
 minreads_default = 5
 maxreads_default = None
-tpb_default = 0
+threads_default = 0
 filter_default = "Basic"
 readgroup_default = "UMI-tools"
 
@@ -113,11 +113,11 @@ advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=min
                     help="Minimum number of good reads at SNV locus per alignment file. Default=5.", name="Min. Reads")
 advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=maxreads_default, remember=True,
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
-advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb_default, remember=True,
-                    help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
+advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
+                    help="Worker threads. Indicate no threading/multiprocessing with 0. Default=0.", name="Threads")
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=readgroup_default, remember=True,
                     choices=groupOptions, name="Read Group",
-                    help="Additional read grouping based on read name/identifier strings or BAM-file RG. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
+                    help="Additional read grouping based on read name/identifier strings or BAM-file RG. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
 # advanced.add_option("--alignmentfilterparam", type="string", dest="filterparam", default="", remember=True,
 #                     help="Override parameters for selected alignment filter. Default: Do not override.", name="Alignment Filter Param.")
 # advanced.add_option("--readgroupparam", type="string", dest="readgroupparam", default="", remember=True,
@@ -159,7 +159,7 @@ while True:
     break
 
 readfilter = filterFactory.get(opt.filter)
-if opt.readgroup:
+if opt.readgroup not in ("","None","-"):
     readgroupparam = ""
     if opt.acceptlist != None:
         if opt.acceptlist in ("","None","-"):
@@ -191,8 +191,8 @@ if opt.readgroup != readgroup_default:
     args.extend(["-G",doublequote(opt.readgroup if readgroup != None else "")])
 if opt.acceptlist != None and readgroup != None:
     args.extend(["-b",doublequote(opt.acceptlist)])
-if opt.tpb != tpb_default:
-    args.extend(["-t",str(opt.tpb)])
+if opt.threads != threads_default:
+    args.extend(["-t",str(opt.threads)])
 if opt.force:
     args.extend(["-F"])
 if opt.quiet:
@@ -212,7 +212,7 @@ scReadCounts Options:
     Min. Reads (-m)           %s (applied only to VAF matrix)
     Max. Reads (-M):          %s
     Read Groups (-G):         %s%s
-    Threads per BAM (-t):     %s
+    Threads (-t):             %s
     Quiet (-q):               %s
 
 Command-Line: scReadCounts %s
@@ -225,7 +225,7 @@ Command-Line: scReadCounts %s
      opt.maxreads,
      None if readgroup == None else opt.readgroup,
      "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
-     opt.tpb,
+     opt.threads,
      opt.quiet,
      cmdargs)
 
@@ -243,7 +243,7 @@ if readgroup != None:
     args.extend(["-G",opt.readgroup])
     if opt.acceptlist:
         args.extend(["-b",opt.acceptlist])
-args.extend(["-t",opt.tpb])
+args.extend(["-t",opt.threads])
 if opt.quiet:
     args.extend(["-q"])
 args = [ str(x) for x in args ]

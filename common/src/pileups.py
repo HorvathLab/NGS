@@ -62,14 +62,14 @@ class SerialPileups(Pileups):
 class ThreadedPileups(Pileups):
     def __init__(self,*args,**kw):
         super(ThreadedPileups,self).__init__(*args)
-        self.tpb = kw.get('threadsperbam',1)
+        self.nt = kw.get('threads',1)
         self.nb = len(self.samfiles)
-        self.nt = self.tpb*self.nb
+        self.tpb = self.nt//self.nb
         self._queue = []
         k = 0;
         for j in range(self.tpb):
             for i in range(self.nb):
-                self._queue.append(queue.Queue(20))
+                self._queue.append(queue.Queue(20*self.nt))
                 t = threading.Thread(target=self.worker,args=(i,j,k))
                 t.daemon = True
                 t.start()
@@ -96,16 +96,18 @@ class ThreadedPileups(Pileups):
                     for pileupread in pileupcolumn.pileups:
                         if self.readgroups != None:
                             grp = (i,self.readgroups.group(pileupread.alignment))
+                            if grp[1] == None:
+                                continue
                             total[grp] += 1
                         else:
                             grp = i
                         try:
                             al, pos, base = self.filter.extract_base(pileupread)
                         except BadRead as e:
-                            cnts[(i, e.args[0])] += 1
+                            cnts[(grp, e.args[0])] += 1
                             continue
                         reads.append((al, pos, base, grp))
-                        cnts[(i, 'Good')] += 1
+                        cnts[(grp, 'Good')] += 1
                     self.filter.pileup_end(pileupcolumn)
             except ValueError as e:
                 pass
@@ -137,14 +139,14 @@ class MultiprocPileups(Pileups):
     # doesn't survive the multiprocess communication process...
     def __init__(self,*args,**kw):
         super(MultiprocPileups,self).__init__(*args)
-        self.tpb = kw.get('procperbam',1)
+        self.nt = kw.get('procs',1)
         self.nb = len(self.samfiles)
-        self.nt = self.tpb*self.nb
+        self.tpb = self.nt//self.nb
         self._queue = []
         k = 0;
         for j in range(self.tpb):
             for i in range(self.nb):
-                self._queue.append(multiprocessing.Queue(20))
+                self._queue.append(multiprocessing.Queue(20*self.nt))
                 t = multiprocessing.Process(target=self.worker,args=(i,j,k))
                 t.daemon = True
                 t.start()
@@ -173,16 +175,18 @@ class MultiprocPileups(Pileups):
                     for pileupread in pileupcolumn.pileups:
                         if self.readgroups != None:
                             grp = (i,self.readgroups.group(pileupread.alignment))
+                            if grp[1] == None:
+                                continue
                             total[grp] += 1
                         else:
                             grp = i
                         try:
                             al, pos, base = self.filter.extract_base(pileupread)
                         except BadRead as e:
-                            cnts[(i, e.args[0])] += 1
+                            cnts[(grp, e.args[0])] += 1
                             continue
                         reads.append((PileupAlignment(al.seq,al.is_reverse), pos, base, grp))
-                        cnts[(i, 'Good')] += 1
+                        cnts[(grp, 'Good')] += 1
                     self.filter.pileup_end(pileupcolumn)
             except ValueError as e:
                 pass 

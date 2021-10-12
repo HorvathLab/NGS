@@ -207,6 +207,8 @@ class Progress(object):
     def __init__(self,quiet=0):
         self._quiet = 0
         self.quiet(quiet)
+        self.start = None
+        self.finish = None
 
     def quiet(self,q):
         oldq = self._quiet
@@ -234,6 +236,7 @@ class Progress(object):
         if self._quiet >= 2:
             return
         self.start = time.time()
+        self.finish = None
         if self.max:
             self.initprogressbar(message)
         else:
@@ -253,10 +256,15 @@ class Progress(object):
     def done(self):
         if self._quiet >= 1:
             return
+        self.finish = time.time()
         if self.max != None:
             self.doneprogressbar()
         else:
             self.donebar()
+
+    def duration(self):
+        assert self.start and self.finish, "Cannot get duration before stage is done"
+        return (self.finish-self.start)
 
 class ProgressText(Progress):
     def __init__(self,*args,**kwargs):
@@ -296,7 +304,7 @@ class ProgressText(Progress):
 
     def donebar(self):
         if self.elapsed:
-            d = timedelta(seconds=(time.time()-self.start))
+            d = timedelta(seconds=self.duration())
             print("(%s)"%(self.deltaformat(d),), file=self.handle)
         else:
             print("", file=self.handle)
@@ -335,7 +343,7 @@ class ProgressText(Progress):
     def doneprogressbar(self):
         print((self.maxwidth-self.barpos)*self.symbol, end=' ', file=self.handle)
         if self.elapsed:
-            d = timedelta(seconds=(time.time()-self.start))
+            d = timedelta(seconds=self.duration())
             print("(%s)"%(self.deltaformat(d),), file=self.handle)
         else:
             print("", file=self.handle)

@@ -28,12 +28,12 @@ set -x
 #
 # STARsolo example
 #
-../bin/scReadCounts -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 \
+../bin/scReadCounts -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 -t 10 \
                     -G STARsolo -b singlecell2_117_barcodes.tsv -o singlecell2-output.tsv
 
 #
 # Override accept list for barcodes, accept all barcodes
 #
-../bin/scReadCounts -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 \
+../bin/scReadCounts -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 -t 10 \
                     -G STARsolo -b None -o singlecell2-all-output.tsv
 

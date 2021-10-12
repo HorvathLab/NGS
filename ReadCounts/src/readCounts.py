@@ -74,7 +74,7 @@ for o,d in sorted(groupFactory.list()):
 
 minreads_default = 10
 maxreads_default = None
-tpb_default = 0
+threads_default = 0
 filter_default = "Basic"
 
 advanced = OptionGroup(parser, "Advanced")
@@ -95,8 +95,8 @@ advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
 advanced.add_option("-E","--extended",type="multichoice",dest="extended",default=None, remember=True, 
                help="Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.", name="Extended Output", multichoices=["Genotype likelihood","Read filtering statistics"])
-advanced.add_option("-t", "--threadsperbam", type="int", dest="tpb", default=tpb_default, remember=True,
-                    help="Worker threads per alignment file. Indicate no threading with 0. Default=0.", name="Threads/BAM")
+advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
+                    help="Worker threads. Indicate no threading/multiprocessing with 0. Default=0.", name="Threads")
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=None, remember=True,
                     choices=groupOptions, name="Read Group",
                     help="Additional read grouping based on read name/identifier strings or BAM-file RG. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
@@ -176,8 +176,8 @@ if readgroup != None:
     args.extend(["-G",doublequote(opt.readgroup)])
     if opt.acceptlist != None:
         args.extend(["-b",doublequote(opt.acceptlist)])
-if opt.tpb != tpb_default:
-    args.extend(["-t",str(opt.tpb)])
+if opt.threads != threads_default:
+    args.extend(["-t",str(opt.threads)])
 if opt.extended:
     args.extend(["-E",doublequote(",".join(opt.extended))])
 if opt.quiet:
@@ -198,7 +198,7 @@ readCounts Options:
     Min. Reads (-m)           %s
     Max. Reads (-M):          %s
     Read Groups (-G):         %s%s
-    Threads per BAM (-t):     %s
+    Threads (-t):             %s
     Extended Output (-E):     %s
     Quiet (-q):               %s
 
@@ -212,7 +212,7 @@ Command-Line: readCounts %s
      opt.maxreads,
      None if readgroup == None else opt.readgroup,
      "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
-     opt.tpb,
+     opt.threads,
      ", ".join(opt.extended) if opt.extended else "None",
      opt.quiet,
      cmdargs)
@@ -366,15 +366,16 @@ if opt.extended == None or 'Genotype likelihood' not in opt.extended:
 emptysym = None
 outrows = []
 
-if opt.tpb == 0:
-    pileups = SerialPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup).iterator()
-else:
-    pileups = MultiprocPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup, procsperbam=opt.tpb).iterator()
-
 progress.stage("Count reads per SNV", len(snvdata))
+if opt.threads == 0:
+    pileups = SerialPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup).iterator()
+elif opt.threads > 0:
+    pileups = MultiprocPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup, procs=opt.threads).iterator()
+elif opt.threads < 0:
+    pileups = ThreadedPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup, threads=-opt.threads).iterator()
+
 
 totalsnvs = 0
-start = time.time()
 for snvchr, snvpos, ref, alt, snvextra in snvdata:
     
     snvchr1, snvpos1, ref1, alt1, total, reads, badread = next(pileups)
@@ -444,7 +445,7 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
     progress.update()
 progress.done()
 if not opt.quiet:
-    print("SNVs/sec: %.2f"%(float(totalsnvs)/(time.time()-start),))
+    print("SNVs/sec: %.2f"%(float(totalsnvs)/progress.duration(),))
 
 # Determine the maxreads value, if percentile, otherwise let the defaultdict take care of it
 coverage = defaultdict(list)
