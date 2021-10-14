@@ -22,3 +22,5 @@ SCReadCounts is a wrapper around readCounts and readCountsMatrix function to fac
 * [Output Files](docs/OutputFiles.md)
 
 **[Examples](docs/Examples.md)**
+
+NOTE: For any issues you are facing kindly provide the command line ouput that the software produces, and if possible, a small reproducible set of your inputs. It will help us to identify and resolve issues efficiently.
