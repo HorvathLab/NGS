@@ -64,12 +64,14 @@ class ThreadedPileups(Pileups):
         super(ThreadedPileups,self).__init__(*args)
         self.nt = kw.get('threads',1)
         self.nb = len(self.samfiles)
+	if self.nt < self.nb or self.nt % self.nb != 0:
+	    raise RuntimeError("Number of threads should be a (non-negative integer) multiple of the number BAM files")
         self.tpb = self.nt//self.nb
         self._queue = []
         k = 0;
         for j in range(self.tpb):
             for i in range(self.nb):
-                self._queue.append(queue.Queue(20*self.nt))
+                self._queue.append(queue.Queue(20))
                 t = threading.Thread(target=self.worker,args=(i,j,k))
                 t.daemon = True
                 t.start()
@@ -141,12 +143,14 @@ class MultiprocPileups(Pileups):
         super(MultiprocPileups,self).__init__(*args)
         self.nt = kw.get('procs',1)
         self.nb = len(self.samfiles)
+	if self.nt < self.nb or self.nt % self.nb != 0:
+	    raise RuntimeError("Number of threads should be a (non-negative integer) multiple of the number BAM files")
         self.tpb = self.nt//self.nb
         self._queue = []
         k = 0;
         for j in range(self.tpb):
             for i in range(self.nb):
-                self._queue.append(multiprocessing.Queue(20*self.nt))
+                self._queue.append(multiprocessing.Queue(20))
                 t = multiprocessing.Process(target=self.worker,args=(i,j,k))
                 t.daemon = True
                 t.start()
