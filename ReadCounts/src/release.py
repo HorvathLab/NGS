@@ -1,6 +1,6 @@
 #!/bin/env python
 RELEASE = "ReadCounts"
-VERSION = '2.3.7'
+VERSION = '2.3.8'
 PROGRAMS = 'readCounts.py phasedReadCounts.py'
 INCLUDES = 'common'
 if __name__ == '__main__':
