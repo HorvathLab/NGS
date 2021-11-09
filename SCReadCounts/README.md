@@ -10,7 +10,7 @@ SCReadcounts provides explicit configuration for alignments barcoded through STA
 SCReadCounts is a wrapper around readCounts and readCountsMatrix function to facilitate single-cell level assessment of read counts.
 
 **Setup:**
-* [Download](https://github.com/HorvathLab/NGS/releases/tag/SCReadCounts-1.1.7)
+* [Download](https://github.com/HorvathLab/NGS/releases/tag/SCReadCounts-1.1.8)
 * [Install](docs/Installation.md)
 
 **Usage:**
@@ -22,3 +22,5 @@ SCReadCounts is a wrapper around readCounts and readCountsMatrix function to fac
 * [Output Files](docs/OutputFiles.md)
 
 **[Examples](docs/Examples.md)**
+
+NOTE: For any issues you are facing kindly provide the command line ouput that the software produces, and if possible, a small reproducible set of your inputs. It will help us to identify and resolve issues efficiently.
