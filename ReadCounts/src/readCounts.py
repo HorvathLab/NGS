@@ -198,6 +198,7 @@ readCounts Options:
     Min. Reads (-m)           %s
     Max. Reads (-M):          %s
     Read Groups (-G):         %s%s
+    Valid Read Groups (-b):   %s
     Threads (-t):             %s
     Extended Output (-E):     %s
     Quiet (-q):               %s
@@ -212,6 +213,7 @@ Command-Line: readCounts %s
      opt.maxreads,
      None if readgroup == None else opt.readgroup,
      "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
+     "" if opt.acceptlist == None else opt.acceptlist,
      opt.threads,
      ", ".join(opt.extended) if opt.extended else "None",
      opt.quiet,

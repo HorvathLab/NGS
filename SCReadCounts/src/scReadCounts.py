@@ -212,6 +212,7 @@ scReadCounts Options:
     Min. Reads (-m)           %s (applied only to VAF matrix)
     Max. Reads (-M):          %s
     Read Groups (-G):         %s%s
+    Valid Read Groups (-b):   %s
     Threads (-t):             %s
     Quiet (-q):               %s
 
@@ -225,6 +226,7 @@ Command-Line: scReadCounts %s
      opt.maxreads,
      None if readgroup == None else opt.readgroup,
      "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
+     "" if opt.acceptlist else opt.acceptlist,
      opt.threads,
      opt.quiet,
      cmdargs)
