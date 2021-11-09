@@ -34,7 +34,7 @@ fi
 # PACKAGE=`readlink -f "$PACKAGE"`
 PACKAGE=`basename "$PACKAGE"`
 if [ ! -d "./$PACKAGE" ]; then
-    echo "Valid packages: SNPlice, RNA2DNAlign, ReadCounts" 1>&2
+    echo "Valid packages: SNPlice, RNA2DNAlign, ReadCounts, SCReadCounts, SCExecute" 1>&2
     exit 1;
 fi
 OS=`uname`
