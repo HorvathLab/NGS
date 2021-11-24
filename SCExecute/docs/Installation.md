@@ -13,11 +13,11 @@ SCExecute is available as a self-contained binary package for 64-bit Linux and M
     ```
 2. See the graphical user interface.
     ```
-    bin/readCounts
+    bin/scExecute
     ```
 3. Command-line help.
     ```
-    bin/readCounts -h
+    bin/scExecute -h
     ```
 4. Run the examples.
     ```
@@ -32,11 +32,11 @@ SCExecute is available as a self-contained binary package for 64-bit Linux and M
     ```
 2. See the graphical user interface.
     ```
-    % bin/readCounts
+    % bin/scExecute
     ```
 3. Command-line help.
     ```
-    % bin/readCounts -h
+    % bin/scExecute -h
     ```
 4. Run the examples.
     ```
@@ -66,11 +66,11 @@ SCExecute is available as a self-contained binary package for 64-bit Linux and M
     ```
 4. See the graphical user interface (if wxPython is installed).
     ```
-    bin/readCounts
+    bin/scExecute
     ```
 5. Command-line help.
     ```
-    bin/readCounts -h
+    bin/scExecute -h
     ```
 6. Run the examples.
     ```
