@@ -80,4 +80,4 @@ SCExecute is available as a self-contained binary package for 64-bit Linux and M
 
 ## See Also
 
-[SCExecute Home](..), [Usage](SCExecute.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md)
+[SCExecute Home](..), [Usage](Usage.md), [Input Files](InputFiles.md)
