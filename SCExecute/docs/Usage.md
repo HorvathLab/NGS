@@ -38,11 +38,11 @@ Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
 Read Group, -G READGROUP, --readgroup=READGROUP
 
->  Read group / barcode extraction strategy. Options: STARsolo (Cell barcodes added by STARsolo in CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped), UMI-tools (Cell barcodes from read name added by umi_tools). Default: STARsolo.
+>  Read group / barcode extraction strategy. Options: STARsolo (Cell barcodes added by STARsolo in CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped), UMI-tools (Cell barcodes from read name added by umi_tools). See (Groupind.md)[Read Groups]. Default: STARsolo.
 
 Command, -C COMMAND, --command=COMMAND
 
-> Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or placed at the end of the command if no {} is present.  Required.
+> Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or is placed at the end of the command if no {} is present.  Required.
 
 --version
 
@@ -59,7 +59,7 @@ Threads, -t T, --threads=T
 
 > Number of instances of COMMAND to run at once. Default: 1.
 
-Batch, -B B, --batch=B
+Batch Size, -B B, --batch=B
 
 > Number of BAM files to extract with each pass of the input reads. Default: 10.
 
