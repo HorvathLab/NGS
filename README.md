@@ -1,3 +1,5 @@
+## [SCExecute](SCExecute#readme) 
+SCExecute generates cell-barcode specific BAM files from aligned, aggregate single-cell sequencing data, executing a user-provided command on each barcode-stratified BAM file.
 ## [SCReadCounts](SCReadCounts#readme) 
 SCReadCounts is a computational tool for a cell-level assessment of the read counts bearing a particular nucleotide at genomic positions of interest from single cell RNA sequencing (scRNA-seq) data. 
 ## [ReadCounts](ReadCounts#readme) 
