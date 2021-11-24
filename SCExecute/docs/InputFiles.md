@@ -7,4 +7,5 @@ expected with `.bam.bai` index files in the same folder.
 
 ## See Also
 
-[SCExecute Home](..), [Read Groups](Grouping.md), [Examples](Examples.md)
+[SCExecute Home](..), [Usage](Usage.md), [Read Groups](Grouping.md), [Examples](Examples.md)
+
