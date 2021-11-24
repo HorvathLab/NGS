@@ -38,7 +38,7 @@ Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
 Read Group, -G READGROUP, --readgroup=READGROUP
 
->  Read group / barcode extraction strategy. Options: STARsolo (Cell barcodes added by STARsolo in CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped), UMI-tools (Cell barcodes from read name added by umi_tools). See [Read Groups](Groupind.md). Default: STARsolo.
+>  Read group / barcode extraction strategy. Options: STARsolo (Cell barcodes added by STARsolo in CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped), UMI-tools (Cell barcodes from read name added by umi_tools). See [Read Groups](Grouping.md). Default: STARsolo.
 
 Command, -C COMMAND, --command=COMMAND
 
@@ -73,4 +73,4 @@ Quiet, -q, --quiet
 
 ## See Also
 
-[SCExecute Home](..), [Usage](Usage.md), [Input Files](InputFiles.md)
+[SCExecute Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Read Groups](Grouping.md), 
