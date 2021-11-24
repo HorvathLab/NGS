@@ -1,6 +1,6 @@
 #!/bin/env python
 RELEASE = "SCExecute"
-VERSION = '0.1.0'
+VERSION = '1.0.0'
 PROGRAMS = 'scExecute.py'
 INCLUDES = 'common'
 if __name__ == '__main__':
