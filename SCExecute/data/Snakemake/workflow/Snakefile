@@ -1,0 +1,31 @@
+import glob
+import os
+
+
+configfile: "config/config.yaml", 
+
+           
+
+
+include: "rules/preprocessing.smk"
+
+
+           
+rule generate_fastq:
+    input:
+        fastq_1= expand("fastqs/{accession}_1.fastq", accession=config["SRR"]), 
+        fastq_2= expand("fastqs/{accession}_2.fastq", accession=config["SRR"])
+
+rule generate_bam:
+    input:
+        og_bam= expand("fastqs/{sample}_wasp_Aligned.sortedByCoord.out.bam", sample=config["Biosample"]), 
+        new_bam= expand("fastqs/{sample}_wasp_Aligned.sortedByCoord_vW_filt.bam", sample=config["Biosample"])
+        
+rule scExecute:
+    input: 
+        gatk_filt_dir= directory("fastqs/gatk_output"), 
+        strelka_filt_dir= directory("fastqs/strelka") 
+
+
+
+
