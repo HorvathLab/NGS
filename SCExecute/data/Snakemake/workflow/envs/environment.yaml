@@ -1,0 +1,14 @@
+name: environment_snakemake
+channels:
+  - conda-forge
+dependencies:
+  - snakemake-minimal >=5.24.1
+  - jinja2 =2.11
+  - networkx =2.5
+  - matplotlib =3.3
+  - graphviz =2.42
+  - bcftools =1.9
+  - samtools =1.9
+  - bwa =0.7
+  - pysam =0.15
+

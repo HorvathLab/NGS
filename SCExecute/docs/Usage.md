@@ -63,6 +63,10 @@ Batch Size, -B B, --batch=B
 
 > Number of BAM files to extract with each pass of the input reads. Default: 10.
 
+Indx, -i, --index
+
+> Index read-group specific BAM file before executing command. Default: False.
+
 Valid Read Groups, -b BARCODES, --barcode_acceptlist BARCODES
 
 > File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list.

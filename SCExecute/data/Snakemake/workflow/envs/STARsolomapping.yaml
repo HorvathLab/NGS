@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies: 
+  - star =2.7.8a
+#  - cellranger =5.0.1
+  - samtools =1.10
