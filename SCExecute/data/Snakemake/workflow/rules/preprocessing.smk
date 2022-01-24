@@ -13,7 +13,7 @@ rule fasterq:
 
 ## Add in rule for combing SRR's into Biosample, for now must do manually
 
-## Add in rule for trimming {sample}_2.fastq, for now must do manually
+## Add in rule for trimming {sample}_1.fastq, for now must do manually
 rule STARsolo:
     input:
         genome= config["Genome_dir"], 
