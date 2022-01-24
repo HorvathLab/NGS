@@ -1,7 +1,7 @@
 #!/bin/sh
-DIR=`dirname $0`
-# DIR=`readlink -f "$DIR"`
-PROG=`basename $0`
+PROG=`python -c "import os.path, sys; print(os.path.realpath(sys.argv[1]))" "$0"`
+DIR=`dirname "$PROG"`
+PROG=`basename "$PROG"`
 if [ ! -d ${DIR}/../src ]; then
   LD_LIBRARY_PATH="${DIR}/_bin:${LD_LIBRARY_PATH}:"
   export LD_LIBRARY_PATH

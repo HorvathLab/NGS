@@ -3,13 +3,15 @@ from pysamimport import pysam
 import re, os, hashlib
 
 class SplitBAM(object):
-    def __init__(self,bamfile,readgroups,batchsize=10,directory='.',index=False):
-        self.bamfile = bamfile
+    def __init__(self,bamfile,readgroups,batchsize=10,directory='.',index=False,region=None):
+        self.bamfile = os.path.realpath(bamfile)
         self.bambase,self.bamextn = self.bamfile.rsplit('.',1)
+        self.bambase = os.path.split(self.bambase)[1]
         self.readgroups = readgroups
         self.batchsize = batchsize
         self.directory = directory
         self.index = index
+        self.region = region
 
     def normalize_readgroup(self,rg):
         return re.sub(r'[^A-Z0-9.]','_',rg)
@@ -24,7 +26,11 @@ class SplitBAM(object):
             outsam = dict()
             more=False
             samfile = pysam.AlignmentFile(self.bamfile, "rb", require_index=False)
-            for al in samfile.fetch(until_eof=True):
+            if self.region:
+                readiter = samfile.fetch(contig=self.region[0],start=self.region[1],stop=self.region[2],until_eof=True)
+            else:
+                readiter = samfile.fetch(until_eof=True)
+            for al in readiter:
                 rg = self.readgroups.group(al)
                 if rg and rg not in seenrg:
                     if rg not in outsam:
