@@ -68,8 +68,12 @@ parser.add_option("-r", "--readalignments", type="files", dest="alignments", def
 parser.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=readgroup_default, remember=True,
                   choices=groupOptions, name="Read Group", notNone=True,
                   help="Read group / barcode extraction strategy. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
-parser.add_option("-C", "--command", type="string", dest="command", default=None, notNone=True, remember=True,
-                  help="Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or placed at the end of the command if no {} is present. Required.", name="Command")
+parser.add_option("-C", "--command", type="string", dest="command", default="", remember=True,
+                  help="Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or placed at the end of the command if no {} is present. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.", name="Command")
+parser.add_option("-F", "--filetemplate", type="string", dest="filetempl", default="", remember=True,
+                  help="File template for each read-group specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.", name="File Template")
+advanced.add_option("-L", "--limit", type="int", dest="limit", default=-1, remember=True,
+                    help="Generate at most this many read-group specific BAM files. Default: No limit.", name="Limit")
 advanced.add_option("-R", "--region", type="str", dest="region", default="", remember=True,
                     help="Restrict reads to those aligning to a specific region. Default: No restriction.", name="Region")
 advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
@@ -121,6 +125,10 @@ while True:
         parser.error("Bad Region option",**error_kwargs)
         continue
 
+    if not opt.command.strip() and not opt.filetempl.strip():
+        parser.error("One of Command/File Template must be specified",**error_kwargs)
+        continue
+
     break
 
 opt.debug = False
@@ -133,6 +141,10 @@ if opt.acceptlist != None:
         readgroupparam = "*:acceptlist='%s'"%(opt.acceptlist,)
 readgroup = groupFactory.get(opt.readgroup,readgroupparam)
 
+limit = opt.limit
+if limit == -1:
+    limit = None
+
 progress = ProgressText(quiet=opt.quiet)
 
 doublequote = lambda s: '"%s"'%(s,)
@@ -142,7 +154,12 @@ args = []
 args.extend(["-r",doublequote(" ".join(opt.alignments))])
 if opt.readgroup != readgroup_default:
     args.extend(["-G",doublequote(opt.readgroup)])
-args.extend(["-C",doublequote(opt.command)])
+if opt.command.strip != "":
+    args.extend(["-C",doublequote(opt.command)])
+if opt.filetempl.strip() != "":
+    args.extend(["-F",doublequote(opt.filetempl)])
+if opt.limit != -1:
+    args.extend(["-L",str(opt.limit)])
 if opt.region != "":
     args.extend(["-R",doublequote(opt.region)])
 if opt.threads != threads_default:
@@ -159,10 +176,12 @@ cmdargs = " ".join(args)
 execution_log = """
 scExecute Options:
   Read Files (-r):            %s
-  Command/Script (-C):        %s
   Read Groups (-G):           %s%s
+  Command/Script (-C):        %s
+  File Template (-F):         %s
 
   Advanced:
+    Limit (-L):               %s
     Region (-R):              %s
     Threads (-t):             %s
     Batch size (-B):          %s
@@ -171,9 +190,11 @@ scExecute Options:
 
 Command-Line: scExecute %s
 """%(", ".join(opt.alignments),
-     opt.command,
      opt.readgroup,
      "\n"+indent(readgroup.tostr(),12),
+     opt.command,
+     opt.filetempl,
+     opt.limit if opt.limit != -1 else "",
      opt.region,
      opt.threads,
      opt.batch,
@@ -205,15 +226,26 @@ def execution_worker(execution_queue):
                  "{READGRP}": rg,
                  "{BARCODE}": rg,
         } 
-        command = opt.command
-        for k,v in subst.items():
-            if k in command:
-                command = command.replace(k,v)
-        if command == opt.command:
-            command = opt.command + " " + bamfile
-        progress.message("Executing: %s"%(command,))
-        subprocess.run(command,shell=True,check=True)
-        clean(bamfile)
+        if opt.command.strip() != "":
+            command = opt.command
+            for k,v in subst.items():
+                if k in command:
+                    command = command.replace(k,v)
+            if command == opt.command:
+                command = opt.command + " " + bamfile
+            progress.message("Executing: %s"%(command,))
+            subprocess.run(command,shell=True,check=True)
+            clean(bamfile)
+        elif opt.filetempl.strip != "":
+            filename = opt.filetempl
+            for k,v in subst.items():
+                if k in filename:
+                    filename = filename.replace(k,v)
+            progress.message("Output: %s"%(filename,))
+            shutil.copyfile(bamfile,filename)
+            if os.path.exists(bamfile+'.bai'):
+                shutil.copyfile(bamfile+'.bai',filename+'.bai')
+            clean(bamfile)
 
 threads = []
 for i in range(opt.threads):
@@ -229,7 +261,7 @@ allrg = dict()
 k1 = 0
 k = 0
 for bamfile in opt.alignments:
-    for rg,splitfile in SplitBAM(bamfile, readgroup, opt.batch, tmpdirname, opt.index, region).iterator():
+    for rg,splitfile in SplitBAM(bamfile, readgroup, opt.batch, tmpdirname, opt.index, region, limit).iterator():
         if rg not in allrg:
             allrg[rg] = k1
             k1 += 1
