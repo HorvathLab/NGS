@@ -11,14 +11,14 @@ barcodes of interest. Implemented in Python3 using the PySAM package and
 distributed for Linux, MacOS, and Python environments, SCExecute builds
 on other NGS tools from the Horvath lab, including SCReadCounts.
 
-SCReadCounts is available as a self-contained binary package for 64-bit
+SCExecute is available as a self-contained binary package for 64-bit
 Linux systems, as Python source, and MacOS (Darwin). The self-contained
 binary package is appropriate for most Linux and MacOS users. The pythonic
 version requires pysam, numpy and scipy along with other packages (See
 the install instructions for more details).
 
-SCReadcounts provides explicit configuration for alignments barcoded
-through STARsolo, CellRanger and UMItools. Additional cellular barcode
+SCExecute provides explicit configuration for alignments barcoded
+through STARsolo and UMItools. Additional cellular barcode
 extraction logic can be configured software, based
 on BAM file tags or RNA sequence name and delimited tokens or regular
 expressions (see Read Grouping documentation). 
