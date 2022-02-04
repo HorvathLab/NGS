@@ -3,7 +3,7 @@ from pysamimport import pysam
 import re, os, hashlib
 
 class SplitBAM(object):
-    def __init__(self,bamfile,readgroups,batchsize=10,directory='.',index=False,region=None):
+    def __init__(self,bamfile,readgroups,batchsize=10,directory='.',index=False,region=None,limit=None):
         self.bamfile = os.path.realpath(bamfile)
         self.bambase,self.bamextn = self.bamfile.rsplit('.',1)
         self.bambase = os.path.split(self.bambase)[1]
@@ -12,6 +12,7 @@ class SplitBAM(object):
         self.directory = directory
         self.index = index
         self.region = region
+        self.limit = limit
 
     def normalize_readgroup(self,rg):
         return re.sub(r'[^A-Z0-9.]','_',rg)
@@ -21,6 +22,9 @@ class SplitBAM(object):
         return os.path.join(self.directory,self.bambase + '.' + self.normalize_readgroup(rg) + "." + uniqstr + "." + self.bamextn)
 
     def iterator(self):
+        limit = self.limit
+        if limit == None or limit <= 0:
+            limit = 1e+20
         seenrg = set()
         while True:
             outsam = dict()
@@ -34,7 +38,7 @@ class SplitBAM(object):
                 rg = self.readgroups.group(al)
                 if rg and rg not in seenrg:
                     if rg not in outsam:
-                        if len(outsam) >= self.batchsize:
+                        if len(outsam) >= min(self.batchsize,limit):
                             more = True
                             continue
                         else:
@@ -47,6 +51,7 @@ class SplitBAM(object):
                     pysam.index(outsam[rg][0])
                 yield rg,outsam[rg][0]
             seenrg.update(outsam)
+            limit = limit - len(outsam)
             outsam = dict()
-            if not more:
+            if not more or len(seenrg) >= self.limit:
                 break
