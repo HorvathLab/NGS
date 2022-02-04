@@ -166,6 +166,8 @@ if opt.threads != threads_default:
     args.extend(["-t",str(opt.threads)])
 if opt.batch != batch_default:
     args.extend(["-B",str(opt.batch)])
+if opt.index:
+    args.extend(["-i",])
 if opt.acceptlist != None:
     args.extend(["-b",doublequote(opt.acceptlist)])
 if opt.quiet:
@@ -185,6 +187,7 @@ scExecute Options:
     Region (-R):              %s
     Threads (-t):             %s
     Batch size (-B):          %s
+    Index BAMs (-i):          %s
     Valid Read Groups (-b):   %s
     Quiet (-q):               %s
 
@@ -198,6 +201,7 @@ Command-Line: scExecute %s
      opt.region,
      opt.threads,
      opt.batch,
+     str(opt.index),
      "" if opt.acceptlist == None else opt.acceptlist,
      opt.quiet,
      cmdargs)
