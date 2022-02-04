@@ -33,8 +33,7 @@ Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 > Read alignments files in indexed BAM format, with extension
 > `.bam`. BAM index with extension `.bam.bai` must be located in the
 > same directory. Multiple BAM files can be selected from the chooser in the graphical user interface, and on the command-line specified inside quotes,
-> separated by spaces, or by using file globbing. See [Input
-> Files](InputFiles.md) for more information. Required.
+> separated by spaces, or by using file globbing. See [Input Files](InputFiles.md) for more information. Required.
 
 Read Group, -G READGROUP, --readgroup=READGROUP
 
@@ -42,7 +41,11 @@ Read Group, -G READGROUP, --readgroup=READGROUP
 
 Command, -C COMMAND, --command=COMMAND
 
-> Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or is placed at the end of the command if no {} is present.  Required.
+> Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or is placed at the end of the command if no {} is present. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.
+
+File Template, -F FILE-TEMPLATE, --filetempl=FILE-TEMPLATE
+
+> File template for each read-group specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.
 
 --version
 
@@ -55,6 +58,14 @@ Command, -C COMMAND, --command=COMMAND
 ### Advanced
 <img src="advanced.png" alt="Advanced"/>
 
+Limit, -L N, --limit=N
+
+> Generate at most this many read-group specific BAM files. Default: No limit.
+
+Region, -R REGION, --region=REGION
+
+> Restrict reads to those aligning to a specific region. Default: No restriction.
+
 Threads, -t T, --threads=T
 
 > Number of instances of COMMAND to run at once. Default: 1.
@@ -63,7 +74,7 @@ Batch Size, -B B, --batch=B
 
 > Number of BAM files to extract with each pass of the input reads. Default: 10.
 
-Indx, -i, --index
+Index, -i, --index
 
 > Index read-group specific BAM file before executing command. Default: False.
 
