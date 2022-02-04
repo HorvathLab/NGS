@@ -72,7 +72,7 @@ parser.add_option("-C", "--command", type="string", dest="command", default="", 
                   help="Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or placed at the end of the command if no {} is present. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.", name="Command")
 parser.add_option("-F", "--filetemplate", type="string", dest="filetempl", default="", remember=True,
                   help="File template for each read-group specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.", name="File Template")
-advanced.add_option("-L", "--limit", type="int", dest="limit", default=-1, remember=True,
+advanced.add_option("-L", "--limit", type="string", dest="limit", default="", remember=True,
                     help="Generate at most this many read-group specific BAM files. Default: No limit.", name="Limit")
 advanced.add_option("-R", "--region", type="str", dest="region", default="", remember=True,
                     help="Restrict reads to those aligning to a specific region. Default: No restriction.", name="Region")
@@ -92,6 +92,7 @@ advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=
 parser.add_option_group(advanced)
 
 region = None
+limit = None
 opt = None
 while True:
     if 'exit' in error_kwargs:
@@ -129,6 +130,15 @@ while True:
         parser.error("One of Command/File Template must be specified",**error_kwargs)
         continue
 
+    try:
+       if opt.limit.strip() != "":
+           limit = int(opt.limit)
+       else:
+           limit = None
+    except ValueError:
+        parser.error("Bad Limit option",**error_kwargs)
+        continue
+
     break
 
 opt.debug = False
@@ -140,10 +150,6 @@ if opt.acceptlist != None:
     else:
         readgroupparam = "*:acceptlist='%s'"%(opt.acceptlist,)
 readgroup = groupFactory.get(opt.readgroup,readgroupparam)
-
-limit = opt.limit
-if limit == -1:
-    limit = None
 
 progress = ProgressText(quiet=opt.quiet)
 
