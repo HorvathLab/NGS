@@ -131,7 +131,7 @@ while True:
         continue
 
     try:
-       if opt.limit.strip() != "":
+       if opt.limit.strip() not in ("",None):
            limit = int(opt.limit)
        else:
            limit = None
@@ -164,7 +164,7 @@ if opt.command.strip != "":
     args.extend(["-C",doublequote(opt.command)])
 if opt.filetempl.strip() != "":
     args.extend(["-F",doublequote(opt.filetempl)])
-if opt.limit != -1:
+if opt.limit not in ("",None):
     args.extend(["-L",str(opt.limit)])
 if opt.region != "":
     args.extend(["-R",doublequote(opt.region)])
@@ -203,7 +203,7 @@ Command-Line: scExecute %s
      "\n"+indent(readgroup.tostr(),12),
      opt.command,
      opt.filetempl,
-     opt.limit if opt.limit != -1 else "",
+     opt.limit if opt.limit not in ("",None) else "",
      opt.region,
      opt.threads,
      opt.batch,

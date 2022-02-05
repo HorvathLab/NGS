@@ -1,6 +1,6 @@
 #!/bin/env python
 RELEASE = "SCExecute"
-VERSION = '1.2.2'
+VERSION = '1.2.3'
 PROGRAMS = 'scExecute.py scBAMStats.py'
 INCLUDES = 'common'
 if __name__ == '__main__':

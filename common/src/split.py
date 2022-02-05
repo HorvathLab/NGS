@@ -53,5 +53,5 @@ class SplitBAM(object):
             seenrg.update(outsam)
             limit = limit - len(outsam)
             outsam = dict()
-            if not more or len(seenrg) >= self.limit:
+            if not more or limit <= 0:
                 break

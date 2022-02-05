@@ -24,7 +24,7 @@ on BAM file tags or RNA sequence name and delimited tokens or regular
 expressions (see Read Grouping documentation). 
 
 **Setup:**
-* [Download](https://github.com/HorvathLab/NGS/releases/tag/SCExecute-1.2.2)
+* [Download](https://github.com/HorvathLab/NGS/releases/tag/SCExecute-1.2.3)
 * [Install](docs/Installation.md)
 
 **Usage:**
