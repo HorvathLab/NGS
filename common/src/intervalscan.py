@@ -3,6 +3,7 @@
 from pysamimport import pysam
 from heapq import heappop, heappush
 from collections import defaultdict
+import os, os.path
 
 class IntervalScan(object):
     def __init__(self, filename, **kw):
@@ -93,8 +94,6 @@ class MinDepthBAM(Intervals):
     def process_end(self,al):
         if self.depth == self.mindepth:
             self.outreads.update(self.interval_current)
-            # for al1 in sorted(self.interval_current,key=lambda al1: (al1.reference_start,al1.reference_end)):
-            #     self.outbam.write(al1)
         super(MinDepthBAM,self).process_end(al)
 
     def process_done(self):

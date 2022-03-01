@@ -12,9 +12,21 @@ except NameError:
 
 from intervalscan import MinDepthBAM, Intervals
 
-depth = int(sys.argv[2])
+outputbam = False
+while sys.argv[1].startswith('-'):
+    if sys.argv[1] == "-b":
+        outputbam  = True
+        sys.argv.pop(1)
+    else:
+        raise RuntimeError("Bad argument")
+    
 bamfilename = sys.argv[1]
+depth = 1
+if len(sys.argv) >= 3:
+    depth = int(sys.argv[2])
 
-# scan = Intervals(bamfilename,mindepth=depth)
-scan = MinDepthBAM(bamfilename,mindepth=depth)
+if not outputbam:
+  scan = Intervals(bamfilename,mindepth=depth)
+else:
+  scan = MinDepthBAM(bamfilename,mindepth=depth)
 scan.process()

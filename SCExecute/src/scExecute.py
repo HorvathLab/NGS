@@ -270,9 +270,11 @@ def execution_worker(execution_queue,output_lock):
         i0,origbam,i1,rg,bampath,rgind,rgtot,bamtot = execution_queue.get()
         if bampath == None:
             break
-        bamfile = os.path.split(os.path.abspath(bampath))[1]
+        bampath = os.path.realpath(bampath)
+        bamfile = os.path.split(bampath)[1]
         bambase = bamfile.rsplit('.',1)[0]
-        orifile = os.path.split(os.path.abspath(origbam))[1]
+        origbam = os.path.realpath(origbam)
+        orifile = os.path.split(origbam)[1]
         oribase = orifile.rsplit('.',1)[0]
         subst = {"{}": bampath, 
                  "{CBPATH}": bampath, # Full path to generated BAM file
@@ -290,9 +292,15 @@ def execution_worker(execution_queue,output_lock):
                  "{READGRP}": rg, # Read Group 
                  "{BARCODE}": rg, # Cell-Barcode
         } 
+        theworkingdir = "."
+        if opt.directory != "":
+            theworkingdir = substtempl(opt.directory,subst)
+            theworkingdir = os.path.realpath(theworkingdir)
         thebamfile = bampath
         if opt.filetempl != "":
             thebamfile = substtempl(opt.filetempl,subst)
+            if not thebamfile.startswith(os.sep):
+                thebamfile = os.path.realpath(os.path.join(theworkingdir,thebamfile))
             if opt.command == "":
                 output_lock.acquire()
                 try:
@@ -306,15 +314,18 @@ def execution_worker(execution_queue,output_lock):
         thestderrfile = None
         if opt.stderrtempl != "":
             thestderrfile = substtempl(opt.stderrtempl,subst)
+            if not thestderrfile.startswith(os.sep):
+                thestderrfile = os.path.realpath(os.path.join(theworkingdir,thestderrfile))
         thestdoutfile = None
         if opt.stdouttempl != "":
             thestdoutfile = substtempl(opt.stdouttempl,subst)
+            if not thestdoutfile.startswith(os.sep):
+                thestdoutfile = os.path.realpath(os.path.join(theworkingdir,thestdoutfile))
         thealloutfile = None
         if opt.allouttempl != "":
             thealloutfile = substtempl(opt.allouttempl,subst)
-        theworkingdir = "."
-        if opt.directory != "":
-            theworkingdir = substtempl(opt.directory,subst)
+            if not thealloutfile.startswith(os.sep):                                                                         
+                thealloutfile = os.path.realpath(os.path.join(theworkingdir,thealloutfile))                                  
         if opt.command != "":
             subst['{}'] = thebamfile
             thecommand = substtempl(opt.command,subst)
