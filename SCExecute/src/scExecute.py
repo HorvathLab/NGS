@@ -296,6 +296,8 @@ def execution_worker(execution_queue,output_lock):
         if opt.directory != "":
             theworkingdir = substtempl(opt.directory,subst)
             theworkingdir = os.path.realpath(theworkingdir)
+            if not os.path.exists(theworkingdir):
+                os.makedirs(theworkingdir)
         thebamfile = bampath
         if opt.filetempl != "":
             thebamfile = substtempl(opt.filetempl,subst)
@@ -331,6 +333,10 @@ def execution_worker(execution_queue,output_lock):
             thecommand = substtempl(opt.command,subst)
             if thecommand == opt.command:
                 thecommand = opt.command + " " + thebamfile
+            prog,rest = thecommand.split(None,1)
+            if os.path.exists(prog) and not prog.startswith(os.sep):
+                prog = os.path.realpath(os.path.join(os.getcwd(),prog))
+                thecommand = prog + " " + rest
             output_lock.acquire()
             try:
                 progress.message("Executing [%*d/%*d]: %s"%(int(math.log(rgtot,10)),rgind+1,int(math.log(rgtot,10)),rgtot,thecommand,))
@@ -347,8 +353,6 @@ def execution_worker(execution_queue,output_lock):
                     stderr=subprocess.STDOUT
                 result = None
                 start = time.time()
-                if not os.path.exists(theworkingdir):
-                    os.makedirs(os.path.abspath(theworkingdir),exists_ok=True)
                 result = subprocess.run(thecommand,shell=True,check=True,
                                         cwd=theworkingdir,stdin=subprocess.DEVNULL,
                                         stdout=stdout,stderr=stderr)
