@@ -76,7 +76,7 @@ advanced.add_option("-D", "--directory", type="str", dest="directory", default="
                     help="Working directory for running command on each read-group specific BAM file. Default: Current working directory.", name="Directory Template")
 advanced.add_option("-o", "--outtemplate", type="string", dest="stdouttempl", default="", remember=True,
                   help="Filename template for the standard output of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard Output of command not captured.", name="Output Template")
-advanced.add_option("-l", "--logtemplate", type="string", dest="stderrtempl", default="", remember=True,
+advanced.add_option("-e", "--errtemplate", type="string", dest="stderrtempl", default="", remember=True,
                   help="Filename template for the standard error of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard error of command not captured.", name="Error Template")
 advanced.add_option("-O", "--allouttemplate", type="string", dest="allouttempl", default="", remember=True,
                   help="Filename template for the standard output and standard error of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Output/Error of command not captured.", name="All Output Template")
@@ -189,7 +189,7 @@ if opt.directory != "":
 if opt.stdouttempl != "":
     args.extend(["-o",doublequote(opt.stdouttempl)])
 if opt.stderrtempl != "":
-    args.extend(["-l",doublequote(opt.stderrtempl)])
+    args.extend(["-e",doublequote(opt.stderrtempl)])
 if opt.allouttempl != "":
     args.extend(["-O",doublequote(opt.allouttempl)])
 if opt.limit not in ("",None):
@@ -219,7 +219,7 @@ scExecute Options:
   Advanced:
     Directory Template (-D):  %s
     Output Template (-o):     %s
-    Error Template (-l):      %s
+    Error Template (-e):      %s
     All Output Template (-O): %s
     Limit (-L):               %s
     Region (-R):              %s
