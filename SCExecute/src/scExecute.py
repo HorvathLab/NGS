@@ -359,7 +359,7 @@ def execution_worker(execution_queue,output_lock):
                 elapsed = time.time()-start
                 output_lock.acquire()
                 try:
-                    progress.message("Complete  [%*d/%*d]: %s:%s elapsed."%(int(math.log(rgtot,10)),rgind+1,int(math.log(rgtot,10)),rgtot,int(elapsed/60),int(elapsed%60)))
+                    progress.message("Complete  [%*d/%*d]: %d:%02d elapsed."%(int(math.log(rgtot,10)),rgind+1,int(math.log(rgtot,10)),rgtot,int(elapsed/60),int(elapsed%60)))
                 finally:
                     output_lock.release()
             except subprocess.SubprocessError as e: 
