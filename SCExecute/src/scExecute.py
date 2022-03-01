@@ -69,9 +69,17 @@ parser.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=
                   choices=groupOptions, name="Read Group", notNone=True,
                   help="Read group / barcode extraction strategy. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
 parser.add_option("-C", "--command", type="string", dest="command", default="", remember=True,
-                  help="Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or placed at the end of the command if no {} is present. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.", name="Command")
+                  help="Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or placed at the end of the command if no {} is present. At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="Command")
 parser.add_option("-F", "--filetemplate", type="string", dest="filetempl", default="", remember=True,
-                  help="File template for each read-group specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.", name="File Template")
+                  help="Filename template for each read-group specific BAM file. Use {ORIBASE} and {BARCODE} to construct the filename, must end in \".bam\". At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="File Template")
+advanced.add_option("-D", "--directory", type="str", dest="directory", default="", remember=True,
+                    help="Working directory for running command on each read-group specific BAM file. Default: Current working directory.", name="Directory")
+advanced.add_option("-o", "--outtemplate", type="string", dest="stdouttempl", default="", remember=True,
+                  help="Filename template for the standard output of each read-group specific command execution. Use {ORIBASE} and {BARCODE} to construct the filename. Default: Standard Output of command not captured.", name="Output Template")
+advanced.add_option("-l", "--logtemplate", type="string", dest="stderrtempl", default="", remember=True,
+                  help="Filename template for the standard error of each read-group specific command execution. Use {ORIBASE} and {BARCODE} to construct the filename. Default: Standard error of command not captured.", name="Error Template")
+advanced.add_option("-O", "--allouttemplate", type="string", dest="allouttempl", default="", remember=True,
+                  help="Filename template for the standard output and standard error of each read-group specific command execution. Use {ORIBASE} and {BARCODE} to construct the filename. Default: Output/Error of command not captured.", name="All Output Template")
 advanced.add_option("-L", "--limit", type="string", dest="limit", default="", remember=True,
                     help="Generate at most this many read-group specific BAM files. Default: No limit.", name="Limit")
 advanced.add_option("-R", "--region", type="str", dest="region", default="", remember=True,
@@ -150,6 +158,18 @@ if opt.acceptlist != None:
     else:
         readgroupparam = "*:acceptlist='%s'"%(opt.acceptlist,)
 readgroup = groupFactory.get(opt.readgroup,readgroupparam)
+if opt.filetempl:
+    opt.filetempl = opt.filetempl.strip()
+if opt.command:
+    opt.command = opt.command.strip()
+if opt.directory:
+    opt.directory = opt.directory.strip()
+if opt.allouttempl:
+    opt.allouttempl = opt.allouttempl.strip()
+if opt.stderrtempl:
+    opt.stderrtempl = opt.stderrtempl.strip()
+if opt.stdouttempl:
+    opt.stdouttempl = opt.stdouttempl.strip()
 
 progress = ProgressText(quiet=opt.quiet)
 
@@ -160,10 +180,18 @@ args = []
 args.extend(["-r",doublequote(" ".join(opt.alignments))])
 if opt.readgroup != readgroup_default:
     args.extend(["-G",doublequote(opt.readgroup)])
-if opt.command.strip != "":
+if opt.command != "":
     args.extend(["-C",doublequote(opt.command)])
-if opt.filetempl.strip() != "":
+if opt.filetempl != "":
     args.extend(["-F",doublequote(opt.filetempl)])
+if opt.directory != "":
+    args.extend(["-D",doublequote(opt.directory)])
+if opt.stdouttempl != "":
+    args.extend(["-o",doublequote(opt.stdouttempl)])
+if opt.stderrtempl != "":
+    args.extend(["-l",doublequote(opt.stderrtempl)])
+if opt.allouttempl != "":
+    args.extend(["-O",doublequote(opt.allouttempl)])
 if opt.limit not in ("",None):
     args.extend(["-L",str(opt.limit)])
 if opt.region != "":
@@ -189,6 +217,10 @@ scExecute Options:
   File Template (-F):         %s
 
   Advanced:
+    Directory (-D):           %s
+    Output Template (-o):     %s
+    Error Template (-l):      %s
+    All Output Template (-O): %s
     Limit (-L):               %s
     Region (-R):              %s
     Threads (-t):             %s
@@ -203,6 +235,10 @@ Command-Line: scExecute %s
      "\n"+indent(readgroup.tostr(),12),
      opt.command,
      opt.filetempl,
+     opt.directory,
+     opt.stdouttempl,
+     opt.stderrtempl,
+     opt.allouttempl,
      opt.limit if opt.limit not in ("",None) else "",
      opt.region,
      opt.threads,
@@ -215,51 +251,117 @@ Command-Line: scExecute %s
 progress.message(execution_log)
 
 execution_queue = multiprocessing.Queue(opt.batch)
+output_lock = multiprocessing.Lock()
 
 def clean(bamfile):
     for fn in (bamfile, bamfile+".bai"):
         if os.path.exists(fn):
             os.unlink(fn)
 
-def execution_worker(execution_queue):
+def substtempl(templ,subst):
+    result = templ
+    for k,v in subst.items():
+        if k in result:
+            result = result.replace(k,v)
+    return result
+
+def execution_worker(execution_queue,output_lock):
     while True:
-        i0,origbam,i1,rg,bamfile = execution_queue.get()
-        if bamfile == None:
+        i0,origbam,i1,rg,bampath,rgind,rgtot,bamtot = execution_queue.get()
+        if bampath == None:
             break
-        bambase = os.path.split(os.path.abspath(origbam))[1].rsplit('.',1)[0]
-        subst = {"{}": bamfile, 
-                 "{BAMFILE}": bamfile,
-                 "{BAMBASE}": bambase,
-                 "{BFINDEX}": str(i0),
-                 "{RGINDEX}": str(i1),
-                 "{CBINDEX}": str(i1),
-                 "{READGRP}": rg,
-                 "{BARCODE}": rg,
+        bamfile = os.path.split(os.path.abspath(bampath))[1]
+        bambase = bamfile.rsplit('.',1)[0]
+        orifile = os.path.split(os.path.abspath(origbam))[1]
+        oribase = orifile.rsplit('.',1)[0]
+        subst = {"{}": bampath, 
+                 "{CBPATH}": bampath, # Full path to generated BAM file
+                 "{CBFILE}": bamfile, # Filename part of generated BAM file
+                 "{CBBASE}": bambase, # Filename of generated BAM file, no .bam
+                 "{RGPATH}": bampath, # Full path to generated BAM file
+                 "{RGFILE}": bamfile, # Filename part of generated BAM file
+                 "{RGBASE}": bambase, # Filename of gerated BAM file, no .bam
+                 "{ORIPATH}": origbam, # Input/Original BAM, full path
+                 "{ORIFILE}": orifile, # Input/Original BAM, filename part
+                 "{ORIBASE}": oribase, # Input/Original BAM, filename part, no .bam
+                 "{BFINDEX}": str(i0), # Original BAM file index
+                 "{RGINDEX}": str(i1), # Read Group index
+                 "{CBINDEX}": str(i1), # Cell-Barcode index
+                 "{READGRP}": rg, # Read Group 
+                 "{BARCODE}": rg, # Cell-Barcode
         } 
-        if opt.command.strip() != "":
-            command = opt.command
-            for k,v in subst.items():
-                if k in command:
-                    command = command.replace(k,v)
-            if command == opt.command:
-                command = opt.command + " " + bamfile
-            progress.message("Executing: %s"%(command,))
-            subprocess.run(command,shell=True,check=True)
-            clean(bamfile)
-        elif opt.filetempl.strip != "":
-            filename = opt.filetempl
-            for k,v in subst.items():
-                if k in filename:
-                    filename = filename.replace(k,v)
-            progress.message("Output: %s"%(filename,))
-            shutil.copyfile(bamfile,filename)
-            if os.path.exists(bamfile+'.bai'):
-                shutil.copyfile(bamfile+'.bai',filename+'.bai')
-            clean(bamfile)
+        thebamfile = bampath
+        if opt.filetempl != "":
+            thebamfile = substtempl(opt.filetempl,subst)
+            if opt.command == "":
+                output_lock.acquire()
+                try:
+                    progress.message("Filename: %s"%(thebamfile,))
+                finally:
+                    output_lock.release()
+            shutil.copyfile(bampath,thebamfile)
+            if os.path.exists(bampath+'.bai'):
+                shutil.copyfile(bampath+'.bai',thebamfile+'.bai')
+            clean(bampath)
+        thestderrfile = None
+        if opt.stderrtempl != "":
+            thestderrfile = substtempl(opt.stderrtempl,subst)
+        thestdoutfile = None
+        if opt.stdouttempl != "":
+            thestdoutfile = substtempl(opt.stdouttempl,subst)
+        thealloutfile = None
+        if opt.allouttempl != "":
+            thealloutfile = substtempl(opt.allouttempl,subst)
+        theworkingdir = "."
+        if opt.directory != "":
+            theworkingdir = substtempl(opt.directory,subst)
+        if opt.command != "":
+            subst['{}'] = thebamfile
+            thecommand = substtempl(opt.command,subst)
+            if thecommand == opt.command:
+                thecommand = opt.command + " " + thebamfile
+            output_lock.acquire()
+            try:
+                progress.message("Executing [%*d/%*d]: %s"%(int(math.log(rgtot,10)),rgind+1,int(math.log(rgtot,10)),rgtot,thecommand,))
+            finally:
+                output_lock.release()
+            try:
+                stdout=None; stderr=None
+                if opt.stderrtempl != "":
+                    stderr=open(thestderrfile,'w')
+                if opt.stdouttempl != "":
+                    stdout=open(thestdoutfile,'w')
+                if opt.allouttempl != "":
+                    stdout=open(thealloutfile,'w')
+                    stderr=subprocess.STDOUT
+                result = None
+                start = time.time()
+                result = subprocess.run(thecommand,shell=True,check=True,
+                                        cwd=theworkingdir,stdin=subprocess.DEVNULL,
+                                        stdout=stdout,stderr=stderr)
+                elapsed = time.time()-start
+                output_lock.acquire()
+                try:
+                    progress.message("Complete  [%*d/%*d]: %s:%s elapsed."%(int(math.log(rgtot,10)),rgind+1,int(math.log(rgtot,10)),rgtot,int(elapsed/60),int(elapsed%60)))
+                finally:
+                    output_lock.release()
+            except subprocess.SubprocessError as e: 
+                output_lock.acquire()
+                try:
+                    progress.message("Command \"%s\" failed, return code %s."%(thecommand,e.returncode,))
+                finally:
+                    output_lock.release()
+                    break
+            finally:
+                if stdout != None:
+                    stdout.close()
+                if stderr != None and stderr != subprocess.STDOUT:
+                    stderr.close()
+                clean(bampath)
 
 threads = []
 for i in range(opt.threads):
-    t = multiprocessing.Process(target=execution_worker, args=(execution_queue,))
+    t = multiprocessing.Process(target=execution_worker, args=(execution_queue,output_lock))
     # t.daemon = True
     t.start()
     threads.append(t)
@@ -271,15 +373,15 @@ allrg = dict()
 k1 = 0
 k = 0
 for bamfile in opt.alignments:
-    for rg,splitfile in SplitBAM(bamfile, readgroup, opt.batch, tmpdirname, opt.index, region, limit).iterator():
+    for rg,splitfile,rgind,rgtot in SplitBAM(bamfile, readgroup, opt.batch, tmpdirname, opt.index, region, limit).iterator():
         if rg not in allrg:
             allrg[rg] = k1
             k1 += 1
-        execution_queue.put((k,bamfile,allrg[rg],rg,splitfile))
-        k += 1
+        execution_queue.put((k,bamfile,allrg[rg],rg,splitfile,rgind,rgtot,len(opt.alignments)))
+    k += 1
         
 for i in range(opt.threads):
-    execution_queue.put((None,None,None,None,None))
+    execution_queue.put((None,None,None,None,None,None,None,None))
 
 for t in threads:
     t.join()

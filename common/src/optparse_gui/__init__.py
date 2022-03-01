@@ -281,13 +281,13 @@ class ProgressText(Progress):
             self.handle.write('\n')
         self.neednl = False
         print(message, end=' ', file=self.handle)
-        self.handle.flush()
         self.barpos = 0
         self.toright = True
         if nl:
             self.handle.write('\n')
         else:
             self.neednl = True
+        self.handle.flush()
 
     @staticmethod
     def deltaformat(delta):

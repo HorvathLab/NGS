@@ -22,6 +22,8 @@ class SplitBAM(object):
         return os.path.join(self.directory,self.bambase + '.' + self.normalize_readgroup(rg) + "." + uniqstr + "." + self.bamextn)
 
     def iterator(self):
+        allrg = {}
+        rgindex = 0
         limit = self.limit
         if limit == None or limit <= 0:
             limit = 1e+20
@@ -36,6 +38,9 @@ class SplitBAM(object):
                 readiter = samfile.fetch(until_eof=True)
             for al in readiter:
                 rg = self.readgroups.group(al)
+                if rg and rg not in allrg:
+                    allrg[rg] = rgindex
+                    rgindex += 1
                 if rg and rg not in seenrg:
                     if rg not in outsam:
                         if len(outsam) >= min(self.batchsize,limit):
@@ -49,7 +54,7 @@ class SplitBAM(object):
                 outsam[rg][1].close()
                 if self.index:
                     pysam.index(outsam[rg][0])
-                yield rg,outsam[rg][0]
+                yield rg,outsam[rg][0],allrg[rg],len(allrg)
             seenrg.update(outsam)
             limit = limit - len(outsam)
             outsam = dict()
