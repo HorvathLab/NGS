@@ -41,11 +41,11 @@ Read Group, -G READGROUP, --readgroup=READGROUP
 
 Command, -C COMMAND, --command=COMMAND
 
-> Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or is placed at the end of the command if no {} is present. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.
+> Command to execute for each read-group specific BAM file. The read-group specific BAM filename replaces {} in the command or is placed at the end of the command if no {} is present. Use {BARCODE} in command as needed. At least one of Command/--command/-C or File Template/--filetemplate/-F must be specified.
 
-File Template, -F FILE-TEMPLATE, --filetempl=FILE-TEMPLATE
+File Template, -F TEMPLATE, --filetemplate=TEMPLATE
 
-> File template for each read-group specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename. One of Command/--command/-C or File Template/--filetemplate/-F must be specified.
+> File template for each read-group specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename. The read-group specific BAM file should end in ".bam" and will not be deleted after the command, if specified, is run. At least one of Command/--command/-C or File Template/--filetemplate/-F must be specified.
 
 --version
 
@@ -57,6 +57,18 @@ File Template, -F FILE-TEMPLATE, --filetempl=FILE-TEMPLATE
 
 ### Advanced
 <img src="advanced.png" alt="Advanced"/>
+
+Directory Template, -D TEMPLATE, --directory=TEMPLATE
+> Working directory for running command on each read-group specific BAM file. Default: Current working directory.
+
+Output Template, -o TEMPLATE, --outtemplate=TEMPLATE
+> Filename template for the standard output of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard Output of command not captured.
+
+Error Template, -e TEMPLATE, --errtemplate=TEMPLATE
+> Filename template for the standard error of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard error of command not captured.
+
+All Output Template, -O TEMPLATE, --allouttemplate=TEMPLATE
+> Filename template for the standard output and standard error of each read-group specific command execution.  Use {BAMBASE} and {BARCODE} to construct the filename. Default: Output/Error of command not captured.
 
 Limit, -L N, --limit=N
 

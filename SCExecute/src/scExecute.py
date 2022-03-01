@@ -71,15 +71,15 @@ parser.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=
 parser.add_option("-C", "--command", type="string", dest="command", default="", remember=True,
                   help="Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or placed at the end of the command if no {} is present. At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="Command")
 parser.add_option("-F", "--filetemplate", type="string", dest="filetempl", default="", remember=True,
-                  help="Filename template for each read-group specific BAM file. Use {ORIBASE} and {BARCODE} to construct the filename, must end in \".bam\". At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="File Template")
+                  help="Filename template for each read-group specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename. The read-group specific BAM file should end in \".bam\" and will not be deleted after the command, if specified, is run. At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="File Template")
 advanced.add_option("-D", "--directory", type="str", dest="directory", default="", remember=True,
-                    help="Working directory for running command on each read-group specific BAM file. Default: Current working directory.", name="Directory")
+                    help="Working directory for running command on each read-group specific BAM file. Default: Current working directory.", name="Directory Template")
 advanced.add_option("-o", "--outtemplate", type="string", dest="stdouttempl", default="", remember=True,
-                  help="Filename template for the standard output of each read-group specific command execution. Use {ORIBASE} and {BARCODE} to construct the filename. Default: Standard Output of command not captured.", name="Output Template")
+                  help="Filename template for the standard output of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard Output of command not captured.", name="Output Template")
 advanced.add_option("-l", "--logtemplate", type="string", dest="stderrtempl", default="", remember=True,
-                  help="Filename template for the standard error of each read-group specific command execution. Use {ORIBASE} and {BARCODE} to construct the filename. Default: Standard error of command not captured.", name="Error Template")
+                  help="Filename template for the standard error of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard error of command not captured.", name="Error Template")
 advanced.add_option("-O", "--allouttemplate", type="string", dest="allouttempl", default="", remember=True,
-                  help="Filename template for the standard output and standard error of each read-group specific command execution. Use {ORIBASE} and {BARCODE} to construct the filename. Default: Output/Error of command not captured.", name="All Output Template")
+                  help="Filename template for the standard output and standard error of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Output/Error of command not captured.", name="All Output Template")
 advanced.add_option("-L", "--limit", type="string", dest="limit", default="", remember=True,
                     help="Generate at most this many read-group specific BAM files. Default: No limit.", name="Limit")
 advanced.add_option("-R", "--region", type="str", dest="region", default="", remember=True,
@@ -217,7 +217,7 @@ scExecute Options:
   File Template (-F):         %s
 
   Advanced:
-    Directory (-D):           %s
+    Directory Template (-D):  %s
     Output Template (-o):     %s
     Error Template (-l):      %s
     All Output Template (-O): %s
@@ -281,9 +281,9 @@ def execution_worker(execution_queue,output_lock):
                  "{RGPATH}": bampath, # Full path to generated BAM file
                  "{RGFILE}": bamfile, # Filename part of generated BAM file
                  "{RGBASE}": bambase, # Filename of gerated BAM file, no .bam
-                 "{ORIPATH}": origbam, # Input/Original BAM, full path
-                 "{ORIFILE}": orifile, # Input/Original BAM, filename part
-                 "{ORIBASE}": oribase, # Input/Original BAM, filename part, no .bam
+                 "{BAMPATH}": origbam, # Input/Original BAM, full path
+                 "{BAMFILE}": orifile, # Input/Original BAM, filename part
+                 "{BAMBASE}": oribase, # Input/Original BAM, filename part, no .bam
                  "{BFINDEX}": str(i0), # Original BAM file index
                  "{RGINDEX}": str(i1), # Read Group index
                  "{CBINDEX}": str(i1), # Cell-Barcode index
@@ -336,6 +336,8 @@ def execution_worker(execution_queue,output_lock):
                     stderr=subprocess.STDOUT
                 result = None
                 start = time.time()
+                if not os.path.exists(theworkingdir):
+                    os.makedirs(os.path.abspath(theworkingdir),exists_ok=True)
                 result = subprocess.run(thecommand,shell=True,check=True,
                                         cwd=theworkingdir,stdin=subprocess.DEVNULL,
                                         stdout=stdout,stderr=stderr)
