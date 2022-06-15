@@ -83,9 +83,13 @@ advanced.add_option("-O", "--allouttemplate", type="string", dest="allouttempl",
 advanced.add_option("-L", "--limit", type="string", dest="limit", default="", remember=True,
                     help="Generate at most this many read-group specific BAM files. Default: No limit.", name="Limit")
 advanced.add_option("-R", "--region", type="str", dest="region", default="", remember=True,
-                    help="Restrict reads to those aligning to a specific region. Default: No restriction.", name="Region")
+                    help="Restrict reads to those aligning to a specific region specified as chrom:start-end. Default: No restriction.", name="Region")
+advanced.add_option("--regions", type="file", dest="regions", default="", remember=True,
+                    help="Restrict reads to those aligning to specific region(s). If a GTF-format genome annotation file (extn *.gtf) is provided, restrict to genic regions; otherwise, one region per line specified as chrom:start-end in a file with extn *.txt. Default: No restriction.", name="Region File", filetypes=[("Genome Annotation", "*.gtf"),("Region List", "*.txt")])
 advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
                     help="Number of concurrent instances of command to run. Default: 1.", name="Threads")
+advanced.add_option("--cpuaffinity", action="store_true", dest="affinity", default=False, remember=True,
+                    help="Constrain each instance of a command to a single CPU. Default: False.", name="CPU Affinity")
 advanced.add_option("-B","--batch", type="int", dest="batch", default=batch_default,
                     help="Batch-size per BAM-file pass. Default: 10", name="Batch Size",remember=True)
 advanced.add_option("-i", "--index", action="store_true", dest="index", default=False, remember=True,
@@ -99,7 +103,27 @@ advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=
 #                     help="Debug.", name="Debug")
 parser.add_option_group(advanced)
 
-region = None
+
+def extract_region(regionstr):
+    if ':' in regionstr:
+        contig,rest = regionstr.split(':',1)
+        contig = contig.strip()
+        start,stop = rest.split('-',1)
+        if start.strip() == "":
+            start = None
+        else:
+            start = int(start)
+        if stop.strip() == "":
+            stop = None
+        else:
+            stop = int(stop)
+    else:
+        contig = opt.region
+        start = None
+        stop = None
+    return (contig,start,stop)
+
+regions = None
 limit = None
 opt = None
 while True:
@@ -113,23 +137,7 @@ while True:
 
     try:
         if opt.region:
-            if ':' in opt.region:
-                contig,rest = opt.region.split(':',1)
-                contig = contig.strip()
-                start,stop = rest.split('-',1)
-                if start.strip() == "":
-                    start = None
-                else:
-                    start = int(start)
-                if stop.strip() == "":
-                    stop = None
-                else:
-                    stop = int(stop)
-            else:
-                contig = opt.region
-                start = None
-                stop = None
-            region = (contig,start,stop)
+            regions = [extract_region(opt.region.strip())]
     except ValueError:
         parser.error("Bad Region option",**error_kwargs)
         continue
@@ -196,8 +204,12 @@ if opt.limit not in ("",None):
     args.extend(["-L",str(opt.limit)])
 if opt.region != "":
     args.extend(["-R",doublequote(opt.region)])
+if opt.regions not in ("",None):
+    args.extend(["--regions",doublequote(opt.regions)])
 if opt.threads != threads_default:
     args.extend(["-t",str(opt.threads)])
+if opt.affinity:
+    args.extend(["--cpuaffinity",])
 if opt.batch != batch_default:
     args.extend(["-B",str(opt.batch)])
 if opt.index:
@@ -223,7 +235,9 @@ scExecute Options:
     All Output Template (-O): %s
     Limit (-L):               %s
     Region (-R):              %s
+    Region List (--regions):  %s
     Threads (-t):             %s
+    Affinity (--cpuaffinity): %s
     Batch size (-B):          %s
     Index BAMs (-i):          %s
     Valid Read Groups (-b):   %s
@@ -241,7 +255,9 @@ Command-Line: scExecute %s
      opt.allouttempl,
      opt.limit if opt.limit not in ("",None) else "",
      opt.region,
+     opt.regions if opt.regions not in ("",None) else "",
      opt.threads,
+     str(opt.affinity),
      opt.batch,
      str(opt.index),
      "" if opt.acceptlist == None else opt.acceptlist,
@@ -250,8 +266,40 @@ Command-Line: scExecute %s
 
 progress.message(execution_log)
 
+starttime = time.time()
+
+if opt.regions:
+    progress.message("Reading regions...")
+    regions = []
+    try:
+        if opt.regions.lower().endswith('.gtf'):
+            for l in open(opt.regions):
+                if l.strip() == "" or l.startswith('#'):
+                    continue
+                sl = l.split()
+                if sl[2] == "gene":
+                    chrom = sl[0]
+                    start = int(sl[3])
+                    stop = int(sl[4])
+                    regions.append((chrom,start,stop))
+        elif opt.regions.lower().endswith('.txt'):
+            for l in open(opt.regions):
+                if l.strip() == "" or l.startswith('#'):
+                    continue
+                regions.append(extract_region(l.strip()))
+    except (ValueError,IndexError,IOError):
+        progress.message("Bad Region List")
+        sys.exit(1)
+    if len(regions) == 0:
+        progress.message("No regions selected!")
+        sys.exit(1)
+    progress.message("Restriction to %d genomic regions"%(len(regions),))
+
 execution_queue = multiprocessing.Queue(opt.batch)
+done_queue = multiprocessing.Queue()
 output_lock = multiprocessing.Lock()
+totaltime = multiprocessing.Value('d',0.0)
+totaljobs = multiprocessing.Value('I',0)
 
 def clean(bamfile):
     for fn in (bamfile, bamfile+".bai"):
@@ -265,15 +313,24 @@ def substtempl(templ,subst):
             result = result.replace(k,v)
     return result
 
-def execution_worker(execution_queue,output_lock):
+def execution_worker(index,execution_queue,done_queue,output_lock):
+    if opt.affinity:
+        try:
+            cpus = sorted(os.sched_getaffinity(0))
+            os.sched_setaffinity(0, {cpus[index%len(cpus)]})
+        except:
+            pass
     while True:
         i0,origbam,i1,rg,bampath,rgind,rgtot,bamtot = execution_queue.get()
         if bampath == None:
+            done_queue.put((None,None,None,None,None))
             break
-        bampath = os.path.realpath(bampath)
+        if opt.directory != "":
+            bampath = os.path.realpath(bampath)
         bamfile = os.path.split(bampath)[1]
         bambase = bamfile.rsplit('.',1)[0]
-        origbam = os.path.realpath(origbam)
+        if opt.directory != "":
+            origbam = os.path.realpath(origbam)
         orifile = os.path.split(origbam)[1]
         oribase = orifile.rsplit('.',1)[0]
         subst = {"{}": bampath, 
@@ -291,6 +348,8 @@ def execution_worker(execution_queue,output_lock):
                  "{CBINDEX}": str(i1), # Cell-Barcode index
                  "{READGRP}": rg, # Read Group 
                  "{BARCODE}": rg, # Cell-Barcode
+                 "{SCEXEC_WORKER_INDEX}": str(index), # Index of this worker
+                 "{WORKER}": str(index), # Index of this worker
         } 
         theworkingdir = "."
         if opt.directory != "":
@@ -301,7 +360,7 @@ def execution_worker(execution_queue,output_lock):
         thebamfile = bampath
         if opt.filetempl != "":
             thebamfile = substtempl(opt.filetempl,subst)
-            if not thebamfile.startswith(os.sep):
+            if not thebamfile.startswith(os.sep) and opt.directory != "":
                 thebamfile = os.path.realpath(os.path.join(theworkingdir,thebamfile))
             if opt.command == "":
                 output_lock.acquire()
@@ -316,17 +375,17 @@ def execution_worker(execution_queue,output_lock):
         thestderrfile = None
         if opt.stderrtempl != "":
             thestderrfile = substtempl(opt.stderrtempl,subst)
-            if not thestderrfile.startswith(os.sep):
+            if not thestderrfile.startswith(os.sep) and opt.directory != "":
                 thestderrfile = os.path.realpath(os.path.join(theworkingdir,thestderrfile))
         thestdoutfile = None
         if opt.stdouttempl != "":
             thestdoutfile = substtempl(opt.stdouttempl,subst)
-            if not thestdoutfile.startswith(os.sep):
+            if not thestdoutfile.startswith(os.sep) and opt.directory != "":
                 thestdoutfile = os.path.realpath(os.path.join(theworkingdir,thestdoutfile))
         thealloutfile = None
         if opt.allouttempl != "":
             thealloutfile = substtempl(opt.allouttempl,subst)
-            if not thealloutfile.startswith(os.sep):                                                                         
+            if not thealloutfile.startswith(os.sep) and opt.directory != "":
                 thealloutfile = os.path.realpath(os.path.join(theworkingdir,thealloutfile))                                  
         if opt.command != "":
             subst['{}'] = thebamfile
@@ -334,12 +393,12 @@ def execution_worker(execution_queue,output_lock):
             if thecommand == opt.command:
                 thecommand = opt.command + " " + thebamfile
             prog,rest = thecommand.split(None,1)
-            if os.path.exists(prog) and not prog.startswith(os.sep):
+            if os.path.exists(prog) and not prog.startswith(os.sep) and opt.directory != "":
                 prog = os.path.realpath(os.path.join(os.getcwd(),prog))
                 thecommand = prog + " " + rest
             output_lock.acquire()
             try:
-                progress.message("Executing [%*d/%*d]: %s"%(int(math.log(rgtot,10)),rgind+1,int(math.log(rgtot,10)),rgtot,thecommand,))
+                progress.message("Executing [%d/%d]: %s"%(rgind+1,rgtot,thecommand,))
             finally:
                 output_lock.release()
             try:
@@ -355,13 +414,10 @@ def execution_worker(execution_queue,output_lock):
                 start = time.time()
                 result = subprocess.run(thecommand,shell=True,check=True,
                                         cwd=theworkingdir,stdin=subprocess.DEVNULL,
-                                        stdout=stdout,stderr=stderr)
+                                        stdout=stdout,stderr=stderr,
+                                        env=dict(os.environ,SCEXEC_WORKER_INDEX=str(index)))
                 elapsed = time.time()-start
-                output_lock.acquire()
-                try:
-                    progress.message("Complete  [%*d/%*d]: %d:%02d elapsed."%(int(math.log(rgtot,10)),rgind+1,int(math.log(rgtot,10)),rgtot,int(elapsed/60),int(elapsed%60)))
-                finally:
-                    output_lock.release()
+                done_queue.put((i0,bamtot,rgind,rgtot,elapsed))
             except subprocess.SubprocessError as e: 
                 output_lock.acquire()
                 try:
@@ -376,9 +432,53 @@ def execution_worker(execution_queue,output_lock):
                     stderr.close()
                 clean(bampath)
 
+def timestr(seconds):
+    secs = seconds%60
+    if seconds < 60:
+        return "%.2f sec"%(secs,)
+    secs = int(secs)
+    mins = int(seconds/60)
+    if mins < 60:
+        return "%d:%02d min:sec"%(mins,secs,)
+    mins = int(mins%60)
+    hrs = int(mins/60)
+    return "%d:%02d hrs:min"%(hrs,mins,)
+    
+def done_worker(done_queue,output_lock,totaljobs,totaltime,starttime):
+    donecount = 0
+    count = 0
+    sumtime = 0
+    done=defaultdict(set)
+    rgtots=defaultdict(int)
+    while True:
+        i0,bamtot,rgind,rgtot,elapsed = done_queue.get()
+        if i0 == None:
+            donecount += 1
+            if donecount == opt.threads:
+                break
+            else:
+                continue
+        if i0 not in rgtots:
+            rgtots[i0] = rgtot
+            avergtot = sum(rgtots.values())/len(rgtots)
+            rgtotest = int(round(sum(rgtots.values()) + avergtot*(len(rgtots)-bamtot)))
+        if rgind not in done[i0]:
+            done[i0].add(rgind)
+            count += 1
+            totaltime.value = (totaltime.value + elapsed)
+            totaljobs.value = (totaljobs.value + 1)
+            sumtime = (time.time()-starttime)
+            avetime = sumtime/count
+        remaining = (rgtotest-count)*avetime
+        output_lock.acquire()
+        try:
+            progress.message("Completed [%d/%d]: Runtime %s, est. time to finish %s, %.2f%% complete."%(rgind+1,rgtot,timestr(elapsed),timestr(remaining),100*(count)/rgtotest))
+        finally:
+            output_lock.release()
+
 threads = []
 for i in range(opt.threads):
-    t = multiprocessing.Process(target=execution_worker, args=(execution_queue,output_lock))
+    t = multiprocessing.Process(target=execution_worker, args=(i,execution_queue,done_queue,output_lock))
     # t.daemon = True
     t.start()
     threads.append(t)
@@ -389,12 +489,23 @@ tmpdirname = tmpdir.name
 allrg = dict()
 k1 = 0
 k = 0
+made_done_worker = False
 for bamfile in opt.alignments:
-    for rg,splitfile,rgind,rgtot in SplitBAM(bamfile, readgroup, opt.batch, tmpdirname, opt.index, region, limit).iterator():
+    for rg,splitfile,rgind,rgtot in SplitBAM(bamfile, readgroup, opt.batch, tmpdirname, opt.index, regions, limit).iterator():
         if rg not in allrg:
             allrg[rg] = k1
             k1 += 1
         execution_queue.put((k,bamfile,allrg[rg],rg,splitfile,rgind,rgtot,len(opt.alignments)))
+        if not made_done_worker:
+            output_lock.acquire()
+            try:
+                progress.message("Time to extract first batch of SCbams: %s"%(timestr(time.time()-starttime,)))
+            finally:
+                output_lock.release()
+            t = multiprocessing.Process(target=done_worker, args=(done_queue,output_lock,totaljobs,totaltime,time.time()))
+            t.start()
+            threads.append(t)
+            made_done_worker = True
     k += 1
         
 for i in range(opt.threads):
@@ -402,3 +513,10 @@ for i in range(opt.threads):
 
 for t in threads:
     t.join()
+
+elapsed = time.time()-starttime
+totalcount = totaljobs.value
+avejobruntime = (totaltime.value/totalcount)
+totaljobtime = math.ceil(totalcount/opt.threads)*avejobruntime
+progress.message("Final: Runtime %s, %d jobs, ave. job runtime %s, scExecute overhead %.2f%%."%(timestr(elapsed),totalcount,timestr(avejobruntime),100*(elapsed-totaljobtime)/elapsed))
+
