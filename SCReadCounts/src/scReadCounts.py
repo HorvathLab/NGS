@@ -82,20 +82,31 @@ else:
 filterFactory = ReadFilterFactory()
 filterOptions = [t[0] for t in filterFactory.list()]
 filterDesc = []
-for o,d in sorted(filterFactory.list()):
-    filterDesc.append("%s (%s)"%(o,d.strip('.')))
+filterMap = {}
+for n,s,d in sorted(filterFactory.list()):
+    filterDesc.append("%s (%s)"%(n,d.strip('.')))
+    filterMap[n] = s
 
 groupFactory = ReadGroupFactory()
-groupOptions = ["","None","-"] + [t[0] for t in groupFactory.list()]
+groupOptions = [t[1] for t in groupFactory.list(type="CellBarcode")] + [""]
 groupDesc = []
-for o,d in sorted(groupFactory.list()):
-    groupDesc.append("%s (%s)"%(o,d.strip('.')))
+groupMap = {}
+for s,n,d in sorted(groupFactory.list(type="CellBarcode")):
+    groupDesc.append("%s (%s)"%(n,d.strip('.')))
+    groupMap[n] = s
+umiOptions = [""] + [t[1] for t in groupFactory.list(type="UMI")]
+umiDesc = []
+umiMap = {}
+for s,n,d in sorted(groupFactory.list(type="UMI")):
+    umiDesc.append("%s (%s)"%(n,d.strip('.')))
+    umiMap[n] = s
 
 minreads_default = 5
 maxreads_default = None
 threads_default = 0
 filter_default = "Basic"
 readgroup_default = "UMI-tools"
+umicount_default = None
 
 advanced = OptionGroup(parser, "Advanced")
 parser.add_option("-s", "--snvs", type="files", dest="snvs", default=None,
@@ -113,19 +124,24 @@ advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=min
                     help="Minimum number of good reads at SNV locus per alignment file. Default=5.", name="Min. Reads")
 advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=maxreads_default, remember=True,
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
+advanced.add_option("-D", "--directional", action="store_true", dest="directional", default=False, remember=True,
+                    help="Output directional (forward and reverse complement) VAF and read counts. Default: False", name="Directional")
 advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
                     help="Worker threads. Indicate no threading/multiprocessing with 0. Default=0.", name="Threads")
-advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=readgroup_default, remember=True,
-                    choices=groupOptions, name="Read Group",
-                    help="Additional read grouping based on read name/identifier strings or BAM-file RG. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
+advanced.add_option("-C", "--cellbarcode", type="choice", dest="cellbarcode", default=readgroup_default, remember=True,
+                    choices=groupOptions, name="Cell Barcode",
+                    help="Group reads based on cell-barcodes extracted from read name/identifiers or BAM-file tags. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
+advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist", default=None,
+                  help="File of white-space separated, acceptable cell-barcodes. Overrides accept list, if any, specified by Cell Barcode option. Use None to remove a default accept list.", name="Valid Cell Barcodes",
+                  remember=True,
+                  filetypes=[("Valid Cell Barcodes", "*.txt;*.tsv")])
+advanced.add_option("-U", "--umicount", type="choice", dest="umicount", default=umicount_default, remember=True,
+                    choices=umiOptions, name="UMI Count",
+                    help="Count unique identifiers (UMI) based on read name/identifiers or BAM-file tags. Options: %s. Default: None, count reads not UMIs."%(", ".join(umiDesc),))
 # advanced.add_option("--alignmentfilterparam", type="string", dest="filterparam", default="", remember=True,
 #                     help="Override parameters for selected alignment filter. Default: Do not override.", name="Alignment Filter Param.")
 # advanced.add_option("--readgroupparam", type="string", dest="readgroupparam", default="", remember=True,
 #                     help="Override parameters for selected read group. Default: Do not override.", name="Read Group Param.")
-advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist", default=None,
-                  help="File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list.", name="Valid Read Groups",
-                  remember=True,
-                  filetypes=[("Valid Read Groups File", "*.txt;*.tsv")])
 advanced.add_option("-F", "--force", action="store_true", dest="force", default=False, remember=True,
                     help="Force all output files to be re-computed, even if already present. Default: False.", name="Force")
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
@@ -158,17 +174,22 @@ while True:
 
     break
 
-readfilter = filterFactory.get(opt.filter)
-if opt.readgroup not in ("","None","-"):
+readfilter = filterFactory.get(filterMap[opt.filter])
+if opt.cellbarcode not in ("","None","-",None):
     readgroupparam = ""
     if opt.acceptlist != None:
         if opt.acceptlist in ("","None","-"):
             readgroupparam = "*:acceptlist=None"
         else:
             readgroupparam = "*:acceptlist='%s'"%(opt.acceptlist,)
-    readgroup = groupFactory.get(opt.readgroup,readgroupparam)
+    readgroup = groupFactory.get(groupMap[opt.cellbarcode],readgroupparam)
 else:
     readgroup = None
+
+if opt.umicount not in ("","None","-",None):
+    umicount = groupFactory.get(umiMap[opt.umicount])
+else:
+    umicount = None
 
 progress = None
 if not opt.output:
@@ -187,10 +208,14 @@ if opt.minreads != minreads_default:
     args.extend(["-m",str(opt.minreads)])
 if opt.maxreads != maxreads_default:
     args.extend(["-M",str(opt.maxreads)])
-if opt.readgroup != readgroup_default:
-    args.extend(["-G",doublequote(opt.readgroup if readgroup != None else "")])
+if opt.directional:
+    args.extend(["-D"])
+if opt.cellbarcode != readgroup_default:
+    args.extend(["-C",doublequote(groupMap[opt.cellbarcode] if readgroup != None else "")])
 if opt.acceptlist != None and readgroup != None:
     args.extend(["-b",doublequote(opt.acceptlist)])
+if opt.umicount not in ("",None,"None","-"):
+    args.extend(["-U",doublequote(opt.umicount if umicount != None else "")])
 if opt.threads != threads_default:
     args.extend(["-t",str(opt.threads)])
 if opt.force:
@@ -209,10 +234,12 @@ scReadCounts Options:
   Outfile File (-o):          %s
 
   Advanced:
-    Min. Reads (-m)           %s (applied only to VAF matrix)
+    Min. Reads (-m)           %s (applied only to VAF, FVAF, RVAF)
     Max. Reads (-M):          %s
-    Read Groups (-G):         %s%s
-    Valid Read Groups (-b):   %s
+    Directional Counts (-D):  %s
+    Cell Barcode (-C):        %s%s
+    Valid Cell Barcode (-b):  %s
+    UMI Count (-U):           %s%s
     Threads (-t):             %s
     Quiet (-q):               %s
 
@@ -224,9 +251,12 @@ Command-Line: scReadCounts %s
      opt.output,
      opt.minreads,
      opt.maxreads,
-     None if readgroup == None else opt.readgroup,
+     opt.directional,
+     None if readgroup == None else opt.cellbarcode,
      "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
      "" if opt.acceptlist else opt.acceptlist,
+     None if umicount == None else opt.umicount,
+     "" if umicount == None else "\n"+indent(umicount.tostr(),12),
      opt.threads,
      opt.quiet,
      cmdargs)
@@ -239,12 +269,15 @@ args.extend(["-r"," ".join(opt.alignments)])
 args.extend(["-f",opt.filter])
 args.extend(["-o",opt.output])
 args.extend(["-m",0])
+args.extend(["-B",10000])
 if opt.maxreads != maxreads_default:
     args.extend(["-M",opt.maxreads])
 if readgroup != None:
-    args.extend(["-G",opt.readgroup])
+    args.extend(["-G",groupMap[opt.cellbarcode]])
     if opt.acceptlist:
         args.extend(["-b",opt.acceptlist])
+if umicount != None:
+    args.extend(["-U",umiMap[opt.umicount]])
 args.extend(["-t",opt.threads])
 if opt.quiet:
     args.extend(["-q"])
@@ -268,9 +301,16 @@ outbase,extn = opt.output.rsplit('.',1)
 outmatrix1 = outbase + '.cnt.matrix.' + extn
 outmatrix2 = outbase + '.vaf-m%d.matrix.'%(opt.minreads,) + extn
 
+if opt.directional:
+    matrix1 = "FRef;FVar;RRef;RVar"
+    matrix2 = "FVAF;RVAF"
+else:
+    matrix1 = "Ref;Var"
+    matrix2 = "VAF"
+
 args = []
 args.extend(["-c",opt.output])
-args.extend(["-M","Ref;Var"])
+args.extend(["-M",matrix1])
 args.extend(["-m",0])
 if opt.quiet:
     args.extend(["-q"])
@@ -279,20 +319,20 @@ args = [ str(x) for x in args ]
 
 if os.path.exists(outmatrix1) and not opt.force:
 
-    progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    progress.message("Skipping readCountsMatrix for Ref;Var, output file present.")
-    progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+    progress.message("\n"+">"*(52+len(matrix1)))
+    progress.message("Skipping readCountsMatrix for "+matrix1+", output file present.")
+    progress.message(">"*(52+len(matrix1))+"\n")
 
 else:
 
-    progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    progress.message("Execute readCountsMatrix for Ref;Var matrix...")
-    progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+    progress.message("\n"+">"*(39+len(matrix1)))
+    progress.message("Execute readCountsMatrix for "+matrix1+" matrix...")
+    progress.message(">"*(39+len(matrix1))+"\n")
     execprog.execute("readCountsMatrix",*args)
 
 args = []
 args.extend(["-c",opt.output])
-args.extend(["-M","VAF"])
+args.extend(["-M",matrix2])
 args.extend(["-m",opt.minreads])
 if opt.quiet:
     args.extend(["-q"])
@@ -301,13 +341,13 @@ args = [ str(x) for x in args ]
 
 if os.path.exists(outmatrix2) and not opt.force:
 
-    progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    progress.message("Skipping readCountsMatrix for VAF, output file present.")
-    progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+    progress.message("\n"+">"*(52+len(matrix2)))
+    progress.message("Skipping readCountsMatrix for "+matrix2+", output file present.")
+    progress.message(">"*(52+len(matrix2))+"\n")
 
 else:
 
-    progress.message("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    progress.message("Execute readCountsMatrix for VAF matrix...")
-    progress.message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n")
+    progress.message("\n"+">"*(39+len(matrix2)))
+    progress.message("Execute readCountsMatrix for "+matrix2+" matrix...")
+    progress.message(">"*(39+len(matrix2))+"\n")
     execprog.execute("readCountsMatrix",*args)

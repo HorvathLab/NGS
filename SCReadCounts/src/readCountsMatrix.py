@@ -57,13 +57,15 @@ else:
 
 minreads_default = 0
 
+matrix_choices = ["VAF", "FVAF", "RVAF", "Ref", "Var", "FRef", "RRef", "FVar", "RVar", "Total", "FTotal","RTotal"]
+matrix_default = "Ref;Var"
+
 parser.add_option("-c", "--counts", type="files", dest="counts", default=None,
                   help="ReadCounts files. Required.", name="ReadCounts Files",
                   notNone=True, remember=True,
                   filetypes=[("ReadCounts Files", "*.csv;*.tsv;*.xls;*.xlsx;*.txt;")])
-parser.add_option("-M", "--matrix", type="choice", dest="matrix", default="Ref;Var", remember=True,
-                  help="Matrix output format: Ref;Var, Ref:Var, or VAF. Default: Ref;Var.", name="Matrix",
-                  choices=["Ref;Var","Ref:Var","VAF"])
+parser.add_option("-M", "--matrix", type="str", dest="matrix", default=matrix_default, remember=True,
+                  help="Matrix output. String containing one or more of: %s. Default: %s."%(", ".join(matrix_choices), matrix_default), name="Matrix")
 parser.add_option("-m", "--minreads", type="int", dest="minreads", default=minreads_default, remember=True,
                   help="Minimum number of good reads at SNV locus. Default=no minimum.", name="Min. Reads")
 parser.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
@@ -87,12 +89,10 @@ while True:
 
 matrix = None
 if opt.matrix:
-    if opt.matrix == "Ref:Var":
-        matrix = (lambda d: "%(Ref)s:%(Var)s"%d)
-    elif opt.matrix == "Ref;Var":
-        matrix = (lambda d: "%(Ref)s;%(Var)s"%d)
-    elif opt.matrix == "VAF":
-        matrix = (lambda d: "%(VAF)s"%d)
+    matrixstr = opt.matrix
+    for k in matrix_choices:
+        matrixstr = re.sub(r'\b%s\b'%k,'%%(%s)s'%k,matrixstr)
+    matrix = (lambda d: matrixstr%d)
 
 progress = None
 if not opt.output:
@@ -115,7 +115,7 @@ if opt.quiet:
 cmdargs = " ".join(args)
 
 execution_log = """
-readCounts Options:
+readCountsMatrix Options:
   ReadCounts Files (-c): %s
   Matrix Output (-M):    %s
   Min. Reads (-m):       %s%s
@@ -126,7 +126,7 @@ Command-Line: readCountsMatrix %s
 """%(", ".join(opt.counts),
      None if not matrix else opt.matrix,
      opt.minreads,
-     "" if opt.matrix not in ("Ref:Var","Ref;Var") or opt.minreads == 0 else " (ignored)",
+     "" if "VAF" in opt.matrix or opt.minreads == 0 else " (ignored)",
      opt.quiet,
      opt.output,
      cmdargs)
@@ -136,7 +136,8 @@ progress.message(execution_log)
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable
 
 progress.stage("Read ReadCounts input files", len(opt.counts))
-headers = "CHROM POS REF ALT ReadGroup RefCount SNVCount GoodReads".split()
+headers = "CHROM POS REF ALT ReadGroup RefCount SNVCount GoodReads SNVCountForward SNVCountReverse RefCountForward RefCountReverse".split()
+
 # NOTE: This *MUST* correspond to the columns in the readCounts .txt file output
 txtheaders = "CHROM   POS     REF     ALT     ReadGroup       SNVCountForward SNVCountReverse RefCountForward RefCountReverse SNVCount   RefCount GoodReads".split()
 
@@ -175,16 +176,29 @@ for filename in opt.counts:
         alt = r[headers[3]].strip()
         snvkey = (filename, chr, locus, ref, alt)
         rg=r[headers[4]].strip()
-        nref = int(float(r[headers[5]]))
-        nsnv = int(float(r[headers[6]]))
-        nall = int(float(r[headers[7]]))
+        nfref = int(r[headers[10]])
+        nfsnv = int(r[headers[8]])
+        nrref = int(r[headers[11]])
+        nrsnv = int(r[headers[9]])
+        nref = int(r[headers[5]])
+        nsnv = int(r[headers[6]])
+        nall = int(r[headers[7]])
         allrg.add(rg)
-        if opt.matrix in ("Ref:Var","Ref;Var") or nall >= opt.minreads:
-            if (nref+nsnv) == 0:
+        if nall > 0:
+            if (nfref+nfsnv) == 0 or (nfref+nfsnv) < opt.minreads:
+                fvaf = "NA"
+            else:
+                fvaf = "%.6f"%(float(nfsnv)/float(nfref+nfsnv),)
+            if (nrref+nrsnv) == 0 or (nrref+nrsnv) < opt.minreads:
+                rvaf = "NA"
+            else:
+                rvaf = "%.6f"%(float(nrsnv)/float(nrref+nrsnv),)
+            if (nref+nsnv) == 0 or (nref+nsnv) < opt.minreads:
                 vaf = "NA"
             else:
                 vaf = "%.6f"%(float(nsnv)/float(nref+nsnv),)
-            vafmatrix[(chr,locus,ref,alt)][rg] = matrix(dict(Ref=nref,Var=nsnv,VAF=vaf))
+            
+            vafmatrix[(chr,locus,ref,alt)][rg] = matrix(dict(Ref=nref,Var=nsnv,FRef=nfref,RRef=nrref,FVar=nfsnv,RVar=nrsnv,Total=nref+nsnv,VAF=vaf,FVAF=fvaf,RVAF=rvaf,FTotal=nfref+nfsnv,RTotal=nrref+nrsnv))
 
     progress.update()
 progress.done()
@@ -218,20 +232,20 @@ else:
     output = TXTFileTable(filename=sys.stdout, headers=outheaders, outputheaders=True)
     emptysym = "-"
 
-outrows = []
-for key in allloci:
+def generate_rows():
+    defaultvalue = matrix(dict(Ref=0,Var=0,VAF="NA",Total=0,FRef=0,RRef=0,FVar=0,RVar=0,FVAF="NA",RVAF="NA",FTotal=0,RTotal=0))
+    for key in allloci:
         snvkey = "%s:%s_%s>%s"%(key[0],key[1],key[2],key[3])
         row = [ snvkey ]
         for rg in allrg:
-            row.append(vafmatrix[key].get(rg,matrix(dict(Ref=0,Var=0,VAF="NA"))))
-        outrows.append(row)
+            row.append(vafmatrix[key].get(rg,defaultvalue))
+        yield dict(zip(outheaders, row + [emptysym]*50))
 
 progress.stage('Output results')
 if opt.output:
     outdir = os.path.split(opt.output)[0]
     if outdir and not os.path.exists(outdir):
         os.makedirs(outdir,exist_ok=True)
-output.from_rows(
-    [dict(list(zip(outheaders, r + [emptysym] * 50))) for r in outrows])
+output.from_rows(generate_rows())
 progress.done()
 

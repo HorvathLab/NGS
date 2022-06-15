@@ -12,7 +12,7 @@ set -x
 #
 # UMI-tools is the default cell-barcode strategy
 #
-# readCounts -s "singlecell_222_5_chr17.txt" -r "singlecell_chr17.bam" -m 0 -G "UMI-tools" -o "singlecell-output.tsv"
+# readCounts -s "singlecell_222_5_chr17.txt" -r "singlecell_chr17.bam" -m 0 -G "UMI-tools-CB" -o "singlecell-output.tsv"
 # readCountsMatrix -c "singlecell-output.tsv" -M Ref:Var -o "singlecell-output.cnt.matrix.tsv"                   
 # readCountsMatrix -c "singlecell-output.tsv" -M VAF -m 3 -o "singlecell-output.vaf-m3.matrix.tsv"
 #
@@ -29,11 +29,11 @@ set -x
 # STARsolo example
 #
 ../bin/scReadCounts -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 -t 10 \
-                    -G STARsolo -b singlecell2_117_barcodes.tsv -o singlecell2-output.tsv
+                    -C STARsolo -U STARsolo -b singlecell2_117_barcodes.tsv -o singlecell2-output.tsv
 
 #
-# Override accept list for barcodes, accept all barcodes
+# Override accept list for barcodes, accept all barcodes, directional output
 #
 ../bin/scReadCounts -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 -t 10 \
-                    -G STARsolo -b None -o singlecell2-all-output.tsv
+                    -C STARsolo -U STARsolo -b None -D -o singlecell2-all-output.tsv
 
