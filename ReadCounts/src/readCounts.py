@@ -63,14 +63,14 @@ else:
 filterFactory = ReadFilterFactory()
 filterOptions = [t[0] for t in filterFactory.list()]
 filterDesc = []
-for o,d in sorted(filterFactory.list()):
-    filterDesc.append("%s (%s)"%(o,d.strip('.')))
+for s,n,d in sorted(filterFactory.list()):
+    filterDesc.append("%s (%s)"%(s,d.strip('.')))
 
 groupFactory = ReadGroupFactory()
 groupOptions = [""] + [t[0] for t in groupFactory.list()]
 groupDesc = []
-for o,d in sorted(groupFactory.list()):
-    groupDesc.append("%s (%s)"%(o,d.strip('.')))
+for s,n,d in sorted(groupFactory.list()):
+    groupDesc.append("%s (%s)"%(s,d.strip('.')))
 
 minreads_default = 10
 maxreads_default = None
@@ -93,13 +93,18 @@ advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=min
                     help="Minimum number of good reads at SNV locus per alignment file. Default=10.", name="Min. Reads")
 advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=maxreads_default, remember=True,
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
+advanced.add_option("-B", "--snvbatchsize", type="int", dest="snvbatchsize", default=None, remember=True,
+                    help="Manage memory footprint by making multiple passes through the BAM file, one for each batch of SNVs. Default=All SNVs (single pass).", name="SNV Batch Size")
 advanced.add_option("-E","--extended",type="multichoice",dest="extended",default=None, remember=True, 
                help="Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.", name="Extended Output", multichoices=["Genotype likelihood","Read filtering statistics"])
 advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
                     help="Worker threads. Indicate no threading/multiprocessing with 0. Default=0.", name="Threads")
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=None, remember=True,
                     choices=groupOptions, name="Read Group",
-                    help="Additional read grouping based on read name/identifier strings or BAM-file RG. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
+                    help="Additional read grouping based on read name/identifier strings or BAM-file tags. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
+advanced.add_option("-U", "--umicount", type="choice", dest="umigroup", default=None, remember=True,
+                    choices=groupOptions, name="UMI Count",
+                    help="Count unique identifiers (UMI) based on read name/identifier strings or BAM-file tags. Options: %s. Default: None, count reads not UMIs."%(", ".join(groupDesc),))
 # advanced.add_option("--alignmentfilterparam", type="string", dest="filterparam", default="", remember=True,
 #                     help="Override parameters for selected alignment filter. Default: Do not override.", name="Alignment Filter Param.")
 # advanced.add_option("--readgroupparam", type="string", dest="readgroupparam", default="", remember=True,
@@ -152,6 +157,11 @@ if opt.readgroup:
     readgroup = groupFactory.get(opt.readgroup,readgroupparam)
 else:
     readgroup = None
+if opt.umigroup:
+    umigroup = groupFactory.get(opt.umigroup)
+else:
+    umigroup = None
+    
 if opt.extended and isinstance(opt.extended,str):
     opt.extended = [ e.strip() for e in opt.extended.split(',') ]
 
@@ -172,10 +182,14 @@ if opt.minreads != minreads_default:
     args.extend(["-m",str(opt.minreads)])
 if opt.maxreads != maxreads_default:
     args.extend(["-M",str(opt.maxreads)])
+if opt.snvbatchsize != None:
+    args.extend(["-B",str(opt.snvbatchsize)])
 if readgroup != None:
     args.extend(["-G",doublequote(opt.readgroup)])
     if opt.acceptlist != None:
         args.extend(["-b",doublequote(opt.acceptlist)])
+if umigroup != None:
+    args.extend(["-U",doublequote(opt.umigroup)])
 if opt.threads != threads_default:
     args.extend(["-t",str(opt.threads)])
 if opt.extended:
@@ -197,8 +211,10 @@ readCounts Options:
   Advanced:
     Min. Reads (-m)           %s
     Max. Reads (-M):          %s
+    SNV Batch Size (-B):      %s
     Read Groups (-G):         %s%s
     Valid Read Groups (-b):   %s
+    UMI Count (-U):           %s%s
     Threads (-t):             %s
     Extended Output (-E):     %s
     Quiet (-q):               %s
@@ -211,9 +227,12 @@ Command-Line: readCounts %s
      opt.output,
      opt.minreads,
      opt.maxreads,
+     "" if opt.snvbatchsize == None else opt.snvbatchsize,
      None if readgroup == None else opt.readgroup,
      "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
      "" if opt.acceptlist == None else opt.acceptlist,
+     None if umigroup == None else opt.umigroup,
+     "" if umigroup == None else "\n"+indent(umigroup.tostr(),12),
      opt.threads,
      ", ".join(opt.extended) if opt.extended else "None",
      opt.quiet,
@@ -223,6 +242,13 @@ progress.message(execution_log)
 
 if opt.maxreads == None:
     opt.maxreads = 1e+20
+
+def print_memory(msg=""):
+  import resource
+  rusage = resource.getrusage(resource.RUSAGE_SELF)
+  if msg:
+      msg = "["+msg+"] "
+  print("%sMemory: %.2fGb"%(msg,rusage.ru_maxrss/(1024**2)),flush=True)
 
 from dataset import XLSFileTable, CSVFileTable, TSVFileTable, XLSXFileTable, TXTFileTable, BEDFile, VCFFile
 
@@ -321,6 +347,10 @@ GoodReads
 VAF
 """.split() if _f]
 
+dogl = True
+if opt.extended == None or 'Genotype likelihood' not in opt.extended:
+    dogl = False
+
 glheaders = [_f for _f in """
 HomoVarSc
 HetSc
@@ -339,7 +369,12 @@ VarDomFDR
 RefDomFDR
 """.split() if _f]
 
-outheaders.extend(glheaders)
+if dogl:
+    outheaders.extend(glheaders)
+
+dodebug = True
+if opt.extended == None or 'Read filtering statistics' not in opt.extended:
+    dodebug = False
 
 debugging = [_f for _f in """
 OtherCountForward
@@ -350,35 +385,37 @@ SNVLociReads
 """.split() if _f]
 debugging.extend(sorted(filter(lambda h: h != "BadRead",BadRead.allheaders)))
 
-outheaders.extend(debugging)
+if dodebug:
+    outheaders.extend(debugging)
 
 pos = outheaders.index("SNVCountForward")
 outheaders.insert(pos, 'ReadGroup')
 
 outheaders1 = copy.copy(outheaders)
-if opt.extended == None or 'Read filtering statistics' not in opt.extended:
-    for dh in debugging:
-        if dh in outheaders1:
-            outheaders1.remove(dh)
-if opt.extended == None or 'Genotype likelihood' not in opt.extended:
-    for dh in glheaders:
-        if dh in outheaders1:
-            outheaders1.remove(dh)
 
 emptysym = None
 outrows = []
 
-progress.stage("Count reads per SNV", len(snvdata))
-if opt.threads == 0:
-    pileups = SerialPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup).iterator()
-elif opt.threads > 0:
-    pileups = MultiprocPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup, procs=opt.threads).iterator()
-elif opt.threads < 0:
-    pileups = ThreadedPileups(snvdata, opt.alignments, readfilter, chrreg, readgroup, threads=-opt.threads).iterator()
-
+if opt.snvbatchsize == None:
+    snvblocksize = len(snvdata)
+else:
+    snvblocksize = opt.snvbatchsize
 
 totalsnvs = 0
-for snvchr, snvpos, ref, alt, snvextra in snvdata:
+progress.stage("Count reads per SNV", len(snvdata))
+for snvblock in range(0,len(snvdata),snvblocksize):
+
+  if opt.threads == 0:
+    pileups = SerialPileups(snvdata[snvblock:(snvblock+snvblocksize)],
+                            opt.alignments, readfilter, chrreg, readgroup, umigroup).iterator()
+  elif opt.threads > 0:
+    pileups = MultiprocPileups(snvdata[snvblock:(snvblock+snvblocksize)], 
+                               opt.alignments, readfilter, chrreg, readgroup, umigroup, procs=opt.threads).iterator()
+  elif opt.threads < 0:
+    pileups = ThreadedPileups(snvdata[snvblock:(snvblock+snvblocksize)], 
+                              opt.alignments, readfilter, chrreg, readgroup, umigroup, threads=-opt.threads).iterator()
+
+  for snvchr, snvpos, ref, alt, snvextra in snvdata[snvblock:(snvblock+snvblocksize)]:
     
     snvchr1, snvpos1, ref1, alt1, total, reads, badread = next(pileups)
     assert(snvchr == snvchr1 and snvpos == snvpos1)
@@ -390,29 +427,58 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
 
     allsi = set()
     goodreads = defaultdict(list)
-    for al, pos, base, si in reads:
-        goodreads[base].append((si, al))
+    for al, pos, base, si, umi in reads:
+        goodreads[base].append((si, al, umi))
         allsi.add(si)
 
     totalsnvs += 1
 
-    counts = defaultdict(int)
-    for base in goodreads:
-        for si, al in goodreads[base]:
-            counts[(base, "R" if al.is_reverse else "F", si)] += 1
+    altnucs = "".join(sorted(map(str.strip,alt.split(','))))
+    othernucs = "".join(sorted(set('ACGT')-set([ref]+list(altnucs))))
+
+    if not umigroup:
+        counts = defaultdict(int)
+        for base in goodreads:
+            for si, al, umi in goodreads[base]:
+                counts[(base, "R" if al.is_reverse else "F", si)] += 1
+                counts[(base, si)] += 1
+                counts[si] += 1
+                if len(altnucs) > 1 and base in altnucs:
+                    counts[(altnucs, "R" if al.is_reverse else "F", si)] += 1
+                    counts[(altnucs, si)] += 1
+                if len(othernucs) > 1 and base in othernucs:
+                    counts[(othernucs, "R" if al.is_reverse else "F", si)] += 1
+                    counts[(othernucs, si)] += 1
+    else:
+        umis = defaultdict(set)
+        for base in goodreads:
+            for si, al, umi in goodreads[base]:
+                if umi == None:
+                    continue
+                umis[(base, "R" if al.is_reverse else "F", si)].add(umi)
+                umis[(base, si)].add(umi)
+                umis[si].add(umi)
+                if len(altnucs) > 1 and base in altnucs:
+                    umis[(altnucs, "R" if al.is_reverse else "F", si)].add(umi)
+                    umis[(altnucs, si)].add(umi)
+                if len(othernucs) > 1 and base in othernucs:
+                    umis[(othernucs, "R" if al.is_reverse else "F", si)].add(umi)
+                    umis[(othernucs, si)].add(umi)
+        counts = defaultdict(int)
+        for k in umis:
+            counts[k] = len(umis[k])
 
     for si in sorted(allsi):
-        nsnvf = sum([counts[(nuc, "F", si)] for nuc in list(map(str.strip,alt.split(',')))])
-        nsnvr = sum([counts[(nuc, "R", si)] for nuc in list(map(str.strip,alt.split(',')))])
-        nsnv = nsnvr + nsnvf
+        nsnvf = counts[(altnucs,"F",si)]
+        nsnvr = counts[(altnucs,"R",si)]
+        nsnv = counts[(altnucs,si)]
         nreff = counts[(ref, "F", si)]
         nrefr = counts[(ref, "R", si)]
-        nref = nreff + nrefr
-        othernucs = set('ACGT') - set([ref] + alt.split(','))
-        notherf = sum([counts[(nuc, "F", si)] for nuc in othernucs])
-        notherr = sum([counts[(nuc, "R", si)] for nuc in othernucs])
-        nother = notherf + notherr
-        counted = sum([counts[(n, d, si)] for n in 'ACGT' for d in 'FR'])
+        nref = counts[(ref, si)]
+        notherf = counts[(othernucs,"F",si)]
+        notherr = counts[(othernucs,"R",si)]
+        nother = counts[(othernucs,si)]
+        counted = counts[si]
 
         if isinstance(si,int):
             alf = opt.alignments[si]
@@ -430,16 +496,12 @@ for snvchr, snvpos, ref, alt, snvextra in snvdata:
                counted,
                100.0 * (total[si] - badread[si, 'Good']) /
                            float(total[si]) if total[si] != 0 else 0.0,
-               float(nsnv)/(nsnv+nref) if (nsnv+nref)>0 else None,
-               -1, -1, -1, -1, -1,
-               notherf, notherr,
-               nother,
-               -1, -1, -1, -1, -1,
-               -1, -1, -1, -1, -1,
-               badread[si, 'Good'],
-               total[si]]
+               float(nsnv)/(nsnv+nref) if (nsnv+nref)>0 else None]  + \
+               ( [] if not dogl else [ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, ] ) + \
+               ( [] if not dodebug else [ notherf, notherr, nother, badread[si, 'Good'], total[si]] )
 
-        for s in sorted(BadRead.allheaders):
+        if dodebug:
+          for s in sorted(BadRead.allheaders):
             row.append(badread[si, s])
 
         outrows.append(row)
@@ -460,7 +522,9 @@ if 0 < opt.maxreads < 1:
         percind = int(round(n*opt.maxreads))
         maxreads[al] = sorted(coverage[al])[percind]
 
-for i in range(len(outrows)):
+if dogl:
+
+  for i in range(len(outrows)):
 
     #Exctract the counts and rescale if necessary
     r = dict(list(zip(outheaders, outrows[i])))
@@ -504,24 +568,24 @@ for i in range(len(outrows)):
     pos = outheaders.index("RefDompV")
     outrows[i][pos] = refdom
 
-# Now compute FDR and scores...
+  # Now compute FDR and scores...
 
-pvkeys = [h for h in outheaders if h.endswith('pV')]
-fdrkeys = [h for h in outheaders if h.endswith('FDR')]
-allpvals = []
-n = len(outrows)
-for pvk in pvkeys:
-    pos = outheaders.index(pvk)
-    allpvals.extend(list(map(itemgetter(pos), outrows)))
-# print allpvals
-allfdrs = fdr(allpvals)
+  pvkeys = [h for h in outheaders if h.endswith('pV')]
+  fdrkeys = [h for h in outheaders if h.endswith('FDR')]
+  allpvals = []
+  n = len(outrows)
+  for pvk in pvkeys:
+      pos = outheaders.index(pvk)
+      allpvals.extend(list(map(itemgetter(pos), outrows)))
+  # print allpvals
+  allfdrs = fdr(allpvals)
 
-for j, fdrk in enumerate(fdrkeys):
+  for j, fdrk in enumerate(fdrkeys):
     pos1 = outheaders.index(fdrk)
     for i in range(len(outrows)):
         outrows[i][pos1] = allfdrs[(j * n) + i]
 
-for i in range(len(outrows)):
+  for i in range(len(outrows)):
     r = dict(list(zip(outheaders, outrows[i])))
     homovarsc = max(0.0, min(pvscore(r["NotHetFDR"]),
                              pvscore(r["NotHomoRefFDR"])) - pvscore(r["NotHomoVarFDR"]))
@@ -541,7 +605,6 @@ for i in range(len(outrows)):
     outrows[i][pos] = vardomsc
     pos = outheaders.index("RefDomSc")
     outrows[i][pos] = refdomsc
-
 
 if opt.output:
     filename = opt.output
@@ -572,6 +635,6 @@ if opt.output:
     if outdir and not os.path.exists(outdir):
         os.makedirs(outdir,exist_ok=True)
 output.from_rows(
-    [dict(list(zip(outheaders, list(map(lambda v: emptysym if (v == None) else v,r)) + [emptysym] * 50))) for r in outrows])
+    map(lambda r: dict(zip(outheaders, list(map(lambda v: emptysym if (v == None) else v,r)) + [emptysym] * 50)),outrows))
 progress.done()
 

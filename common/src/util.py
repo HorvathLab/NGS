@@ -436,6 +436,8 @@ class CompoundMethod(object):
     def __init__(self):
         self._elements = []
         self._description = ""
+        self._name = ""
+        self._type = ""
         self._specification = []
 
     def set_special_params(self,method,**params):
@@ -446,6 +448,12 @@ class CompoundMethod(object):
 
     def add_desc(self,desc):
         self._description = desc
+
+    def add_name(self,name):
+        self._name = name
+
+    def add_type(self,type):
+        self._type = type
 
     def add_spec(self,spec):
         self._specification.append(spec)
@@ -494,15 +502,17 @@ class ReadGroup(object):
 
     def __init__(self, acceptlist=None, missing=None):
         self._default = missing 
+        self._type = type
         self.set_acceptlist(acceptlist)
 
     def default(self):
         return self._default
 
+    def type(self):
+        return self._type
+
     def accept(self,value):
-        if self._acceptlist == None or value in self._acceptlist:
-            return True
-        return False
+        return (self._acceptlist == None or value in self._acceptlist)
 
     def set_acceptlist(self,acceptlist=None):
         self._acceptlist = None
@@ -518,6 +528,9 @@ class ReadGroup(object):
 class CompoundGroup(CompoundMethod,ReadGroup):
 
     def group(self, alignment):
+        if len(self._elements) == 1:
+            return self._elements[0].group(alignment)
+
         grp = None
         for rg in self._elements:
             grp = rg.group(alignment)
@@ -567,15 +580,26 @@ class MethodFactory(object):
                 pass
         return v
     
+    NAME='Name'
+    TYPE='Type'
     DESC='Description'
-    def list(self):
+    def list(self,type=None):
         methods = []
         for sec in self.config.sections():
+            if type != None:
+                if not self.config.has_option(sec,self.TYPE):
+                    continue
+                if self.config.get(sec,self.TYPE) != type:
+                    continue
+            if self.config.has_option(sec,self.NAME):
+                name = self.config.get(sec,self.NAME)
+            else:
+                name = sec
             if self.config.has_option(sec,self.DESC):
                 desc = self.config.get(sec,self.DESC)
-                methods.append((sec,desc))
+                methods.append((sec,name,desc))
             else:
-                methods.append((sec,self.defaultDesc%(sec,)))
+                methods.append((sec,name,self.defaultDesc%(sec,)))
         methods.sort()
         return methods
 
@@ -597,6 +621,12 @@ class MethodFactory(object):
         for opt,value in self.config.items(name):
             opt = opt.strip()
             value = value.strip()
+            if opt == self.NAME:
+                method.add_name(value)
+                continue
+            if opt == self.TYPE:
+                method.add_type(value)
+                continue
             if opt == self.DESC:
                 method.add_desc(value)
                 continue
@@ -660,7 +690,7 @@ class ReadGroupFactory(MethodFactory):
     baseMethodClass = ReadGroup
     compoundMethodClass = CompoundGroup
     iniFile = 'group.ini'
-    defaultDesc = 'Read groups method: %s.'
+    defaultDesc = 'Read group method: %s.'
     nomethodError = "Can\'t find named read group method: %s."
     noelementError = "Can\'t find element %s of read group method %s."
     paramError = "Element %s of read group method %s"
@@ -711,7 +741,7 @@ class ReadTagValue(ReadGroup):
 
     def group(self, alignment):
         try:
-            value = str(alignment.opt(self._tag))
+            value = str(alignment.get_tag(self._tag))
             if self.accept(value):
                 return value
         except KeyError:

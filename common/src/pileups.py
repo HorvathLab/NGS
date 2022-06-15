@@ -8,12 +8,13 @@ import queue
 import time, math, sys
 
 class Pileups(object):
-    def __init__(self,loci,samfiles,filter,chrreg,readgroups):
+    def __init__(self,loci,samfiles,filter,chrreg,readgroups,umigroups):
         self.loci = loci
         self.samfiles = samfiles
         self.filter = filter
         self.chrreg = chrreg
         self.readgroups = readgroups
+        self.umigroups = umigroups
 
 class SerialPileups(Pileups):
 
@@ -52,7 +53,11 @@ class SerialPileups(Pileups):
                                 except BadRead as e:
                                     cnts[(grp, e.args[0])] += 1
                                     continue
-                                reads.append((al, pos, base, grp))
+                                if self.umigroups != None:
+                                    umi = self.umigroups.group(pileupread.alignment)
+                                else:
+                                    umi = None
+                                reads.append((al, pos, base, grp, umi))
                                 cnts[(grp, 'Good')] += 1
                             self.filter.pileup_end(pileupcolumn)
                 except ValueError:
@@ -108,7 +113,11 @@ class ThreadedPileups(Pileups):
                         except BadRead as e:
                             cnts[(grp, e.args[0])] += 1
                             continue
-                        reads.append((al, pos, base, grp))
+                        if self.umigroups != None:
+                            umi = self.umigroups.group(pileupread.alignment)
+                        else:
+                            umi = None
+                        reads.append((al, pos, base, grp, umi))
                         cnts[(grp, 'Good')] += 1
                     self.filter.pileup_end(pileupcolumn)
             except ValueError as e:
@@ -189,7 +198,11 @@ class MultiprocPileups(Pileups):
                         except BadRead as e:
                             cnts[(grp, e.args[0])] += 1
                             continue
-                        reads.append((PileupAlignment(al.seq,al.is_reverse), pos, base, grp))
+                        if self.umigroups != None:
+                            umi = self.umigroups.group(pileupread.alignment)
+                        else:
+                            umi = None
+                        reads.append((PileupAlignment(al.seq,al.is_reverse), pos, base, grp, umi))
                         cnts[(grp, 'Good')] += 1
                     self.filter.pileup_end(pileupcolumn)
             except ValueError as e:
