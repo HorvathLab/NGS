@@ -52,11 +52,15 @@ else:
     error_kwargs = {}
 
 groupFactory = ReadGroupFactory()
-groupOptions = [""] + [t[0] for t in groupFactory.list()]
+groupOptions = [t[1] for t in groupFactory.list(type="CellBarcode")]
 groupDesc = []
-for o,d in sorted(groupFactory.list()):
-    groupDesc.append("%s (%s)"%(o,d.strip('.')))
+groupMap = {}
+for s,n,d in sorted(groupFactory.list(type="CellBarcode")):
+    groupDesc.append("%s (%s)"%(n,d.strip('.')))
+    groupMap[n] = s
+
 readgroup_default = "STARsolo"
+
 threads_default = 1
 batch_default = 100
 
@@ -65,9 +69,9 @@ parser.add_option("-r", "--readalignments", type="files", dest="alignments", def
                   help="Read alignment files in (indexed) BAM format. Required.", name="Read Alignment Files",
                   notNone=True, remember=True,
                   filetypes=[("Read Alignment Files (BAM)", "*.bam")])
-parser.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=readgroup_default, remember=True,
-                  choices=groupOptions, name="Read Group", notNone=True,
-                  help="Read group / barcode extraction strategy. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
+parser.add_option("-G", "--cellbarcode", type="choice", dest="readgroup", default=readgroup_default, remember=True,
+                  choices=groupOptions, name="Cell Barcode", notNone=True,
+                  help="Cell barcode extraction strategy. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
 parser.add_option("-C", "--command", type="string", dest="command", default="", remember=True,
                   help="Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or placed at the end of the command if no {} is present. At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="Command")
 parser.add_option("-F", "--filetemplate", type="string", dest="filetempl", default="", remember=True,
@@ -95,8 +99,8 @@ advanced.add_option("-B","--batch", type="int", dest="batch", default=batch_defa
 advanced.add_option("-i", "--index", action="store_true", dest="index", default=False, remember=True,
                     help="Index read-group specific BAM file before executing command.", name="Index")
 advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist", default=None,
-                    help="File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list.", name="Valid Read Groups", remember=True,
-                    filetypes=[("Valid Read Groups File", "*.txt;*.tsv")])
+                    help="File of white-space separated, acceptable cell barcode values. Overrides value, if any, specified by Cell Barcode. Use None to remove a default accept list.", name="Valid Cell Barcodes", remember=True,
+                    filetypes=[("Valid Cell Barcodes File", "*.txt;*.tsv")])
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
 # advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
@@ -165,7 +169,7 @@ if opt.acceptlist != None:
         readgroupparam = "*:acceptlist=None"
     else:
         readgroupparam = "*:acceptlist='%s'"%(opt.acceptlist,)
-readgroup = groupFactory.get(opt.readgroup,readgroupparam)
+readgroup = groupFactory.get(groupMap[opt.readgroup],readgroupparam)
 if opt.filetempl:
     opt.filetempl = opt.filetempl.strip()
 if opt.command:
