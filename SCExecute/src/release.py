@@ -1,6 +1,6 @@
 #!/bin/env python
 RELEASE = "SCExecute"
-VERSION = '1.2.5'
+VERSION = '1.3.0'
 PROGRAMS = 'scExecute.py scBAMStats.py minDepth.py'
 INCLUDES = 'common'
 if __name__ == '__main__':
