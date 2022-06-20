@@ -77,4 +77,4 @@ ReadNameRegex: regex='_([ACGT]{16})_' regexgrp=1 missing="XXXXXXXXX"
 
 ## See Also
 
-[SCExecute Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Command Substitution](CommandSubst.md), [Examples](Examples.md)
+[SCExecute Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Command/Template Substitution](CommandSubst.md), [Examples](Examples.md)
