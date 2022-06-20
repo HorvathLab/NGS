@@ -21,7 +21,7 @@ SCExecute provides explicit configuration for alignments barcoded
 through STARsolo and UMItools. Additional cellular barcode
 extraction logic can be configured software, based
 on BAM file tags or RNA sequence name and delimited tokens or regular
-expressions (see Read Grouping documentation). 
+expressions (see [Cell Barcode](Barcode.md) documentation). 
 
 **Setup:**
 * [Download](https://github.com/HorvathLab/NGS/releases/tag/SCExecute-1.3.1)
