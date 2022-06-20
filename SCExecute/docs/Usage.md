@@ -40,11 +40,11 @@ Cell Barcode, -G READGROUP, --cellbarcode=READGROUP
                         
 Command, -C COMMAND, --command=COMMAND
 
-> Command to execute for each cell-barcode specific BAM file. The cell-barcode specific BAM filename replaces {} in the command or is placed at the end of the command if no {} is present. Use {BARCODE} in command as needed, see [Command Substitution](cmdsubst.md). At least one of Command/--command/-C or File Template/--filetemplate/-F must be specified.
+> Command to execute for each cell-barcode specific BAM file. The cell-barcode specific BAM filename replaces {} in the command or is placed at the end of the command if no {} is present. Use {BARCODE} in command as needed, see [Command Substitution](CommandSubst.md). At least one of Command/--command/-C or File Template/--filetemplate/-F must be specified.
 
 File Template, -F TEMPLATE, --filetemplate=TEMPLATE
 
-> Filename template for each cell-barcode specific BAM file. The cell-barcode specific BAM file template should end in \".bam\" and will not be deleted after the command, if specified, is executed. Use {BAMBASE} and {BARCODE} to construct the filename, see [Command Substitution](cmdsubst.md). At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.
+> Filename template for each cell-barcode specific BAM file. The cell-barcode specific BAM file template should end in \".bam\" and will not be deleted after the command, if specified, is executed. Use {BAMBASE} and {BARCODE} to construct the filename, see [Command Substitution](CommandSubst.md). At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.
 
 --version
 
@@ -58,16 +58,16 @@ File Template, -F TEMPLATE, --filetemplate=TEMPLATE
 <img src="advanced.png" alt="Advanced"/>
 
 Directory Template, -D TEMPLATE, --directory=TEMPLATE
-> Working directory for running command on each cell-barcode specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename, if necessary, see [Command Substitution](cmdsubst.md). Default: Current working directory.
+> Working directory for running command on each cell-barcode specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename, if necessary, see [Template Substitution](CommandSubst.md). Default: Current working directory.
 
 Output Template, -o TEMPLATE, --outtemplate=TEMPLATE
-> Filename template for the standard output of each cell-barcode specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename, see [Command Substitution](cmdsubst.md). Default: Standard output of command not captured.
+> Filename template for the standard output of each cell-barcode specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename, see [Template Substitution](CommandSubst.md). Default: Standard output of command not captured.
 
 Error Template, -e TEMPLATE, --errtemplate=TEMPLATE
-> Filename template for the standard error of each cell-barcode specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename, see [Command Substitution](cmdsubst.md). Default: Standard error of command not captured.
+> Filename template for the standard error of each cell-barcode specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename, see [Template Substitution](CommandSubst.md). Default: Standard error of command not captured.
 
 All Output Template, -O TEMPLATE, --allouttemplate=TEMPLATE
-> Filename template for the standard output and standard error of each cell-barcode specific command execution.  Use {BAMBASE} and {BARCODE} to construct the filename, see [Command Substitution](cmdsubst.md). Default: Standard output/error of command not captured.
+> Filename template for the standard output and standard error of each cell-barcode specific command execution.  Use {BAMBASE} and {BARCODE} to construct the filename, see [Template Substitution](CommandSubst.md). Default: Standard output/error of command not captured.
 
 Limit, -L N, --limit=N
 
@@ -107,4 +107,4 @@ Quiet, -q, --quiet
 
 ## See Also
 
-[SCExecute Home](..), [Input Files](InputFiles.md), [Cell Barcodes](Barcodes.md), [Command Substitution](cmdsubst.md), [Examples](Examples.md)
+[SCExecute Home](..), [Input Files](InputFiles.md), [Cell Barcodes](Barcodes.md), [Command/Template Substitution](CommandSubst.md), [Examples](Examples.md)
