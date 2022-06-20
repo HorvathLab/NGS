@@ -7,5 +7,7 @@ expected with `.bam.bai` index files in the same folder.
 
 ## See Also
 
-[SCExecute Home](..), [Usage](Usage.md), [Cell Barcodes](Barcodes.md), [Examples](Examples.md)
+[SCExecute Home](..), [Usage](Usage.md), [Cell Barcodes](Barcodes.md), [Command/Template Substitution](CommandSubst.md), [Examples](Examples.md)
+
+
 
