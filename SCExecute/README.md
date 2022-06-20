@@ -5,7 +5,7 @@ on each barcode-stratified BAM file. Unlike other tools, SCExecute
 generates cell-barcode specific BAM files in batches to avoid file-system
 and memory constraints, and manages the execution of the user-provided
 commands on multiple processes to improve throughput. Cell-barcodes can
-be [extracted](Barcodes.md) from read-names or BAM-file tags populated by a variety
+be [extracted](docs/Barcodes.md) from read-names or BAM-file tags populated by a variety
 of tools, included STARsolo and UMI-tools, and can be restricted to
 barcodes of interest. Implemented in Python3 using the PySAM package and
 [distributed](https://github.com/HorvathLab/NGS/releases) for Linux, MacOS, and Python environments, SCExecute builds
@@ -21,7 +21,7 @@ SCExecute provides explicit configuration for alignments barcoded
 through STARsolo and UMItools. Additional cellular barcode
 extraction logic can be configured software, based
 on BAM file tags or RNA sequence name and delimited tokens or regular
-expressions (see [Cell Barcode](Barcode.md) documentation). 
+expressions (see [Cell Barcode](docs/Barcode.md) documentation). 
 
 **Setup:**
 * [Download](https://github.com/HorvathLab/NGS/releases/tag/SCExecute-1.3.1)
