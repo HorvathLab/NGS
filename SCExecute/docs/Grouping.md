@@ -12,7 +12,7 @@ cell-barcode strategies can be created, using the same format, using
 a similar `group.ini` file in the current working directory. Named cell-barcode extraction rules in the current working directory override those with the
 same name in the SCExecute distribution.
 
-## Read-Grouping Strategies
+## Cell Barcode Extraction Rules
 
 ### UMI-tools
 > Cell barcodes from read name added by UMI-tools.
@@ -23,7 +23,7 @@ same name in the SCExecute distribution.
 ### CellRanger
 > Cell barcodes from the CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped
                         
-## Read-Grouping Operations
+## Cell Barcode Extraction Operations
 
 ### ReadNameWord
 > Parameters: field_index field_sep=_ missing=None
