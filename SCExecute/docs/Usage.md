@@ -36,7 +36,7 @@ Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 
 Cell Barcode, -G READGROUP, --cellbarcode=READGROUP
 
->  Cell barcode extraction strategy. Options: Options: CellRanger (Cell barcodes from the CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped), STARsolo (Cell barcodes from the CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped), UMI-tools (Cell barcodes from read name added by umi_tools). See [Read Groups](Grouping.md). Default: STARsolo.
+>  Cell barcode extraction strategy. Options: Options: CellRanger (Cell barcodes from the CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped), STARsolo (Cell barcodes from the CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped), UMI-tools (Cell barcodes from read name added by umi_tools). See [Cell Barcodes](Barcodes.md). Default: STARsolo.
                         
 Command, -C COMMAND, --command=COMMAND
 
