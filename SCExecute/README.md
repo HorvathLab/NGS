@@ -24,7 +24,7 @@ on BAM file tags or RNA sequence name and delimited tokens or regular
 expressions (see [Cell Barcode](docs/Barcode.md) documentation). 
 
 **Setup:**
-* [Download](https://github.com/HorvathLab/NGS/releases/tag/SCExecute-[Current version])
+* [Download][Current version]
 * [Install](docs/Installation.md)
 
 **Usage:**
@@ -37,4 +37,4 @@ expressions (see [Cell Barcode](docs/Barcode.md) documentation).
 
 **[Examples](docs/Examples.md)**
 
-[Current version]: 1.3.1
+[Current version]: https://github.com/HorvathLab/NGS/releases/tag/SCExecute-1.3.1
