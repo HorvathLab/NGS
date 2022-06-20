@@ -30,8 +30,10 @@ expressions (see Read Grouping documentation).
 **Usage:**
 * [SCExecute](docs/Usage.md)
 
-**File Formats:**
+**Other:**
 * [Input Files](docs/InputFiles.md)
+* [Cell Barcodes](docs/Barcodes.md)
+* [Command/Template Substitution](docs/CommandSubst.md)
 
 **[Examples](docs/Examples.md)**
 
