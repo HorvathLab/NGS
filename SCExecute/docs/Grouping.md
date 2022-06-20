@@ -1,27 +1,28 @@
-# SCExecute Read Grouping / Cell Barcodes
+# SCExecute Cell Barcodes
 
-SCExecute splits the aligned reads by a group identifier extracted from each alignment record. Usecases
-include cell-barcodes added for single-cell sequencing. Read groups can
+SCExecute splits the aligned reads by cell barcodes extracted from each alignment record. Cell barcodes can
 be extracted from read headers by regular expression, splitting lines
 according to some separator character, or directly from BAM alignment
 headers. Aligned reads without a group identifier can be assigned a
-specific identifier or omitted from the output.
+specific identifier or skipped.
 
-The available read-grouping strategies are defined in the file
+The available cell-barcode strategies are defined in the file
 `group.ini` in the SCExecute distribution. New or modified
-read-grouping strategies can be created, using the same format, in
-a `group.ini` file in the current working directory. Named grouping
-strategies in the current working directory override those with the
+cell-barcode strategies can be created, using the same format, using 
+a similar `group.ini` file in the current working directory. Named cell-barcode extraction rules in the current working directory override those with the
 same name in the SCExecute distribution.
 
 ## Read-Grouping Strategies
 
 ### UMI-tools
-> Pick out cell barcodes from read name/identifier added by umi_tools.
+> Cell barcodes from read name added by UMI-tools.
 
 ### STARsolo
-> Cell barcodes added by STARsolo as CB tag in aligned read, reads without a CB tag dropped.
+> Cell barcodes from the CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped
 
+### CellRanger
+> Cell barcodes from the CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped
+                        
 ## Read-Grouping Operations
 
 ### ReadNameWord
@@ -49,32 +50,31 @@ same name in the SCExecute distribution.
 ### UMI-tools
 
 ```
-[UMI-tools]
-Description: Pick out cell barcodes from read name/identifier added by umi_tools.
+[UMI-tools_CB]
+Name: UMI-tools
+Description: Cell barcodes from read name added by umi_tools.
+Type: CellBarcode
 ReadNameWord: field_index=1 field_sep=_
 ```
 
 ### STARsolo
 ```
-[STARsolo]
-Description: Cell barcodes added by STARsolo in CB tag in aligned read, reads without a CB tag dropped.
-ReadTagValue: tag='CB'
+[STARsolo_CB]
+Name: STARsolo
+Description: Cell barcodes from the CB tag of aligned read - reads without a CB tag or with CB tag not in the accept list (default: file "barcodes.tsv" in the current directory) dropped.                                                                
+Type: CellBarcode                                                                                                            
+ReadTagValue: tag='CB' acceptlist='barcodes.tsv'
 ```
 
 ### UMI-tools_Regex
 ```
-[UMI-tools_Regex]
+[UMI-tools_Regex_CB]
+Name: UMI-tools-RE
 Description: Pick out cell barcodes from read name/identifier added by umi_tools using a regular expression.
-ReadNameRegex: regex='_([ACGT]{16})_' regexgrp=1
-```
-
-### UB-Tag
-```
-[UB-Tag]
-Description: UB tag from aligned read, reads without a UB tag get value "XXXXXXXX"
-ReadTagValue: tag='UB' missing='XXXXXXXX'
+Type: CellBarcode
+ReadNameRegex: regex='_([ACGT]{16})_' regexgrp=1 missing="XXXXXXXXX"
 ```
 
 ## See Also
 
-[SCExecute Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Examples](Examples.md)
+[SCExecute Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Command Substitution](cmdsubst.md), [Examples](Examples.md)
