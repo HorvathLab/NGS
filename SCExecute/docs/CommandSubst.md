@@ -52,7 +52,7 @@ SCExecute can replace a variety of placeholder terms in the specified command an
 
 > Processor index for a command execution.
 
-## Example
+## Examples
 
 ### Filename template
 ```
