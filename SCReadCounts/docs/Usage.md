@@ -71,10 +71,14 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
                         file. Values greater than 1 indicate absolute read
                         counts, otherwise the value indicates the coverage
                         distribution percentile. Default=No maximum. This affects only VAF calculations.
-                        
-All Fields, -F, --full
 
-> Output extra diagnostic read count fields. Default=False.
+Directional, -D, --directional
+
+> Output directional (forward and reverse complement) VAF and read counts. Default: False
+
+Threads/BAM, -t TPB, --threadsperbam=TPB                   
+
+> Worker threads per alignment file. Default=0; indicates no threading.
 
 Read Group, -G READGROUP, --readgroup
 
@@ -83,10 +87,6 @@ Read Group, -G READGROUP, --readgroup
 Read Group Values, -b BARCODES, --barcode_acceptlist BARCODES
 
 > File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list. 
-
-Threads/BAM, -t TPB, --threadsperbam=TPB                   
-
-> Worker threads per alignment file. Default=0; indicates no threading.
 
 Force, -F, --force
 
