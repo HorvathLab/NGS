@@ -28,7 +28,7 @@ SCReadCounts.
 
 Additional GUI option tabs are documented below.
 
-## Required Arguments
+## Options
 
 SNVs, -s SNVS, --snvs=SNVS
 
@@ -39,6 +39,10 @@ Read Alignment Files, -r ALIGNMENTS, --readalignments=ALIGNMENTS
 > Read alignments files in indexed BAM format, with extension `.bam`. BAM index with extension `.bam.bai` must be located in the same directory. Multiple files are specified inside quotes, separated by spaces, and by using file globbing. scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment. See [Input Files](InputFiles.md) for more information.
 > 
 > scReadCounts accepts alignment files generated with popular aligning tools; the test dataset uses a STAR-generated alignment.
+
+Filter Alignments, -f FILTER, --alignmentfilter
+
+> Alignment filtering strategy. See [Read Filtering](Filtering.md) for more details. Default: Basic.
 
 Output Folder, -o OUTPUT, --output=OUTPUT
 
@@ -68,13 +72,9 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
                         counts, otherwise the value indicates the coverage
                         distribution percentile. Default=No maximum. This affects only VAF calculations.
                         
-Filter Alignments, -f FILTER, --alignmentfilter
-
-> Alignment filtering strategy. See [Read Filtering](Filtering.md) for more details. Default: Basic.
-
 All Fields, -F, --full
 
-> Output extra diagnostic read count fields.Default=False.
+> Output extra diagnostic read count fields. Default=False.
 
 Read Group, -G READGROUP, --readgroup
 
