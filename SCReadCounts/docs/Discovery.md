@@ -15,4 +15,4 @@ The ```<bam_file>.bam``` must be indexed and ```<bam_file>.bam.bai``` should be 
 
 ```<min_var_read_count>``` is the minimum number of variant reads required for a locus to be considered a putative variant loci.
 
-Note that this is an agressive enumeration of *potential* variant sites for *much* more careful analysis by SCReadCounts or other tools. It will, however, provide a much more limited set of loci than an exhaustive enumeration of loci in a genomic region. It will also provide the opportunity for *de novo* discovery of loci that have not otherwise been annotated elsewhere.
+Note that this is an agressive enumeration of *potential* variant sites for *much* more careful analysis by SCReadCounts or other tools. It will, however, provide a much more limited set of loci than an exhaustive enumeration of loci in a genomic region. It will also provide the opportunity for *de novo* discovery of loci that have not otherwise been annotated elsewhere. Finally, it will avoid the unnecessary examination of annotated loci that are not supported by the data available in the BAM file alignments. 
