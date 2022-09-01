@@ -74,19 +74,6 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
                         counts, otherwise the value indicates the coverage
                         distribution percentile. Default=No maximum.
 
-SNV Batch Size, -B SNVBATCHSIZE, --snvbatchsize=SNVBATCHSIZE
-                        Manage memory footprint by making multiple passes
-                        through the BAM file, one for each batch of SNVs.
-                        Default=All SNVs (single pass).
-
-Extended Output, -E, --extended=EXTENDED
-
-> Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.
-
-Threads, -t THREADS, --threads=THREADS                   
-
-> Worker threads. Default: 0, indicating single-threaded serial execution.
-
 Read Group, -G READGROUP, --readgroup=READGROUP
 
 > Additional read grouping based on read name/identifier strings or BAM-file RG. See [Read Grouping](Grouping.md) for more details. Default: None, group reads by BAM-file only.
@@ -98,6 +85,21 @@ Valid Read Groups, -b BARCODES, --barcode_acceptlist BARCODES
 UMI Count, -U UMIGROUP, --umicount=UMIGROUP
                         
 > Count unique identifiers (UMI) based on read name/identifier strings or BAM-file tags. Default: None, count reads not UMIs.
+
+Extended Output, -E, --extended=EXTENDED
+
+> Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.
+
+SNV Batch Size, -B SNVBATCHSIZE, --snvbatchsize=SNVBATCHSIZE
+                        
+> Manage memory footprint by making multiple passes
+                        through the BAM file, one for each batch of SNVs.
+                        Default=All SNVs (single pass).
+
+Threads, -t THREADS, --threads=THREADS                   
+
+> Worker threads. Default: 0, indicating single-threaded serial execution.
+
 
 Quiet, -q, --quiet
 
