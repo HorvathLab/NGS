@@ -74,11 +74,11 @@ Directional, -D, --directional
 
 > Output directional (forward and reverse complement) VAF and read counts. Default: False
 
-Threads, -t TPB, --threadsperbam=TPB                   
+Threads, -t THREADS, --threads=THREADS                   
 
 > Worker threads. Default: 0, indicating single-threaded serial execution.
 
-Cell Barcode, -C CELLBARCODE, --readgroup
+Cell Barcode, -C CELLBARCODE, --readgroup=CELLBARCODE
 
 > Group reads based on cell-barcodes extracted from read name/identifiers or BAM-file tags. See [Read Grouping](Grouping.md) for more details. Default: UMI-tools.
 
