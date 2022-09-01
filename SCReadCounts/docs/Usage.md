@@ -68,7 +68,7 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
                         most this many good reads at SNV locus per alignment
                         file. Values greater than 1 indicate absolute read
                         counts, otherwise the value indicates the coverage
-                        distribution percentile. Default=No maximum. This affects only VAF calculations.
+                        distribution percentile. Default=No maximum.
 
 Directional, -D, --directional
 
