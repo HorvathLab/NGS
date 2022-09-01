@@ -47,7 +47,7 @@ Alignment Filter, -f FILTER, --alignmentfilter=FILTER
 
 > Alignment filtering strategy. See [Read Filtering](Filtering.md) for more details. Default: Basic.
 
-Output Folder, -o OUTPUT, --output=OUTPUT
+Output File, -o OUTPUT, --output=OUTPUT
 
 > Output file. Will be created if necessary. See [Output Files](OutputFiles.md) for more information on output files. Optional. 
 
@@ -74,9 +74,18 @@ Max. Reads, -m MAXREADS, --maxreads=MAXREADS
                         counts, otherwise the value indicates the coverage
                         distribution percentile. Default=No maximum.
 
+SNV Batch Size, -B SNVBATCHSIZE, --snvbatchsize=SNVBATCHSIZE
+                        Manage memory footprint by making multiple passes
+                        through the BAM file, one for each batch of SNVs.
+                        Default=All SNVs (single pass).
+
 Extended Output, -E, --extended=EXTENDED
 
 > Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.
+
+Threads, -t THREADS, --threads=THREADS                   
+
+> Worker threads. Default: 0, indicating single-threaded serial execution.
 
 Read Group, -G READGROUP, --readgroup=READGROUP
 
@@ -86,9 +95,9 @@ Valid Read Groups, -b BARCODES, --barcode_acceptlist BARCODES
 
 > File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list.
 
-Threads/BAM, -t TPB, --threadsperbam=TPB                   
-
-> Each worker thread is allocated one or more BAM files. Indicate no threading with 0. Default: 0.
+UMI Count, -U UMIGROUP, --umicount=UMIGROUP
+                        
+> Count unique identifiers (UMI) based on read name/identifier strings or BAM-file tags. Default: None, count reads not UMIs.
 
 Quiet, -q, --quiet
 
