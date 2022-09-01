@@ -102,9 +102,6 @@ advanced.add_option("-t", "--threads", type="int", dest="threads", default=threa
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=None, remember=True,
                     choices=groupOptions, name="Read Group",
                     help="Additional read grouping based on read name/identifier strings or BAM-file tags. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
-advanced.add_option("-U", "--umicount", type="choice", dest="umigroup", default=None, remember=True,
-                    choices=groupOptions, name="UMI Count",
-                    help="Count unique identifiers (UMI) based on read name/identifier strings or BAM-file tags. Options: %s. Default: None, count reads not UMIs."%(", ".join(groupDesc),))
 # advanced.add_option("--alignmentfilterparam", type="string", dest="filterparam", default="", remember=True,
 #                     help="Override parameters for selected alignment filter. Default: Do not override.", name="Alignment Filter Param.")
 # advanced.add_option("--readgroupparam", type="string", dest="readgroupparam", default="", remember=True,
@@ -113,6 +110,9 @@ advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist",
                   help="File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list.", name="Valid Read Groups",
                   remember=True,
                   filetypes=[("Valid Read Groups File", "*.txt;*.tsv")])
+advanced.add_option("-U", "--umicount", type="choice", dest="umigroup", default=None, remember=True,
+                    choices=groupOptions, name="UMI Count",
+                    help="Count unique identifiers (UMI) based on read name/identifier strings or BAM-file tags. Options: %s. Default: None, count reads not UMIs."%(", ".join(groupDesc),))
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
 # advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,

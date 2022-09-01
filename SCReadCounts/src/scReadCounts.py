@@ -117,6 +117,12 @@ parser.add_option("-r", "--readalignments", type="files", dest="alignments", def
                   help="Read alignment files in indexed BAM format. Required.", name="Read Alignment Files",
                   notNone=True, remember=True,
                   filetypes=[("Read Alignment Files (indexed BAM)", "*.bam")])
+parser.add_option("-C", "--cellbarcode", type="choice", dest="cellbarcode", default=readgroup_default, remember=True,
+                    choices=groupOptions, name="Cell Barcode",
+                    help="Group reads based on cell-barcodes extracted from read name/identifiers or BAM-file tags. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
+parser.add_option("-U", "--umicount", type="choice", dest="umicount", default=umicount_default, remember=True,
+                    choices=umiOptions, name="UMI Count",
+                    help="Count unique identifiers (UMI) based on read name/identifiers or BAM-file tags. Options: %s. Default: None, count reads not UMIs."%(", ".join(umiDesc),))
 parser.add_option("-f", "--alignmentfilter", type="choice", dest="filter", default=filter_default, remember=True,
                   help="Alignment filtering strategy. Options: %s. Default: Basic."%(", ".join(filterDesc),), choices = filterOptions,
                   name="Alignment Filter")
@@ -126,18 +132,12 @@ advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
 advanced.add_option("-D", "--directional", action="store_true", dest="directional", default=False, remember=True,
                     help="Output directional (forward and reverse complement) VAF and read counts. Default: False", name="Directional")
-advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
-                    help="Worker threads. Indicate no threading/multiprocessing with 0. Default=0.", name="Threads")
-advanced.add_option("-C", "--cellbarcode", type="choice", dest="cellbarcode", default=readgroup_default, remember=True,
-                    choices=groupOptions, name="Cell Barcode",
-                    help="Group reads based on cell-barcodes extracted from read name/identifiers or BAM-file tags. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
 advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist", default=None,
                   help="File of white-space separated, acceptable cell-barcodes. Overrides accept list, if any, specified by Cell Barcode option. Use None to remove a default accept list.", name="Valid Cell Barcodes",
                   remember=True,
                   filetypes=[("Valid Cell Barcodes", "*.txt;*.tsv")])
-advanced.add_option("-U", "--umicount", type="choice", dest="umicount", default=umicount_default, remember=True,
-                    choices=umiOptions, name="UMI Count",
-                    help="Count unique identifiers (UMI) based on read name/identifiers or BAM-file tags. Options: %s. Default: None, count reads not UMIs."%(", ".join(umiDesc),))
+advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
+                    help="Worker threads. Indicate no threading/multiprocessing with 0. Default=0.", name="Threads")
 # advanced.add_option("--alignmentfilterparam", type="string", dest="filterparam", default="", remember=True,
 #                     help="Override parameters for selected alignment filter. Default: Do not override.", name="Alignment Filter Param.")
 # advanced.add_option("--readgroupparam", type="string", dest="readgroupparam", default="", remember=True,
