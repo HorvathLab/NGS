@@ -38,4 +38,4 @@ expressions (see [Cell Barcode](docs/Barcode.md) documentation).
 
 **[Examples](docs/Examples.md)**
 
-[Current version]: https://github.com/HorvathLab/NGS/releases/tag/SCExecute-1.3.1
+[Current version]: https://github.com/HorvathLab/NGS/releases/tag/SCExecute-1.3.2
