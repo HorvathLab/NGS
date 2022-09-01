@@ -61,5 +61,4 @@ Since the output files: `singlecell_GUI.tsv and singlecell_GUI.cnt.matrix.tsv` a
 
 ## See Also
 
-[SCReadCounts Home](..), [Input Files](InputFiles.md), [Output Files](OutputFiles.md), [Annotation Files](AnnotationFiles.md)
-
+[SCReadCounts Home](..), [Usage](Usage.md), [Input Files](InputFiles.md), [Output Files](OutputFiles.md)
