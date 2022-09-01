@@ -1,1 +1,16 @@
-To use SCReadCounts in <i>discovery</i> mode, process your output fasta file through the script called [table_browser_to_SCRC](https://github.com/pnm27/My_scripts/tree/main/python_scripts), and then use the output file produced by the script as the input to the [`SNVs, -s SNVS, --snvs=SNVS`](https://github.com/HorvathLab/NGS/blob/master/SCReadCounts/docs/Usage.md#required-arguments) parameter of SCReadCounts.
+
+# varLoci
+
+The SCReadCounts release contains a new tool `varLoci` for enumerating potential variant loci directly from the indexed BAM file. It outputs SNV loci and reference and alternate nucleotides suitable for SCReadCounts SNVs input file. 
+
+## Usage
+
+```
+% varLoci <bam_file>.bam <region> <min_var_read_count> > snv_loci.txt
+```
+
+```<region``` is the samtools format region specifier. Use ```<chrom>``` or ```<chrom>:<start>-<end>``` to specify a chromosome or a chromosomal region, respectively. Use ```-``` to indicate no region constraint. 
+
+```<min_var_read_count>``` is the minimum number of variant reads required for a locus to be considered a putative variant loci.
+
+Note that this is an agressive enumeration of *potential* variant sites for *much* more careful analysis by SCReadCounts or other tools. 
