@@ -9,7 +9,7 @@ The SCReadCounts release contains a new tool `varLoci` for enumerating *potentia
 % varLoci <bam_file>.bam <region> <min_var_read_count> > snv_loci.txt
 ```
 
-The ```<bam_file>.bam``` must be indexed. 
+The ```<bam_file>.bam``` must be indexed and ```<bam_file>.bam.bai``` should be in the same directory. 
 
 ```<region``` is the samtools format region specifier. Use ```<chrom>``` or ```<chrom>:<start>-<end>``` to specify a chromosome or a chromosomal region, respectively. Use ```-``` to indicate no region constraint. 
 
