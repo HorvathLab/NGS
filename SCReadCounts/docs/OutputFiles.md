@@ -1,12 +1,10 @@
 # SCReadCount Output 
 
-SCReadCounts output file are created inside of the directory specified by the user.
+SCReadCounts output files are created based on the output filename provided. 
 
 ## SCReadCounts output file
 
-A tab-separated values file consisting of the computed read-counts. This file contains the read counts
-for each SNV locus in each BAM file and computes the various
-statistical tests below above:
+A tab-separated values file consisting of the computed counts for each SNV locus and cell-bardcode. 
 
 CHROM
 > Chromosome identifier
@@ -20,13 +18,13 @@ REF
 ALT
 > Variant allele nucleotide
 
-AlignedReads
+ReadGroup
 > Name of the aligned reads file for the following read counts.
 
-SNPCountForward
+SNVCountForward
 > Number of forward oriented variant reads in the paired end alignment.
 
-SNPCountReverse
+SNVCountReverse
 > Number of reverse oriented variant reads in the paired end alignment.
 
 RefCountForward
@@ -35,56 +33,27 @@ RefCountForward
 RefCountReverse
 > Number of reverse oriented reference reads in the paired end alignment.
 
-SNPCount
+SNVCount
 > Total number of variant reads.
 
 RefCount
 > Total number of reference reads.
 
-R
-> Proportion of variant reads.
+GoodReads
+> Total number of good reads.
 
-HomoVarSc
-> Score of locus as homozygous variant.
+%BadRead
+> Percentage of bad reads.
 
-HetSc
-> Score of locus as heterozygous reference and variant.
+VAF
+> Variant allele fraction
 
-HomoRefSc
-> Score of locus as homozygous reference.
+## SCReadCounts Counts matrix
 
-VarDomSc
-> Score of locus as dominant for the variant allele.
+File with extention `*.cnt.matrix.<extn>` for output file with extension `*.<extn>`. Contains read counts for the reference and alternative allele at each locus and in each cell. Rows represent loci, columns represent cell barcodes. Values are `refcnt;altcnt`. 
 
-RefDomSc
-> Score of locus as dominant for the reference allele.
+## SCReadCounts VAF matrix
 
-NotHomoVarpV
-> p-Value of read counts with respect to homozygous variant null model.
+File with extension `*.vaf.matrix.<extn>` for output file with extension `*.<extn>`. Contains variant allele frequency (VAF) for loci with at least the minimum required number of good reads (Min. Reads or `-m` option) at each locus and in each cell. Rows represent loci, columns represent cell barcodes. Loci and cells without sufficient reads are indicated with `NA`.
 
-NotHomoRefpV
-> p-Value of read counts with respect to homozygous reference null model.
 
-NotHetpV
-> p-Value of read counts with respect to heterozygous reference and variant null model.
-
-VarDompV
-> p-Value of increased variant read counts with respect to heterozygous reference and variant null model.
-
-RefDompV
-> p-Value of increased reference read counts with respect to heterozygous reference and variant null model.
-
-NotHomoVarFDR
-> Multiple-test corrected FDR significance of read counts with respect to homozygous variant null model.
-
-NotHomoRefFDR
-> Multiple-test corrected FDR significance of read counts with respect to homozygous reference null model.
-
-NotHetFDR
-> Multiple-test corrected FDR significance of read counts with respect to heterozygous reference and variant null model.
-
-VarDomFDR
-> Multiple-test corrected FDR significance of increased variant read counts with respect to heterozygous reference and variant null model.
-
-RefDomFDR
-> Multiple-test corrected FDR significance of increased reference read counts with respect to heterozygous reference and variant null model.
