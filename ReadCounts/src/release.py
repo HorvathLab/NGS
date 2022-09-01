@@ -1,7 +1,7 @@
 #!/bin/env python
 RELEASE = "ReadCounts"
-VERSION = '2.4.0'
-PROGRAMS = 'readCounts.py phasedReadCounts.py'
+VERSION = '2.5.0'
+PROGRAMS = 'readCounts.py phasedReadCounts.py varLoci.py'
 INCLUDES = 'common'
 if __name__ == '__main__':
     import sys

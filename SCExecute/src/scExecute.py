@@ -14,6 +14,7 @@ import atexit
 import subprocess
 import time
 import math
+import psutil
 from collections import defaultdict, Counter
 from os.path import join, dirname, realpath
 try:
@@ -73,19 +74,19 @@ parser.add_option("-G", "--cellbarcode", type="choice", dest="readgroup", defaul
                   choices=groupOptions, name="Cell Barcode", notNone=True,
                   help="Cell barcode extraction strategy. Options: %s. Default: %s."%(", ".join(groupDesc),readgroup_default))
 parser.add_option("-C", "--command", type="string", dest="command", default="", remember=True,
-                  help="Command to execute for each read-group specific BAM file. The BAM filename replaces {} in the command or placed at the end of the command if no {} is present. At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="Command")
+                  help="Command to execute for each cell-barcode specific BAM file. The BAM filename replaces {} in the command or is placed at the end of the command if no {} is present. At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="Command")
 parser.add_option("-F", "--filetemplate", type="string", dest="filetempl", default="", remember=True,
-                  help="Filename template for each read-group specific BAM file. Use {BAMBASE} and {BARCODE} to construct the filename. The read-group specific BAM file should end in \".bam\" and will not be deleted after the command, if specified, is run. At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="File Template")
+                  help="Filename template for each cell-barcode specific BAM file. The cell-barcode specific BAM file should end in \".bam\" and will not be deleted after the command, if specified, is executed. Use {BAMBASE} and {BARCODE} to construct the filename. At least one of Command/--command/-C and/or File Template/--filetemplate/-F must be specified.", name="File Template")
 advanced.add_option("-D", "--directory", type="str", dest="directory", default="", remember=True,
-                    help="Working directory for running command on each read-group specific BAM file. Default: Current working directory.", name="Directory Template")
+                    help="Working directory for running command on each cell-barcode specific BAM file. Default: Current working directory.", name="Directory Template")
 advanced.add_option("-o", "--outtemplate", type="string", dest="stdouttempl", default="", remember=True,
-                  help="Filename template for the standard output of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard Output of command not captured.", name="Output Template")
+                  help="Filename template for the standard output of each cell-barcode specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard Output of command not captured.", name="Output Template")
 advanced.add_option("-e", "--errtemplate", type="string", dest="stderrtempl", default="", remember=True,
-                  help="Filename template for the standard error of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard error of command not captured.", name="Error Template")
+                  help="Filename template for the standard error of each cell-barcode specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Standard error of command not captured.", name="Error Template")
 advanced.add_option("-O", "--allouttemplate", type="string", dest="allouttempl", default="", remember=True,
-                  help="Filename template for the standard output and standard error of each read-group specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Output/Error of command not captured.", name="All Output Template")
+                  help="Filename template for the standard output and standard error of each cell-barcode specific command execution. Use {BAMBASE} and {BARCODE} to construct the filename. Default: Output/Error of command not captured.", name="All Output Template")
 advanced.add_option("-L", "--limit", type="string", dest="limit", default="", remember=True,
-                    help="Generate at most this many read-group specific BAM files. Default: No limit.", name="Limit")
+                    help="Generate at most this many cell-barcode specific BAM files. Default: No limit.", name="Limit")
 advanced.add_option("-R", "--region", type="str", dest="region", default="", remember=True,
                     help="Restrict reads to those aligning to a specific region specified as chrom:start-end. Default: No restriction.", name="Region")
 advanced.add_option("--regions", type="file", dest="regions", default="", remember=True,
@@ -97,7 +98,7 @@ advanced.add_option("--cpuaffinity", action="store_true", dest="affinity", defau
 advanced.add_option("-B","--batch", type="int", dest="batch", default=batch_default,
                     help="Batch-size per BAM-file pass. Default: 10", name="Batch Size",remember=True)
 advanced.add_option("-i", "--index", action="store_true", dest="index", default=False, remember=True,
-                    help="Index read-group specific BAM file before executing command.", name="Index")
+                    help="Index cell-barcode specific BAM file before executing command.", name="Index")
 advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist", default=None,
                     help="File of white-space separated, acceptable cell barcode values. Overrides value, if any, specified by Cell Barcode. Use None to remove a default accept list.", name="Valid Cell Barcodes", remember=True,
                     filetypes=[("Valid Cell Barcodes File", "*.txt;*.tsv")])
@@ -299,6 +300,17 @@ if opt.regions:
         sys.exit(1)
     progress.message("Restriction to %d genomic regions"%(len(regions),))
 
+origpid = os.getpid()
+
+def getmemmb():
+    p = psutil.Process(origpid)
+    mi = p.memory_info()
+    vmem = mi.vms; rmem = mi.rss
+    for cp in p.children():
+        mi = cp.memory_info()
+        vmem += mi.vms; rmem += mi.rss
+    return vmem/1024**2, rmem/1024**2
+
 execution_queue = multiprocessing.Queue(opt.batch)
 done_queue = multiprocessing.Queue()
 output_lock = multiprocessing.Lock()
@@ -372,7 +384,11 @@ def execution_worker(index,execution_queue,done_queue,output_lock):
                     progress.message("Filename: %s"%(thebamfile,))
                 finally:
                     output_lock.release()
+            start = time.time()
             shutil.copyfile(bampath,thebamfile)
+            elapsed = time.time()-start
+            if opt.command == "":
+                done_queue.put((i0,bamtot,rgind,rgtot,elapsed))
             if os.path.exists(bampath+'.bai'):
                 shutil.copyfile(bampath+'.bai',thebamfile+'.bai')
             clean(bampath)
@@ -437,15 +453,14 @@ def execution_worker(index,execution_queue,done_queue,output_lock):
                 clean(bampath)
 
 def timestr(seconds):
-    secs = seconds%60
     if seconds < 60:
-        return "%.2f sec"%(secs,)
-    secs = int(secs)
+        return "%.2f sec"%(seconds,)
+    secs = int(seconds%60)
     mins = int(seconds/60)
     if mins < 60:
         return "%d:%02d min:sec"%(mins,secs,)
-    mins = int(mins%60)
     hrs = int(mins/60)
+    mins = int(mins%60)
     return "%d:%02d hrs:min"%(hrs,mins,)
     
 def done_worker(done_queue,output_lock,totaljobs,totaltime,starttime):
@@ -474,9 +489,10 @@ def done_worker(done_queue,output_lock,totaljobs,totaltime,starttime):
             sumtime = (time.time()-starttime)
             avetime = sumtime/count
         remaining = (rgtotest-count)*avetime
+        vmemmb,rmemmb = getmemmb()
         output_lock.acquire()
         try:
-            progress.message("Completed [%d/%d]: Runtime %s, est. time to finish %s, %.2f%% complete."%(rgind+1,rgtot,timestr(elapsed),timestr(remaining),100*(count)/rgtotest))
+            progress.message("Completed [%d/%d]: Runtime %s, est. time to finish %s, %.2f%% complete, virt. memory %.0f MB, resident mem. %.0f MB."%(rgind+1,rgtot,timestr(elapsed),timestr(remaining),100*(count)/rgtotest,vmemmb,rmemmb))
         finally:
             output_lock.release()
 
@@ -522,5 +538,6 @@ elapsed = time.time()-starttime
 totalcount = totaljobs.value
 avejobruntime = (totaltime.value/totalcount)
 totaljobtime = math.ceil(totalcount/opt.threads)*avejobruntime
-progress.message("Final: Runtime %s, %d jobs, ave. job runtime %s, scExecute overhead %.2f%%."%(timestr(elapsed),totalcount,timestr(avejobruntime),100*(elapsed-totaljobtime)/elapsed))
+vmemmb,rmemmb = getmemmb()
+progress.message("Final: Runtime %s, %d jobs, ave. job runtime %s, scExecute overhead %.2f%%, virt. memory %.0f MB, resident mem. %.0f MB."%(timestr(elapsed),totalcount,timestr(avejobruntime),100*(elapsed-totaljobtime)/elapsed,vmemmb,rmemmb))
 
