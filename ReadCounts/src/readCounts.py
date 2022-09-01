@@ -93,19 +93,9 @@ advanced.add_option("-m", "--minreads", type="int", dest="minreads", default=min
                     help="Minimum number of good reads at SNV locus per alignment file. Default=10.", name="Min. Reads")
 advanced.add_option("-M", "--maxreads", type="string", dest="maxreads", default=maxreads_default, remember=True,
                     help="Scale read counts at high-coverage loci to ensure at most this many good reads at SNV locus per alignment file. Values greater than 1 indicate absolute read counts, otherwise the value indicates the coverage distribution percentile. Default=No maximum.", name="Max. Reads")
-advanced.add_option("-B", "--snvbatchsize", type="int", dest="snvbatchsize", default=None, remember=True,
-                    help="Manage memory footprint by making multiple passes through the BAM file, one for each batch of SNVs. Default=All SNVs (single pass).", name="SNV Batch Size")
-advanced.add_option("-E","--extended",type="multichoice",dest="extended",default=None, remember=True, 
-               help="Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.", name="Extended Output", multichoices=["Genotype likelihood","Read filtering statistics"])
-advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
-                    help="Worker threads. Indicate no threading/multiprocessing with 0. Default=0.", name="Threads")
 advanced.add_option("-G", "--readgroup", type="choice", dest="readgroup", default=None, remember=True,
                     choices=groupOptions, name="Read Group",
                     help="Additional read grouping based on read name/identifier strings or BAM-file tags. Options: %s. Default: None, group reads by BAM-file only."%(", ".join(groupDesc),))
-# advanced.add_option("--alignmentfilterparam", type="string", dest="filterparam", default="", remember=True,
-#                     help="Override parameters for selected alignment filter. Default: Do not override.", name="Alignment Filter Param.")
-# advanced.add_option("--readgroupparam", type="string", dest="readgroupparam", default="", remember=True,
-#                     help="Override parameters for selected read group. Default: Do not override.", name="Read Group Param.")
 advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist", default=None,
                   help="File of white-space separated, acceptable read group values (barcode accept list). Overrides value, if any, specified by Read Group. Use None to remove a default accept list.", name="Valid Read Groups",
                   remember=True,
@@ -113,6 +103,16 @@ advanced.add_option("-b","--barcode_acceptlist", type="file", dest="acceptlist",
 advanced.add_option("-U", "--umicount", type="choice", dest="umigroup", default=None, remember=True,
                     choices=groupOptions, name="UMI Count",
                     help="Count unique identifiers (UMI) based on read name/identifier strings or BAM-file tags. Options: %s. Default: None, count reads not UMIs."%(", ".join(groupDesc),))
+advanced.add_option("-E","--extended",type="multichoice",dest="extended",default=None, remember=True, 
+               help="Generate extended output, one or more comma-separated values: Genotype likelihood, Read filtering statistics. Default: No extended ouptut.", name="Extended Output", multichoices=["Genotype likelihood","Read filtering statistics"])
+# advanced.add_option("--alignmentfilterparam", type="string", dest="filterparam", default="", remember=True,
+#                     help="Override parameters for selected alignment filter. Default: Do not override.", name="Alignment Filter Param.")
+# advanced.add_option("--readgroupparam", type="string", dest="readgroupparam", default="", remember=True,
+#                     help="Override parameters for selected read group. Default: Do not override.", name="Read Group Param.")
+advanced.add_option("-B", "--snvbatchsize", type="int", dest="snvbatchsize", default=None, remember=True,
+                    help="Manage memory footprint by making multiple passes through the BAM file, one for each batch of SNVs. Default=All SNVs (single pass).", name="SNV Batch Size")
+advanced.add_option("-t", "--threads", type="int", dest="threads", default=threads_default, remember=True,
+                    help="Worker threads. Indicate no threading/multiprocessing with 0. Default=0.", name="Threads")
 advanced.add_option("-q", "--quiet", action="store_true", dest="quiet", default=False, remember=True,
                     help="Quiet.", name="Quiet")
 # advanced.add_option("-d", "--debug", action="store_true", dest="debug", default=False, remember=True,
