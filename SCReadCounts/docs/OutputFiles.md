@@ -1,12 +1,11 @@
 # SCReadCount Output 
 
-SCReadCounts output file are created inside of the directory specified by the user.
+SCReadCounts output files are created based on the output filename provided. 
 
 ## SCReadCounts output file
 
 A tab-separated values file consisting of the computed read-counts. This file contains the read counts
-for each SNV locus in each BAM file and computes the various
-statistical tests below above:
+for each SNV locus in each BAM file.
 
 CHROM
 > Chromosome identifier
@@ -44,47 +43,3 @@ RefCount
 R
 > Proportion of variant reads.
 
-HomoVarSc
-> Score of locus as homozygous variant.
-
-HetSc
-> Score of locus as heterozygous reference and variant.
-
-HomoRefSc
-> Score of locus as homozygous reference.
-
-VarDomSc
-> Score of locus as dominant for the variant allele.
-
-RefDomSc
-> Score of locus as dominant for the reference allele.
-
-NotHomoVarpV
-> p-Value of read counts with respect to homozygous variant null model.
-
-NotHomoRefpV
-> p-Value of read counts with respect to homozygous reference null model.
-
-NotHetpV
-> p-Value of read counts with respect to heterozygous reference and variant null model.
-
-VarDompV
-> p-Value of increased variant read counts with respect to heterozygous reference and variant null model.
-
-RefDompV
-> p-Value of increased reference read counts with respect to heterozygous reference and variant null model.
-
-NotHomoVarFDR
-> Multiple-test corrected FDR significance of read counts with respect to homozygous variant null model.
-
-NotHomoRefFDR
-> Multiple-test corrected FDR significance of read counts with respect to homozygous reference null model.
-
-NotHetFDR
-> Multiple-test corrected FDR significance of read counts with respect to heterozygous reference and variant null model.
-
-VarDomFDR
-> Multiple-test corrected FDR significance of increased variant read counts with respect to heterozygous reference and variant null model.
-
-RefDomFDR
-> Multiple-test corrected FDR significance of increased reference read counts with respect to heterozygous reference and variant null model.
