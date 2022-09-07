@@ -19,5 +19,6 @@ Notes:
 * **varLoci** is an agressive enumeration of *potential* variant sites for *much* more careful analysis by SCReadCounts or other tools. It will, however, provide a much more limited set of loci than an exhaustive enumeration of loci in a genomic region. It will also provide the opportunity for *de novo* discovery of loci that have not otherwise been annotated elsewhere. Finally, it will avoid the unnecessary examination of annotated loci that are not supported by the data available in the BAM file alignments. 
 * **varLoci** requires the BAM file have the ```MD``` tag for all alignments in order to determine the reference nucleotide at each locus. Some aligners do not output this tag by default, so look for options that ensure the ```MD``` (and ```NM```) tags are output in the BAM file. Alternatively, the following ```samtools``` command will add the ```MD``` (and ```NM```) tags:
     ```
-    % samtools calmd -b aln.bam ref.fasta > alnmd.bam     
+    % samtools calmd -b aln.bam ref.fasta > aln_md.bam
+    % samtools index aln_md.bam
     ```
