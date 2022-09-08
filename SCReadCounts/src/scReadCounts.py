@@ -202,6 +202,10 @@ indent = lambda s,n: "\n".join([(" "*n)+l for l in s.splitlines()])
 args = []
 args.extend(["-s",doublequote(" ".join(opt.snvs))])
 args.extend(["-r",doublequote(" ".join(opt.alignments))])
+if opt.cellbarcode != readgroup_default:
+    args.extend(["-C",doublequote(groupMap[opt.cellbarcode] if readgroup != None else "")])
+if opt.umicount not in ("",None,"None","-"):
+    args.extend(["-U",doublequote(opt.umicount if umicount != None else "")])
 if opt.filter != filter_default:
     args.extend(["-f",doublequote(opt.filter)])
 if opt.minreads != minreads_default:
@@ -210,12 +214,8 @@ if opt.maxreads != maxreads_default:
     args.extend(["-M",str(opt.maxreads)])
 if opt.directional:
     args.extend(["-D"])
-if opt.cellbarcode != readgroup_default:
-    args.extend(["-C",doublequote(groupMap[opt.cellbarcode] if readgroup != None else "")])
 if opt.acceptlist != None and readgroup != None:
     args.extend(["-b",doublequote(opt.acceptlist)])
-if opt.umicount not in ("",None,"None","-"):
-    args.extend(["-U",doublequote(opt.umicount if umicount != None else "")])
 if opt.threads != threads_default:
     args.extend(["-t",str(opt.threads)])
 if opt.force:
@@ -271,7 +271,6 @@ args.extend(["-r"," ".join(opt.alignments)])
 args.extend(["-f",opt.filter])
 args.extend(["-o",opt.output])
 args.extend(["-m",0])
-args.extend(["-B",10000])
 if opt.maxreads != maxreads_default:
     args.extend(["-M",opt.maxreads])
 if readgroup != None:
