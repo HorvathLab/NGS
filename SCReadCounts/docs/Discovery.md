@@ -13,7 +13,7 @@ The ```<bam_file>.bam``` must be sorted (by alignment start position) and indexe
 
 ```<region``` is the samtools format region specifier. Use ```<chrom>``` or ```<chrom>:<start>-<end>``` to specify a chromosome or a chromosomal region, respectively. Use ```-``` to indicate no region constraint. 
 
-```<min_var_read_count>``` is the minimum number of variant reads required for a locus to be considered a putative variant loci.
+```<min_var_read_count>``` is the minimum number of reads with the variant allele required for a locus to be considered a putative variant loci.
 
 Notes:
 * **varLoci** is an agressive enumeration of *potential* variant sites for *much* more careful analysis by SCReadCounts or other tools. It will, however, provide a much more limited set of loci than an exhaustive enumeration of loci in a genomic region. It will also provide the opportunity for *de novo* discovery of loci that have not otherwise been annotated elsewhere. Finally, it will avoid the unnecessary examination of annotated loci that are not supported by the data available in the BAM file alignments. 
