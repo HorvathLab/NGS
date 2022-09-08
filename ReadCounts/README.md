@@ -12,7 +12,7 @@ instructions for more details. The self-contained binary package is
 appropriate for most Linux and MacOS users.
 
 Setup:
-* [Download](https://github.com/HorvathLab/NGS/releases/ReadCounts-2.5.0)
+* [Download](https://github.com/HorvathLab/NGS/releases/ReadCounts-2.5.1)
 * [Install](docs/Installation.md)
 
 Usage:
