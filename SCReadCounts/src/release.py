@@ -1,7 +1,7 @@
 #!/bin/env python
 RELEASE = "SCReadCounts"
-VERSION = '1.3.0'
-PROGRAMS = 'readCountsMatrix.py scReadCounts.py readCounts.py varLoci.py'
+VERSION = '1.3.1'
+PROGRAMS = 'readCountsMatrix.py scReadCounts.py readCounts.py varLoci.py scVarLoci.py'
 INCLUDES = 'common ReadCounts'
 if __name__ == '__main__':
     import sys

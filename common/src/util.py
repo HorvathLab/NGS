@@ -111,7 +111,10 @@ class ReadFilter(object):
     def pileup_kwargs(self):
         return dict(stepper='nofilter',
                     ignore_overlaps=True,
-                    min_base_quality=0)
+                    ignore_orphans=False,
+                    flag_filter=0,
+                    min_base_quality=0,
+                    max_depth=100000)
 
     def pileup_start(self,pileupcolumn):
         pass
@@ -250,9 +253,7 @@ class BasicFilter(ReadFilter):
         self._skip_unmapped = skip_unmapped
 
     def extract_base(self, pileupread):
-        if pileupread.indel != 0:
-            raise IndelAtSNV()
-        if pileupread.is_del:
+        if pileupread.is_del or pileupread.is_refskip:
             raise GapAtSNV()
         al = pileupread.alignment
         if self._skip_duplicate and al.is_duplicate:
@@ -475,8 +476,11 @@ class CompoundFilter(CompoundMethod,ReadFilter):
         CompoundMethod.__init__(self)
         # Defaults, unlikely to need to be changed...
         self._pileup_params = dict(stepper='nofilter',
+                                   ignore_overlaps=True,
+                                   ignore_orphans=False,
+                                   flag_filter=0,
                                    min_base_quality=0,
-                                   ignore_overlaps=True)
+                                   max_depth=100000)
 
     def set_special_params(self,method,**params):
         assert method == "Pileup"

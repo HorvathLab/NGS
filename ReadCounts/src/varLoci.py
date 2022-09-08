@@ -16,14 +16,14 @@ bamfilename = sys.argv[1]
 region = None
 mincnt = 1
 if len(sys.argv) > 2:
-    region = sys.argv[2]
+    minreads = int(sys.argv[2])
+if len(sys.argv) > 3:
+    region = sys.argv[3]
     if region.strip() in ("", "-", "None"):
         region = None
-if len(sys.argv) > 3:
-    mincnt = int(sys.argv[3])
 
-# scan = VariantLociByPileup(bamfilename,region=region,mincnt=mincnt)
-scan = VariantLociByFetch(bamfilename,region=region,mincnt=mincnt)
+# scan = VariantLociByPileup(bamfilename,region=region,minreads=minreads)
+scan = VariantLociByFetch(bamfilename,region=region,minreads=minreads)
 for chrom,pos,refnuc,altnuc,freq in scan.loci():
     # print(chrom,pos,refnuc,altnuc,freq.get(refnuc,0),freq.get(altnuc,0),sep='\t')
     print(chrom,pos,refnuc,altnuc,sep='\t')

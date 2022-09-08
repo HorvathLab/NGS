@@ -502,6 +502,8 @@ for snvblock in range(0,len(snvdata),snvblocksize):
 
         if dodebug:
           for s in sorted(BadRead.allheaders):
+            if s == 'BadRead':
+                continue
             row.append(badread[si, s])
 
         outrows.append(row)

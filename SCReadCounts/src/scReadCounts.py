@@ -230,6 +230,8 @@ execution_log = """
 scReadCounts Options:
   SNV Files (-s):             %s
   Read Files (-r):            %s
+  Cell Barcode (-C):          %s%s
+  UMI Count (-U):             %s%s
   Read/Alignment Filter (-f): %s%s
   Outfile File (-o):          %s
 
@@ -237,27 +239,27 @@ scReadCounts Options:
     Min. Reads (-m)           %s (applied only to VAF, FVAF, RVAF)
     Max. Reads (-M):          %s
     Directional Counts (-D):  %s
-    Cell Barcode (-C):        %s%s
     Valid Cell Barcode (-b):  %s
-    UMI Count (-U):           %s%s
     Threads (-t):             %s
+    Force (-F):               %s
     Quiet (-q):               %s
 
 Command-Line: scReadCounts %s
 """%(", ".join(opt.snvs),
      ", ".join(opt.alignments),
+     None if readgroup == None else opt.cellbarcode,
+     "" if readgroup == None else "\n"+indent(readgroup.tostr(),10),
+     None if umicount == None else opt.umicount,
+     "" if umicount == None else "\n"+indent(umicount.tostr(),10),
      opt.filter,
      "" if readfilter == None else "\n"+indent(readfilter.tostr(),10),
      opt.output,
      opt.minreads,
      opt.maxreads,
      opt.directional,
-     None if readgroup == None else opt.cellbarcode,
-     "" if readgroup == None else "\n"+indent(readgroup.tostr(),12),
      "" if opt.acceptlist else opt.acceptlist,
-     None if umicount == None else opt.umicount,
-     "" if umicount == None else "\n"+indent(umicount.tostr(),12),
      opt.threads,
+     opt.force,
      opt.quiet,
      cmdargs)
 
