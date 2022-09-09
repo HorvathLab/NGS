@@ -1,3 +1,4 @@
+# SCReadCounts
 
 SCReadCounts is a computational tool for a cell-level assessment of the read counts bearing a particular nucleotide at genomic positions of interest from single cell RNA sequencing (scRNA-seq) data. 
 
