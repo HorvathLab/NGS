@@ -1,11 +1,17 @@
 
 # SCExecute Installation #
 
-SCExecute is available as a self-contained binary package for 64-bit Linux and MacOS systems and as Python source. The self-contained binary package is appropriate for most Linux and MacOS users. The pysam package, plus a variety of common third-party python packages including numpy and scipy must be installed to use SCExecute in Python source form. See the install instructions below for more details. 
+SCExecute is available as a self-contained binary package for 64-bit Intel-based Linux and MacOS (Darwin), and as Python Source. The self-contained binary packages are appropriate for most users. The pysam package, plus a variety of common third-party python packages including numpy and scipy must be installed to use SCExecute in Python source form. See the install instructions below for more details.  Conda-based installation of Python source provides a simple, platform-independent installation and update procedure. 
+
+* [Binary Package Installation](#binary-package-installation)
+  * [64-bit Linux](#64-bit-linux)
+  * [Intel-based MacOS](#intel-based-macos)
+* [Conda-based Installation](#conda-based-installation)
+* [Python Source Installation](#python-source-installation)
 
 ## Binary Package Installation ##
 
-### Linux ###
+### 64-bit Linux ###
 1. Unpack the download.
     ```
     tar xzf SCExecute-*.Linux-x86_64.tgz
@@ -24,7 +30,7 @@ SCExecute is available as a self-contained binary package for 64-bit Linux and M
     cd data
     ./example.sh
     ```
-### MacOS ###
+### Intel-based MacOS ###
 1. Unpack the download.
     ```
     % tar xzf SCExecute-*.Darwin-x86_64.tgz
@@ -42,6 +48,25 @@ SCExecute is available as a self-contained binary package for 64-bit Linux and M
     ```
     % cd data
     % ./example.sh
+    ```
+
+## Conda-based Installation ##
+
+1. Create a conda environment for **HorvathLab** tools (if not done previously)
+    ```
+    % conda create -n HorvathLab
+    ```
+2. Install in the conda environment
+    ```
+    % conda install -n HorvathLab -c bioconda scexecute
+    ```
+3. Run scReadCounts:
+    ```
+    % conda run -n HorvathLab scExecute
+    ```
+4. Update scReadCounts to latest version:
+    ```
+    % conda update -n HorvathLab scexecute
     ```
 
 ## Python Source Installation ##
