@@ -65,7 +65,7 @@ SCReadCounts is available as a self-contained binary package for 64-bit Intel-ba
     ```
 3. Run scReadCounts:
     ```
-    % conda run -n HorvathLab scReadCounts
+    % conda run -n HorvathLab --live-stream scReadCounts
     ```
 4. Update scReadCounts to latest version:
     ```
