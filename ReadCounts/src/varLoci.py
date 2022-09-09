@@ -14,7 +14,7 @@ from variantloci import VariantLociByPileup, VariantLociByFetch
 
 bamfilename = sys.argv[1]
 region = None
-mincnt = 1
+minreads = 1
 if len(sys.argv) > 2:
     minreads = int(sys.argv[2])
 if len(sys.argv) > 3:
