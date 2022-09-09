@@ -6,12 +6,12 @@ The SCReadCounts release contains a new tool `varLoci` for enumerating *potentia
 ## Usage
 
 ```
-% varLoci <bam_file>.bam [ <min_var_read_count> [ <region> ] ] > snv_loci.txt
+% varLoci <bam_file>.bam <min_var_read_count> [ <region> ] > snv_loci.txt
 ```
 
 The ```<bam_file>.bam``` must be sorted (by alignment start position) and indexed. ```<bam_file>.bam.bai``` should be placed in the same directory as the BAM file. 
 
-```<min_var_read_count>``` (optional) is the minimum number of reads with the variant allele required for a locus to be considered a putative variant loci. Default: 1.
+```<min_var_read_count>``` is the minimum number of reads with the variant allele required for a locus to be considered a putative variant loci.
 
 ```<region>``` (optional) is the samtools format region specifier. Use ```<chrom>``` or ```<chrom>:<start>-<end>``` to specify a chromosome or a chromosomal region, respectively. Default: no region constraint. 
 
