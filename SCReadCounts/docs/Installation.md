@@ -46,7 +46,26 @@ SCReadCounts is available as a self-contained binary package for 64-bit Linux sy
     % cd data
     % ./example.sh
     ```
-    
+
+## Conda-based Installation ##
+
+1. Create a conda environment for **HorvathLab** tools (if not done previously)
+    ```
+    % conda create -n HorvathLab
+    ```
+2. Install in the conda environment
+    ```
+    % conda install -n HorvathLab -c bioconda screadcounts
+    ```
+3. Run scReadCounts:
+    ```
+    % conda run -n HorvathLab scReadCounts
+    ```
+4. Update scReadCounts to latest version:
+    ```
+    % conda update -n HorvathLab scReadCounts
+    ```
+
 ## Python Source Installation ##
 
 1. Unpack the downloaded:
