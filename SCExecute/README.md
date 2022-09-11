@@ -1,5 +1,3 @@
-# SCExecute
-
 SCExecute generates cell-barcode specific BAM files from aligned,
 aggregate single-cell sequencing data, executing a user-provided command
 on each barcode-stratified BAM file. Unlike other tools, SCExecute
