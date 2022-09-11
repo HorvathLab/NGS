@@ -1,2 +1,10 @@
 title: Next-Gen Sequencing tools from the Horvath Lab
 theme: jekyll-theme-slate
+
+defaults:
+  -
+    scope:
+      path: "SCReadCounts"
+      type: "pages"
+    values:
+      title: "SCReadCounts"
