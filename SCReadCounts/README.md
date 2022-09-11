@@ -1,5 +1,3 @@
-# SCReadCounts
-
 SCReadCounts is a computational tool for a cell-level assessment of the read counts bearing a particular nucleotide at genomic positions of interest from single cell RNA sequencing (scRNA-seq) data. 
 
 SCReadCounts is available as a self-contained binary package for 64-bit Linux systems, as Python source, and MacOS (Darwin). The self-contained binary package is appropriate for most Linux and MacOS users. The pythonic version requires pysam, numpy and scipy along with other packages (See the install instructions for more details). 
