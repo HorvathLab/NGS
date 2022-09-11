@@ -8,3 +8,9 @@ defaults:
       type: "pages"
     values:
       layout: "screadcounts"
+  -
+    scope:
+      path: "SCExecute"
+      type: "pages"
+    values:
+      layout: "scexecute"
