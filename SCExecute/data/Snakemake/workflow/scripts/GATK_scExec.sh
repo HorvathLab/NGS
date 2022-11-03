@@ -14,6 +14,7 @@
 #                -b <barcodes-acceptlist>.tsv \
 #                -i \
 #                -t <worker-threads> \
+#                --cpuaffinity \
 #                -B 200 \
 #                -D <pooled-scBAM>_gatk \
 #                -C 'sh GATK_scExec.sh {{}} <reference_genome>.fasta <depth>' \

@@ -14,6 +14,7 @@
 #                -b <barcodes-acceptlist>.tsv \
 #                -i \
 #                -t <worker-threads> \
+#                --cpuaffinity \
 #                -B 200 \
 #                -D <pooled-scBAM>_strelka \
 #                -C 'sh strelka_scExec.sh {{}} <reference_genome>.fasta <depth>' \
