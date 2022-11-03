@@ -17,8 +17,8 @@
 #                --cpuaffinity \
 #                -B 200 \
 #                -D <pooled-scBAM>_gatk \
-#                -C 'sh GATK_scExec.sh {{}} <reference_genome>.fasta <depth>' \
 #                -F '{{BAMBASE}}.{{BARCODE}}.bam' \
+#                -C 'sh GATK_scExec.sh {{}} <reference_genome>.fasta <depth>' \
 #                -O '{{BAMBASE}}.{{BARCODE}}.log'
 #
 #

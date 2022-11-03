@@ -17,8 +17,8 @@
 #                --cpuaffinity \
 #                -B 200 \
 #                -D <pooled-scBAM>_strelka \
-#                -C 'sh strelka_scExec.sh {{}} <reference_genome>.fasta <depth>' \
 #                -F '{{BAMBASE}}.{{BARCODE}}.bam' \
+#                -C 'sh strelka_scExec.sh {{}} <reference_genome>.fasta <depth>' \
 #                -O '{{BAMBASE}}.{{BARCODE}}.log'
 #
 #
