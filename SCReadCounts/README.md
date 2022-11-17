@@ -23,4 +23,4 @@ SCReadCounts is a wrapper around readCounts and readCountsMatrix function to fac
 **[Examples](docs/Examples.md)**
 
 **Please cite:**
-* Prashant, N.M., Alomran, N., Chen, Y. et al. [SCReadCounts: estimation of cell-level SNVs expression from scRNA-seq data](https://doi.org/10.1186/s12864-021-07974-8). BMC Genomics 22, 689 (2021).
+* Prashant, N.M., Alomran, N., Chen, Y., Liu, H., Bousounis, P., Movassagh, M., Edwards, N., and Horvath, A. [SCReadCounts: estimation of cell-level SNVs expression from scRNA-seq data](https://doi.org/10.1186/s12864-021-07974-8). BMC Genomics 22, 689 (2021).
