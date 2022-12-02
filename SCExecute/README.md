@@ -37,7 +37,6 @@ expressions (see [Cell Barcode](docs/Barcode.md) documentation).
 **[Examples](docs/Examples.md)**
 
 **Please cite:**
-* Edwards, N., Dillard, C., Prashant, N.M., Liu, H., Yang, M., Ulianova, E., and Horvath, A. [SCExecute: cell barcode-stratified analyses of scRNA-seq data](https://doi.org/10.1101/2022.03.27.485988). bioRxiv 2022.03.27.485988 (2022). Preprint.
-* Edwards, N., Dillard, C., Prashant, N.M., Liu, H., Yang, M., Ulianova, E., and Horvath, A. SCExecute: custom cell barcode-stratified analyses of scRNA-seq data. Bioinformatics (2022). Accepted for publication. 
+* Edwards, N., Dillard, C., Prashant, N.M., Liu, H., Yang, M., Ulianova, E., and Horvath, A. [SCExecute: custom cell barcode-stratified analyses of scRNA-seq data](https://doi.org/10.1093/bioinformatics/btac768). Bioinformatics (2022).
 
 [Current version]: https://github.com/HorvathLab/NGS/releases/tag/SCExecute-1.3.2
