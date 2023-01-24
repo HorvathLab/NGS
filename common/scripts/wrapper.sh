@@ -1,5 +1,8 @@
 #!/bin/sh
-PROG=`python -c "import os.path, sys; print(os.path.realpath(sys.argv[1]))" "$0"`
+# can't rely on realpath, readlink -f, or python on MacOS.... ugh...
+# I guess we just hope for the best...
+# PROG=`python -c "import os.path, sys; print(os.path.realpath(sys.argv[1]))" "$0"`
+PROG="$0"
 DIR=`dirname "$PROG"`
 PROG=`basename "$PROG"`
 if [ ! -d ${DIR}/../src ]; then
