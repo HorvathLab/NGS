@@ -60,7 +60,7 @@ SCExecute is available as a self-contained binary package for 64-bit Intel-based
     ```
     % conda install -n HorvathLab -c bioconda scexecute
     ```
-3. Run scReadCounts:
+3. Run scExecute:
     ```
     % conda run -n HorvathLab --live-stream scExecute
     ```
@@ -68,7 +68,7 @@ SCExecute is available as a self-contained binary package for 64-bit Intel-based
     ```
     % conda run -n HorvathLab --live-stream scExecute -h
     ```
-5. Update scReadCounts to latest version:
+5. Update scExecute to latest version:
     ```
     % conda update -n HorvathLab scexecute
     ```
