@@ -339,55 +339,23 @@ class FileTable(Table):
     def open(self, mode='rt', encoding='utf8'):
         if not isinstance(self.filename, str):
             return iter(self.filename)
-        if self.filename.lower().endswith(".gz") or \
-                self.compression == "gz" or \
-                os.path.exists(self.filename + ".gz"):
-            try:
-                if 'r' in mode:
-                    if self.filename.lower().endswith(".gz"):
-                        h = gzip.open(self.filename, mode=mode, encoding=encoding)
-                        h.readline()
-                        h.seek(0)
-                    else:
-                        h = gzip.open(self.filename + ".gz", mode=mode, encoding=encoding)
-                        h.readline()
-                        h.seek(0)
-                        self.filename += ".gz"
-                else:
-                    if self.filename.lower().endswith(".gz"):
-                        h = gzip.open(self.filename, mode=mode, encoding=encoding)
-                    else:
-                        h = gzip.open(self.filename + ".gz", mode=mode, encoding=encoding)
-                        self.filename += ".gz"
-                return h
-            except IOError:
-                return open(self.filename, mode=mode, encoding=encoding)
-        elif self.filename.lower().endswith(".bz2") or \
-                self.compression == "bz2" or \
-                os.path.exists(self.filename + ".bz2"):
-            try:
-                if 'r' in mode:
-                    if self.filename.lower().endswith(".bz2"):
-                        h = bz2.BZ2File(self.filename, mode=mode, encoding=encoding)
-                        h.readline()
-                        h.seek(0)
-                    else:
-                        h = bz2.BZ2File(self.filename + ".bz2", mode=mode, encoding=encoding)
-                        h.readline()
-                        h.seek(0)
-                        self.filename += ".bz2"
-                else:
-                    if self.filename.lower().endswith(".bz2"):
-                        h = bz2.BZ2File(self.filename, mode=mode, encoding=encoding)
-                    else:
-                        h = bz2.BZ2File(self.filename + ".bz2", mode=mode, encoding=encoding)
-                        self.filename += ".bz2"
-                return h
-            except IOError as e:
-                # print >>sys.stderr, e
-                return open(self.filename, mode=mode, encoding=encoding)
-        else:
-            return open(self.filename, mode=mode, encoding=encoding)
+        if self.filename.lower().endswith(".gz"):
+            if 'r' in mode:
+                h = gzip.open(self.filename, mode=mode, encoding=encoding)
+                h.readline()
+                h.seek(0)
+            else:
+                h = gzip.open(self.filename, mode=mode, encoding=encoding)
+            return h
+        elif self.filename.lower().endswith(".bz2"):
+            if 'r' in mode:
+                h = bz2.BZ2File(self.filename, mode=mode, encoding=encoding)
+                h.readline()
+                h.seek(0)
+            else:
+                h = bz2.BZ2File(self.filename, mode=mode, encoding=encoding)
+            return h
+        return open(self.filename, mode=mode, encoding=encoding)
 
 import csv
 
