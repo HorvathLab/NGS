@@ -70,7 +70,7 @@ SCExecute is available as a self-contained binary package for 64-bit Intel-based
     ```
 5. Update scExecute to latest version:
     ```
-    % conda update -n HorvathLab scexecute
+    % conda update -n HorvathLab -c bioconda scexecute
     ```
 
 ## Python Source Installation ##
