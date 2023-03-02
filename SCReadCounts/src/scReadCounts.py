@@ -203,7 +203,7 @@ args = []
 args.extend(["-s",doublequote(" ".join(opt.snvs))])
 args.extend(["-r",doublequote(" ".join(opt.alignments))])
 if opt.cellbarcode != readgroup_default:
-    args.extend(["-C",doublequote(groupMap[opt.cellbarcode] if readgroup != None else "")])
+    args.extend(["-C",doublequote(opt.cellbarcode if readgroup != None else "")])
 if opt.umicount not in ("",None,"None","-"):
     args.extend(["-U",doublequote(opt.umicount if umicount != None else "")])
 if opt.filter != filter_default:
