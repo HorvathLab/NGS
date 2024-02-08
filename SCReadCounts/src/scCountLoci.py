@@ -29,20 +29,19 @@ Usage:
   scCountLoci [ options ] <bamfile> <snvlocifile> [ parameters ]
 
 Parameters (with defaults):
-  acceptlist=
-  cellbarcodes=STARsolo
-  countumis=True
-  gapsize=1000
-  maxedits=3
-  minbasequal=25
-  mincells=3
-  minmappingqual=60
-  minreadspercell=0
-  minumipercell=3
-  minvarreadspercell=0
-  minvarumipercell=3
-  outfile=
-  umibarcodes=STARsolo
+  acceptlist=            # File of cell-barcodes to consider
+  cellbarcodes=STARsolo  # Name of cell-barcode extraction strategy
+  maxedits=3             # Max. edits for acceptable read alignment
+  minbasequal=25         # Min. base quality score
+  mincells=3             # Min. number of cells for cell and variant constraints
+  minmappingqual=60      # Min. mapping quality for reads
+  minreadspercell=3      # Min. number of reads per cell
+  minumipercell=3        # Min. number of UMIs per cell
+  minvarreadspercell=3   # Min. number of variant reads per cell
+  minvarumipercell=3     # Min. number of variant UMIs per cell
+  outfile=               # Place output in compact binary file
+  outputumis=True        # Output UMI counts, not reads
+  umibarcodes=STARsolo   # Name of UMI extraction strategy
 
 Options:
   -v    Verbose
@@ -56,7 +55,7 @@ bf = sys.argv[1]
 sf = sys.argv[2]
 kwargs = {'minbasequal': 25, 'minmappingqual': 60, 'gapsize': 1000, 'maxedits': 3, 
           'cellbarcodes': 'STARsolo', 'mincells': 3, 'minvarumipercell': 3, 'minumipercell': 3,
-          'outfile': "", 'acceptlist': "", 'minvarreadspercell': 3, 'minreadspercell': 3, 'countumis': True}
+          'outfile': "", 'acceptlist': "", 'minvarreadspercell': 3, 'minreadspercell': 3, 'outputumis': True}
 for kv in sys.argv[3:]:
     k,v = kv.split('=')
     try:
@@ -88,13 +87,7 @@ else:
     readgroupparam = ""
 kwargs['cellbarcodes'] = groupFactory.get(groupMap[kwargs['cellbarcodes']],readgroupparam)
 kwargs['umibarcodes'] = groupFactory.get(umiMap[kwargs['umibarcodes']])
-countumis = kwargs.get('countumis',True)
-if countumis:
-    kwargs['minreadspercell'] = 0
-    kwargs['minvarreadspercell'] = 0
-else:
-    kwargs['minumipercell'] = 0
-    kwargs['minvarumipercell'] = 0
+outputumis = kwargs.get('outputumis',True)
 
 if verbose:
     print("Parameters:",file=sys.stderr)
@@ -108,8 +101,8 @@ if verbose:
 outfile = kwargs.get('outfile')
 if 'outfile' in kwargs:
     del kwargs['outfile']
-if 'countumis' in kwargs:
-    del kwargs['countumis']
+if 'outputumis' in kwargs:
+    del kwargs['outputumis']
 
 start = time.time()
 locifreq = SCSelectedLociByFetch(bf,snvs,**kwargs)
@@ -131,15 +124,15 @@ for chr,pos,refalt,freq in locifreq.loci():
                 vals[nuc] = len(freq[cb][nuc])
                 vals1[nuc] =  sum(freq[cb][nuc].values())         
                 totalreads += vals1[nuc]
-            if countumis and len(allumi) < kwargs.get('minumipercell'):
+            if len(allumi) < kwargs.get('minumipercell'):
                 continue
-            if not countumis and totalreads < kwargs.get('minreadspercell'):
+            if totalreads < kwargs.get('minreadspercell'):
                 continue
-            if countumis and vals[alt] < kwargs.get('minvarumipercell'):
+            if vals[alt] < kwargs.get('minvarumipercell'):
                 continue
-            if not countumis and vals1[alt] < kwargs.get('minvarreadspercell'):
+            if vals1[alt] < kwargs.get('minvarreadspercell'):
                 continue
-            if countumis:
+            if outputumis:
                 writer.writecounts(chr,pos,ref,alt,None,cb,vals[ref],vals[alt])
             else:
                 writer.writecounts(chr,pos,ref,alt,None,cb,vals1[ref],vals1[alt])

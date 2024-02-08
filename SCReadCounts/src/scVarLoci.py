@@ -37,16 +37,16 @@ Usage:
   scVarLoci [ options ] <bamfile> [ parameters ]
 
 Parameters (with defaults):
-  acceptlist=
-  cellbarcodes=STARsolo
-  minbasequal=25
-  mincells=3
-  mindist=5
-  minmappingqual=60
-  minvarumipercell=3
-  region=
-  outfile=
-  umibarcodes=STARsolo
+  acceptlist=            # File of cell-barcodes to consider
+  cellbarcodes=STARsolo  # Name of cell-barcode extraction strategy
+  minbasequal=25         # Min. base quality score
+  mincells=3             # Min. number of cells with variant
+  mindist=5              # Min. number of bases between variants
+  minmappingqual=60      # Min. mapping quality for reads
+  minvarumipercell=3     # Min. number of UMIs with variant per cell
+  region=                # Restriction analysis to chrom. region
+  outfile=               # Place output in file, otherwise standard out
+  umibarcodes=STARsolo   # Name of UMI extraction strategy
 
 Options:
   -v 	Verbose
