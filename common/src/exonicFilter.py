@@ -10,16 +10,33 @@ try:
     scriptdir = dirname(realpath(__file__))
 except NameError:
     scriptdir = dirname(realpath(sys.argv[0]))
+sys.path.append(os.getcwd())
+sys.path.append(scriptdir)
 sys.path.append(join(scriptdir, '..', '..', 'common', 'src'))
 
-from version import VERSION
-VERSION = '1.0.4 (%s)' % (VERSION,)
+VERSION = None
+if not VERSION:
+    try:
+        from version import VERSION
+        VERSION = '1.0.4 (%s)' % (VERSION,)
+    except ImportError:
+        pass
+
+if not VERSION:
+    try:
+        from release import VERSION
+        VERSION = '1.0.4 (%s)' % (VERSION,)
+    except ImportError:
+        pass
+
+if not VERSION:
+        VERSION = '1.0.4'
 
 from optparse_gui import OptionParser
 parser = OptionParser(version=VERSION)
 
 parser.add_option("--exons", type="file", dest="exons", default=None,
-                  help="Exonic coordinates (sored). Required.", notNone=True,
+                  help="Exonic coordinates (sorted). Required.", notNone=True,
                   filetypes=[("Exonic Coordinates", "*.txt")])
 parser.add_option("--input", type="file", dest="input", default=None,
                   help="Input SNVs. Required",

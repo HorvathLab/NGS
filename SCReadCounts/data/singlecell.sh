@@ -7,6 +7,10 @@ rm -f singlecell2-all-output.{tsv,*.matrix.tsv}
 
 set -x
 
+PREFIX="../bin/"
+# PREFIX="conda run -n HorvathLab --live-stream "
+SCRC="${PREFIX}scReadCounts"
+
 #
 # Equivalent to running these three commands...
 #
@@ -18,22 +22,22 @@ set -x
 #
 # readCountsMatrix -c "singlecell-output.tsv" -M VAF -m 5 -o "singlecell-output.vaf-m5.matrix.tsv"
 #
-../bin/scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 3 -o singlecell-output.tsv
+$SCRC -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 3 -o singlecell-output.tsv
 
 #
 # Regenerate the VAF matrix (different output name: singlecell-output.vaf-m5.matrix.tsv)
 #
-../bin/scReadCounts -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 5 -o singlecell-output.tsv
+$SCRC -r singlecell_chr17.bam -s singlecell_222_5_chr17.txt -m 5 -o singlecell-output.tsv
 
 #
 # STARsolo example
 #
-../bin/scReadCounts -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 -t 10 \
-                    -C STARsolo -U STARsolo -b singlecell2_117_barcodes.tsv -o singlecell2-output.tsv
+$SCRC -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 -t 10 \
+      -C STARsolo -U STARsolo -b singlecell2_117_barcodes.tsv -o singlecell2-output.tsv
 
 #
 # Override accept list for barcodes, accept all barcodes, directional output
 #
-../bin/scReadCounts -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 -t 10 \
-                    -C STARsolo -U STARsolo -b None -D -o singlecell2-all-output.tsv
+$SCRC -r singlecell2_117.bam -s singlecell2_117_snvs.txt -m 5 -t 10 \
+      -C STARsolo -U STARsolo -b None -D -o singlecell2-all-output.tsv
 

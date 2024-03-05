@@ -515,7 +515,10 @@ class ReadGroup(object):
     def type(self):
         return self._type
 
+    validbcregex = re.compile(r'[ACGT]{6}')
     def accept(self,value):
+        if not self.validbcregex.search(value):
+            return False
         return (self._acceptlist == None or value in self._acceptlist)
 
     def set_acceptlist(self,acceptlist=None):
@@ -757,3 +760,14 @@ class RGTag(ReadTagValue):
     def __init__(self,**kw):
         kw['tag'] = "RG"
         super(RGTag,self).__init__(**kw)
+
+class NoValue(ReadGroup):
+
+    def __init__(self, **kw):
+        super(NoValue,self).__init__(**kw)
+
+    def group(self, alignment):
+        return self.default()
+
+
+

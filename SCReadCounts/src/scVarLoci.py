@@ -39,13 +39,16 @@ Usage:
 Parameters (with defaults):
   acceptlist=            # File of cell-barcodes to consider
   cellbarcodes=STARsolo  # Name of cell-barcode extraction strategy
+  maxedits=5             # Max. edits for acceptable read alignment
   minbasequal=25         # Min. base quality score
   mincells=3             # Min. number of cells with variant
   mindist=5              # Min. number of bases between variants
   minmappingqual=60      # Min. mapping quality for reads
   minvarumipercell=3     # Min. number of UMIs with variant per cell
-  region=                # Restriction analysis to chrom. region
+  minvarreadspercell=0   # Min. number of reads with variant per cell
+  region=                # Restriction analysis to chrom. region(s)
   outfile=               # Place output in file, otherwise standard out
+  outputcells=False      # Output the number of cells with the variant
   umibarcodes=STARsolo   # Name of UMI extraction strategy
 
 Options:
@@ -57,31 +60,36 @@ Options:
 verbose = opt['v']
 
 bamfilename = sys.argv[1]
-kwargs = dict(region = None, minbasequal = 25,
-              minmappingqual = 60, mindist = 5,
-              mincells = 3, minvarumipercell = 3,
-              cellbarcodes = 'STARsolo', acceptlist=None)
+kwargs = dict(region = None, minbasequal = 25, outfile = "", 
+              minmappingqual = 60, mindist = 5, maxedits = 5,
+              mincells = 3, minvarumipercell = 3, minvarreadspercell = 0,
+              cellbarcodes = 'STARsolo', acceptlist="", outputcells=False)
 
 for kv in sys.argv[2:]:
-    k,v = kv.split('=')
+    badsplit=False
+    try:
+        k,v = map(str.strip,kv.split('='))
+    except ValueError:
+        badsplit = True
+    if badsplit or not k or k not in kwargs:
+        raise RuntimeError("Bad parameter setting: "+kv)
     try:
         v = eval(v)
     except:
         pass
     kwargs[k] = v
 
-if kwargs.get('cellbarcodes',None) != None:
-    if not kwargs.get('umibarcodes',None):
-        kwargs['umibarcodes'] = kwargs['cellbarcodes']
-    if kwargs.get('acceptlist') != None:
-        if kwargs.get('acceptlist') in (None,"","None","-"):
-            readgroupparam = "*:acceptlist=None"
-        else:
-            readgroupparam = "*:acceptlist='%s'"%(kwargs.get('acceptlist',))
+if not kwargs.get('umibarcodes',None):
+    kwargs['umibarcodes'] = kwargs['cellbarcodes']
+if kwargs.get('acceptlist') != None:
+    if kwargs.get('acceptlist') in ("","None","-"):
+        readgroupparam = "*:acceptlist=None"
     else:
-        readgroupparam = ""
-    kwargs['cellbarcodes'] = groupFactory.get(groupMap[kwargs['cellbarcodes']],readgroupparam)
-    kwargs['umibarcodes'] = groupFactory.get(umiMap[kwargs['umibarcodes']])
+        readgroupparam = "*:acceptlist='%s'"%(kwargs.get('acceptlist',))
+else:
+    readgroupparam = ""
+kwargs['cellbarcodes'] = groupFactory.get(groupMap[kwargs['cellbarcodes']],readgroupparam)
+kwargs['umibarcodes'] = groupFactory.get(umiMap[kwargs['umibarcodes']])
 
 if verbose:
     print("Parameters:",file=sys.stderr)
@@ -98,16 +106,32 @@ if verbose:
 outfile = kwargs.get('outfile')
 if 'outfile' in kwargs:
     del kwargs['outfile']
+outputcells = kwargs['outputcells']
+del kwargs['outputcells'] 
 
 scan = SCVariantLociByFetch(bamfilename,**kwargs)
 if not outfile:
     outfile = sys.stdout
 else:
     outfile = open(outfile,'wt')
+if outputcells:
+    print("CHROM","POS","REF","ALT","SNVCELLS",sep='\t',file=outfile)
+else:
+    print("CHROM","POS","REF","ALT",sep='\t',file=outfile)
 for chrom,pos,refnuc,altnuc,freq in scan.loci():
     # print(chrom,pos,refnuc,altnuc,freq,sep='\t')
-    altcellcnt = sum(1 for _ in filter(lambda x: x>=kwargs.get('minvarumipercell'),map(lambda k: len(freq.get(altnuc,{}).get(k,{})),filter(lambda k: k != "-",freq.get(altnuc,{}).keys()))))
-    print(chrom,pos,refnuc,altnuc,altcellcnt,sep='\t',file=outfile)
+    if outputcells:
+        ncells = 0
+        for cb,umicnt in freq[altnuc].items():
+            umis = len(umicnt.keys())
+            if len(umicnt.keys()) < kwargs.get('minvarumipercell'):
+                continue
+            if sum(umicnt.values()) < kwargs.get('minvarreadspercell'): 
+                continue
+            ncells += 1
+        print(chrom,pos,refnuc,altnuc,ncells,sep='\t',file=outfile)
+    else:
+        print(chrom,pos,refnuc,altnuc,sep='\t',file=outfile)
 
 if outfile != sys.stdout:
     outfile.close()
