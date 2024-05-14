@@ -1,4 +1,4 @@
-# May 9, 2024
+# May 14, 2024
 suppressWarnings(library('optparse'))
 suppressWarnings(library('stringr'))
 
@@ -7,8 +7,7 @@ script.desc <-
 3-dimensional PCAs of SNV reads, reference reads, and VAF for each cell. The
 user must supply the RDS of a Seurat object (-r) which can contain multiple
 integrated datasets. The user must also supply an SNV file (-t) that contains
-at least one SNV. The RDS file needs to have been dimensionally reduced and
-clustered. Dark gray values in plots represent NAs.'
+at least one SNV.'
 
 parser <- OptionParser(description=script.desc)
 parser <- add_option(parser, c('-r', '--rds-file'),
