@@ -1,24 +1,24 @@
 # snv\_plotter.r (Updated: 11/28/2022)
 ## Introduction
-snv\_plotter.r plots information about SNV's provided by the user onto a
+snv\_plotter.r plots information about SNVs provided by the user onto a
 dimensionally reduced representation of the data. Currently, the script
 generates a set of plots that represents basic statistics and properties of the
 SNV's identified in the dataset, which includes:
-- Histogram of different SNV's for each cell
-  - This figure shows how many different SNV's were identified in each cell.
+- Histogram of different SNVs for each cell
+  - This figure shows how many different SNVs were identified in each cell.
     This information is represented in the file names and in the script as 'n'.
 - Histogram of total reads of SNV for each cell
-  - This figure shows how many total reads of SNV's were identified in each
-    cell. The number will be inherently larger than the total different SNV's
+  - This figure shows how many total reads of SNVs were identified in each
+    cell. The number will be inherently larger than the total different SNVs
     for each cell. The number of reads is represented as 'reads' in the file
     names and in the script. 
-- UMAP representation of different SNV's for each cell.
+- UMAP representation of different SNVs for each cell.
   - This figure shows the number of different SNV's found in each cell, where
     the cells with the highest count is labeled with dark red while the cells
     with the lowest count is labeled with yellow.
 - UMAP representation of total reads of SNV for each cell.
   - This figure is similar to the previous figure except the figure shows the
-    number of reads for SNV's found in each cell.
+    number of reads for SNVs found in each cell.
 - UMAP representation with variable allelic frequency (VAF)
   - For each SNV, this figure shows the VAF for each SNV. VAF is the percentage
     of observed SNV reads from the total number of reads.
@@ -36,7 +36,7 @@ The script accepts three inputs:
   integration, as this order is assumed to be the order which the data appears
   in the Seurat object. A sample name should also be supplied in the second
   column.
-- .txt file containing list of SNV's (chromosome, position) (-l, optional) -
+- .txt file containing list of SNVs (chromosome, position) (-l, optional) -
   This is a .txt file that contains a list of individual SNV's for which
   individual plots will be generated. These individual plots are UMAP
   representations with data points showing which cells contain the SNV's.
