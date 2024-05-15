@@ -10,7 +10,7 @@ in the dataset and utilize existing packages, such as Seurat, Slingshot, and scT
  
 ## Input
 The script accepts three inputs:
-- STAR solo output directory (-m) that contains features.tsv.gz, barcodes.tsv.gz, and matrix.mtx.gz OR a Seurat object (-r) that was saved as an RDS
+- STAR solo output directory (-m) that contains features.tsv.gz, barcodes.tsv.gz, and matrix.mtx.gz OR a Seurat object (-r) that was saved as a .RDS
 - SCReadCounts output file (-t) saved as a .tsv
 
 See sample files for reference.
