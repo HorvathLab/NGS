@@ -11,7 +11,7 @@ in the dataset and utilize existing packages, such as Seurat, Slingshot, and scT
 ## Input
 The script accepts three inputs:
 - STAR solo output directory (-m) that contains features.tsv.gz, barcodes.tsv.gz, and matrix.mtx.gz OR a Seurat object (-r) that was saved as a .RDS
-- SCReadCounts output file (-t) saved as a .tsv
+- SCReadCounts output file (-t) that is tab-delimited and either a .tsv or .txt
 
 See sample files for reference.
 
@@ -37,7 +37,7 @@ The produced figures include:
 ## Examples
 ml R
 
-Rscript 240508_multivar_plotter_tsne_blRed.r -t SNV_file.tsv -m SAMNXX_wasp_Solo.out/Gene/filtered/
+Rscript 240508_multivar_plotter_tsne_blRed.r -t SNV_file.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
 
-Rscript 240508_multivar_plotter_tsne_blRed.r -t SNV_file.tsv -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
+Rscript 240508_multivar_plotter_tsne_blRed.r -t SNV_file.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
 
