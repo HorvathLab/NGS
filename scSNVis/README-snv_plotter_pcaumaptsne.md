@@ -34,6 +34,8 @@ See sample files for reference.
 
 ## Examples
 ml R
+
 Rscript 240508_multivar_plotter_tsne_blRed.r -t SNV_file.tsv -m SAMNXX_wasp_Solo.out/Gene/filtered/
+
 Rscript 240508_multivar_plotter_tsne_blRed.r -t SNV_file.tsv -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
 
