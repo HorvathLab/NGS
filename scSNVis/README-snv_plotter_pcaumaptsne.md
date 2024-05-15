@@ -2,7 +2,7 @@
 # snv\_plotter_pca.r (Updated: 05/14/2024)
 # snv\_plotter_umap.r (Updated: 05/14/2024)
 ## Introduction
-snv\_plotter_tsne\\pca\\umap.r scripts plot information about SNVs provided by the user onto a
+snv\_plotter_tsne\/pca\/umap.r scripts plot information about SNVs provided by the user onto a
 dimensionally reduced representation of the data (either tsne, pca, or umap,
 depending on the script selected). Currently, the script generates a set of 
 plots that represent basic statistics and properties of the SNVs identified
@@ -27,9 +27,8 @@ The produced figures include:
  
 ## Input
 The script accepts three inputs:
-- STAR solo output directory (-m) OR an .RDS file (-r)  - This is a Seurat object that was written into an RDS
-  format.
-- .tsv SCReadCounts output file (-t)
+- STAR solo output directory (-m) that contains features.tsv.gz, barcodes.tsv.gz, and matrix.mtx.gz OR a Seurat object (-r) that was saved as an RDS
+- SCReadCounts output file (-t) saved as a .tsv
 
 See sample files for reference.
 
