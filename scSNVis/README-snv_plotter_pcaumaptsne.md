@@ -7,6 +7,15 @@ dimensionally reduced representation of the data (either tsne, pca, or umap,
 depending on the script selected). Currently, the script generates a set of 
 plots that represent basic statistics and properties of the SNVs identified
 in the dataset and utilize existing packages, such as Seurat, Slingshot, and scType.
+ 
+## Input
+The script accepts three inputs:
+- STAR solo output directory (-m) that contains features.tsv.gz, barcodes.tsv.gz, and matrix.mtx.gz OR a Seurat object (-r) that was saved as an RDS
+- SCReadCounts output file (-t) saved as a .tsv
+
+See sample files for reference.
+
+## Output
 The produced figures include:
 - Histogram of mean VAF per SNV per cell
 - Histogram of the number of SNVs per cell
@@ -24,13 +33,6 @@ The produced figures include:
   - VAF per cell
   - Number of Reference Reads per cell
   - Number of Variant Reads per cell
- 
-## Input
-The script accepts three inputs:
-- STAR solo output directory (-m) that contains features.tsv.gz, barcodes.tsv.gz, and matrix.mtx.gz OR a Seurat object (-r) that was saved as an RDS
-- SCReadCounts output file (-t) saved as a .tsv
-
-See sample files for reference.
 
 ## Examples
 ml R
