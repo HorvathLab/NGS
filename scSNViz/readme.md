@@ -1,6 +1,6 @@
-# snv\_plotter_tsne.r (Updated: 05/14/2024)
-# snv\_plotter_pca.r (Updated: 05/14/2024)
-# snv\_plotter_umap.r (Updated: 05/14/2024)
+# snv\_plotter_tsne.r (Updated: 05/28/2024)
+# snv\_plotter_pca.r (Updated: 05/28/2024)
+# snv\_plotter_umap.r (Updated: 05/28/2024)
 ## Introduction
 snv\_plotter_tsne\/pca\/umap.r scripts plot information about SNVs provided by the user onto a
 dimensionally reduced representation of the data (either tsne, pca, or umap,
