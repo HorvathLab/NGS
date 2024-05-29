@@ -1,8 +1,8 @@
-# snv\_plotter_tsne.r (Updated: 05/14/2024)
-# snv\_plotter_pca.r (Updated: 05/14/2024)
-# snv\_plotter_umap.r (Updated: 05/14/2024)
+# scSNViz\_tsne.r (Updated: 05/14/2024)
+# scSNViz\_pca.r (Updated: 05/14/2024)
+# scSNViz\_umap.r (Updated: 05/14/2024)
 ## Introduction
-snv\_plotter_tsne\/pca\/umap.r scripts plot information about SNVs provided by the user onto a
+scSNViz\_tsne\/pca\/umap.r scripts plot information about SNVs provided by the user onto a
 dimensionally reduced representation of the data (either tsne, pca, or umap,
 depending on the script selected). Currently, the script generates a set of 
 plots that represent basic statistics and properties of the SNVs identified
@@ -37,7 +37,9 @@ The produced figures include:
 ## Examples
 ml R
 
-Rscript 240508_multivar_plotter_tsne_blRed.r -t SNV_file.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
+Rscript scSNViz_tsne.r -t SNV_file.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
 
-Rscript 240508_multivar_plotter_tsne_blRed.r -t SNV_file.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
+Rscript scSNViz_umap.r -t SNV_file.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
+
+
 
