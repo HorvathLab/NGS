@@ -1,6 +1,6 @@
-# scSNViz\_tsne.r (Updated: 05/14/2024)
-# scSNViz\_pca.r (Updated: 05/14/2024)
-# scSNViz\_umap.r (Updated: 05/14/2024)
+# scSNViz\_tsne.r (Updated: 05/28/2024)
+# scSNViz\_pca.r (Updated: 05/28/2024)
+# scSNViz\_umap.r (Updated: 05/28/2024)
 ## Introduction
 scSNViz\_tsne\/pca\/umap.r scripts plot information about SNVs provided by the user onto a
 dimensionally reduced representation of the data (either tsne, pca, or umap,
