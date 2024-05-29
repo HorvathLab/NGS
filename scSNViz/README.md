@@ -15,7 +15,7 @@ The script accepts three inputs:
 
 See sample files for reference.
 
-## Output
+## Default Output
 The produced figures include:
 - Histogram of mean VAF per SNV per cell
 - Histogram of the number of SNVs per cell
@@ -34,11 +34,19 @@ The produced figures include:
   - Number of Reference Reads per cell
   - Number of Variant Reads per cell
 
+- a text file of summary statistics per cell
+
 ## Examples
 ml R
 
-Rscript scSNViz_tsne.r -t SNV_file.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
+Rscript scSNViz_tsne.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
 
-Rscript scSNViz_umap.r -t SNV_file.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
+Rscript scSNViz_umap.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
+
+Rscript scSNViz_umap.r -t sample_SNVs.txt -r sample_seurat.rds --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
+
+
+
+
 
 
