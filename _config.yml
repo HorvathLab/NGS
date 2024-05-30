@@ -14,3 +14,9 @@ defaults:
       type: "pages"
     values:
       layout: "scexecute"
+  -
+    scope:
+      path: "scSNViz"
+      type: "pages"
+    values:
+      layout: "scsnviz"
