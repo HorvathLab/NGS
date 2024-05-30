@@ -1,3 +1,5 @@
+## [scSNViz](https://horvathlab.github.io/NGS/scSNViz) 
+scSNViz plots information about scSNVs onto a dimensionally reduced representation.
 ## [SCExecute](https://horvathlab.github.io/NGS/SCExecute) 
 SCExecute generates cell-barcode specific BAM files from aligned, aggregate single-cell sequencing data, executing a user-provided command on each barcode-stratified BAM file.
 ## [SCReadCounts](https://horvathlab.github.io/NGS/SCReadCounts) 
