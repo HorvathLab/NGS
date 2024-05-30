@@ -36,9 +36,9 @@ The produced figures include:
 ## Installation
 
 Download the files
-- [scSNViz_tsne.r](scSNViz_tsne.r) (Updated: 05/28/2024)
-- [scSNViz_pca.r](scSNViz_pca.r) (Updated: 05/28/2024)
-- [scSNViz_umap.r](scSNViz_umap.r) (Updated: 05/28/2024)
+- [scSNViz_tsne.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_tsne.r) (Updated: 05/28/2024)
+- [scSNViz_pca.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_pca.r) (Updated: 05/28/2024)
+- [scSNViz_umap.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_umap.r) (Updated: 05/28/2024)
 
 ## Examples
 ml R
