@@ -35,13 +35,12 @@ The produced figures include:
 
 ## Installation
 
-Download the files
+Download the file according to the desired dimensionality reduction technique: 
 - [scSNViz_tsne.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_tsne.r) (Updated: 05/28/2024)
 - [scSNViz_pca.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_pca.r) (Updated: 05/28/2024)
 - [scSNViz_umap.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_umap.r) (Updated: 05/28/2024)
 
 ## Examples
-ml R
 
 Rscript scSNViz_tsne.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
 
