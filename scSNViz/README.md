@@ -1,5 +1,5 @@
 ## Introduction
-scSNViz\_tsne\/pca\/umap.r scripts plot information about SNVs provided by the user onto a
+The scSNViz scripts plot information about SNVs provided by the user onto a
 dimensionally reduced representation of the data (either tsne, pca, or umap,
 depending on the script selected). Currently, the script generates a set of 
 plots that represent basic statistics and properties of the SNVs identified
