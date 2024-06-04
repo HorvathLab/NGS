@@ -46,7 +46,7 @@ The following CRAN R packages are required:
 The following Bioconductor R packages are required:
 - slingshot.
 
-Note too that the matrixStats package needs to be downgraded to version 1.1.0:
+Note too that the matrixStats package (a dependancy of Seurat) needs to be downgraded to version 1.1.0:
 - `> remotes::install_version("matrixStats", version="1.1.0")`
 
 ## Examples
