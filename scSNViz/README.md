@@ -40,14 +40,30 @@ Download the file according to the desired dimensionality reduction technique:
 - [scSNViz_pca.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_pca.r) (Updated: 05/28/2024)
 - [scSNViz_umap.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_umap.r) (Updated: 05/28/2024)
 
+The following CRAN R packages are required:
+- optparse, stringr, openxlsx, HGNChelper, Seurat, ggplot2, dplyr, plotly, htmlwidgets.
+
+The following Bioconductor R packages are required:
+- slingshot.
+
+Note too that the matrixStats package (a dependancy of Seurat) needs to be downgraded to version 1.1.0:
+- `> remotes::install_version("matrixStats", version="1.1.0")`
+
 ## Examples
-
-Rscript scSNViz_tsne.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
-
-Rscript scSNViz_umap.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
-
-Rscript scSNViz_umap.r -t sample_SNVs.txt -r sample_seurat.rds --th-vars=1 --th-reads=10 --tissue-type=Immunesystem -c -d -e --color-scale=YlOrRd
-
+```
+% Rscript scSNViz_tsne.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
+```
+```
+% Rscript scSNViz_umap.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ \
+                         --th-vars=1 --th-reads=10 \
+                         -i --tissue-type=Liver -c -d -e
+```
+```
+% Rscript scSNViz_umap.r -t sample_SNVs.txt -r sample_Seurat_object.rds \
+                         --th-vars=1 --th-reads=10 \
+                         -i --tissue-type=Immunesystem \
+                         -c -d -e --color-scale=YlOrRd 
+```
 
 
 
