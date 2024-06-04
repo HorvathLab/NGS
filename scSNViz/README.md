@@ -39,6 +39,10 @@ Download the file according to the desired dimensionality reduction technique:
 - [scSNViz_tsne.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_tsne.r) (Updated: 05/28/2024)
 - [scSNViz_pca.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_pca.r) (Updated: 05/28/2024)
 - [scSNViz_umap.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_umap.r) (Updated: 05/28/2024)
+The following CRAN R packages are required:
+- optparse, stringr, openxlsx, HGNChelper, Seurat, ggplot2, dplyr, plotly, htmlwidgets.
+The following Bioconductor R packages are required:
+- slingshot.
 
 ## Examples
 
