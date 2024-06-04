@@ -50,9 +50,9 @@ The following Bioconductor R packages are required:
 
 Rscript scSNViz_tsne.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
 
-Rscript scSNViz_umap.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e
+Rscript scSNViz_umap.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --th-vars=1 --th-reads=10 --tissue-type=Liver -c -d -e -i
 
-Rscript scSNViz_umap.r -t sample_SNVs.txt -r sample_Seurat_object.rds --th-vars=1 --th-reads=10 --tissue-type=Immunesystem -c -d -e --color-scale=YlOrRd -i
+Rscript scSNViz_umap.r -t sample_SNVs.txt -r sample_Seurat_object.rds -\-th-vars=1 -\-th-reads=10 -\-tissue-type=Immunesystem -c -d -e -\-color-scale=YlOrRd -i
 
 
 
