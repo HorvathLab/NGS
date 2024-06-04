@@ -1,6 +1,8 @@
 # May 28, 2024
-suppressWarnings(library('optparse'))
-suppressWarnings(library('stringr'))
+suppressPackageStartupMessages({
+  library('optparse')
+  library('stringr')
+})
 
 script.desc <-
 'This script calculates and plots basic statistics, 2-dimensional and
@@ -114,11 +116,13 @@ if (!is.null(error.msg)) {
 # Application Logic
 ######
 
-library('Seurat')
-library('ggplot2')
-library('dplyr')
-library('openxlsx')
-library('HGNChelper')
+suppressPackageStartupMessages({
+  library('Seurat')
+  library('ggplot2')
+  library('dplyr')
+  library('openxlsx')
+  library('HGNChelper')
+})
 
 # load files
 snv.file <- args$`snv-file`
@@ -283,11 +287,13 @@ if (args$`enable-sctype`){
 rownames(df.3dplot) <- df.3dplot$Row.names
 df.3dplot <- df.3dplot[, 2:ncol(df.3dplot)]
 # generate interactive 2D plots
-library('plotly')
-library('htmlwidgets')
+suppressPackageStartupMessages({
+  library('plotly')
+  library('htmlwidgets')
+})
 
 # generate slingshot trajectory
-library('slingshot')
+suppressPackageStartupMessages(library('slingshot'))
 sce <- as.SingleCellExperiment(srt)
 sce <- slingshot(sce, clusterLabels='seurat_clusters', reducedDim='UMAP')
 
