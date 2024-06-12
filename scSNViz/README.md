@@ -54,12 +54,13 @@ Note too that the matrixStats package (a dependancy of Seurat) needs to be downg
 % Rscript scSNViz_tsne.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
 ```
 ```
-% Rscript scSNViz_umap.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ \
+% Rscript scSNViz_umap.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --dimensionality-reduction=umap \
                          --th-vars=1 --th-reads=10 \
-                         -i --tissue-type=Liver -c -d -e
+                         -i --tissue-type=Liver -c -d -e 
 ```
 ```
 % Rscript scSNViz_umap.r -t sample_SNVs.txt -r sample_Seurat_object.rds \
+                         --dimensionality-reduction=tsne \
                          --th-vars=1 --th-reads=10 \
                          -i --tissue-type=Immunesystem \
                          -c -d -e --color-scale=YlOrRd 
