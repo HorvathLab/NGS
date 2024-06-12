@@ -1,4 +1,4 @@
-# June 12, 2024
+# May 28, 2024
 suppressPackageStartupMessages({
   library('optparse')
   library('stringr')
@@ -112,10 +112,13 @@ if (args$`enable-cell-border`) {
 }
 
 if (is.null(args$`dimensionality-reduction`)){
-  print('You did not provide a dimensionality reduction selection. The default will be PCA. To change this in the future, look at option -w')
+  error.msg <- paste(error.msg,'You did not provide a dimensionality reduction selection. The default will be PCA. To change this in the future, look at option -w')
 } else {
   dimensionality.reduction <- args$`dimensionality-reduction`
   dimensionality.reduction <- tolower(dimensionality.reduction)
+  if (dimensionality.reduction!='pca' & dimensionality.reduction!='umap' & dimensionality.reduction!='tsne'){
+    error.msg <- paste(error.msg, 'You inputted a dimensionality reduction that is not supported by this software. Please use pca, umap, or tsne.')
+  } else {
   if (dimensionality.reduction=='tsne'){
     dim.plotting = 'tSNE'
     dim.title = 'tSNE'
@@ -127,6 +130,7 @@ if (is.null(args$`dimensionality-reduction`)){
   if (dimensionality.reduction=='umap'){
     dim.plotting = 'UMAP'
     dim.title = 'UMAP'
+  }
   }
 
 }
