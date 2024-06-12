@@ -26,7 +26,7 @@ parser <- add_option(parser, c('-t', '--snv-file'),
                      help='scReadCounts file')
 parser <- add_option(parser, c('-w', '--dimensionality-reduction'),
                      type='character',
-                     default='pca',
+                     default='umap',
                      help='options include tSNE, PCA, UMAP')
 parser <- add_option(parser, c('-x', '--th-vars'),
                      type='integer', default=0,
@@ -112,7 +112,7 @@ if (args$`enable-cell-border`) {
 }
 
 if (is.null(args$`dimensionality-reduction`)){
-  error.msg <- paste(error.msg,'You did not provide a dimensionality reduction selection. The default will be PCA. To change this in the future, look at option -w')
+  error.msg <- paste(error.msg,'You did not provide a dimensionality reduction selection. The default is UMAP. To change this in the future, look at option -w')
 } else {
   dimensionality.reduction <- args$`dimensionality-reduction`
   dimensionality.reduction <- tolower(dimensionality.reduction)
