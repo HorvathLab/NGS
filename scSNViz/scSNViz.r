@@ -38,7 +38,7 @@ parser <- add_option(parser, c('-y', '--th-reads'),
 parser <- add_option(parser, c('-c', '--enable-title'),
                      type='logical', default=T, action='store_true',
                      help='Enable title. Default=T')
-parser <- add_option(parser, c('-d', '--enable-ind-plots'),
+parser <- add_option(parser, c('-d', '--disable-ind-plots'),
                      type='logical', default=F, action='store_true',
                      help='Disable individual SNV plots. Default=F.')
 parser <- add_option(parser, c('-e', '--disable-3d-axis'),
@@ -721,7 +721,7 @@ write.table(df.3dplot, paste0(dir.name, sample.name, '-summary.txt'),
 
 
 #make plot that contains VARReads, RefReads, dimensional reduction plots, Slingshot
-if (args$`enable-ind-plots`) {
+if (!args$`disable-ind-plots`) {
 suppressWarnings(dir.create(
                  paste0(dir.name,sample.name, '_individual_sceSNVs/')))
 suppressWarnings(dir.create(
