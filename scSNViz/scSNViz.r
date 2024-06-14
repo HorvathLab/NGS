@@ -343,7 +343,7 @@ if (num.snvs>1) {
   p <- ggplot(df.snv, aes(x=TotalVAF))+
        geom_histogram(fill=histogram.scale2,boundary=0,alpha=0.6)+
        xlab('TotalVAF')+ylab('cells')+
-       theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(), axis.ticks.x=element_blank(),
+       theme(panel.grid.minor=element_blank(), axis.ticks.x=element_blank(),
              axis.ticks.y=element_blank())
   if (args$`enable-title`) {
     p <- p+ggtitle(sample.name)
@@ -354,7 +354,7 @@ if (num.snvs>1) {
   p <- ggplot(df.snv, aes(x=MeanVAF))+
        geom_histogram(fill=histogram.scale2, boundary=0, alpha=0.6)+
        xlab('MeanSNVsVAF')+ylab('cells')+
-       theme(panel.grid.minor=element_blank(),panel.grid.major=element_blank(), axis.ticks.x=element_blank(),
+       theme(panel.grid.minor=element_blank(), axis.ticks.x=element_blank(),
              axis.ticks.y=element_blank())
   if (args$`enable-title`) {
     p <- p+ggtitle(sample.name)
@@ -365,7 +365,7 @@ if (num.snvs>1) {
   p <- ggplot(df.snv, aes(x=SNVCount))+
        geom_histogram(fill=histogram.scale1, binwidth=1, boundary=0, alpha=0.6)+
        xlab('N_VARreadCounts')+ylab('cells')+
-       theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(), axis.ticks.x=element_blank(),
+       theme(panel.grid.minor=element_blank(), axis.ticks.x=element_blank(),
              axis.ticks.y=element_blank())
   if (args$`enable-title`) {
     p <- p+ggtitle(sample.name)
