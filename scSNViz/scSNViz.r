@@ -343,7 +343,7 @@ if (num.snvs>1) {
   p <- ggplot(df.snv, aes(x=TotalVAF))+
        geom_histogram(fill=histogram.scale2,boundary=0,alpha=0.6)+
        xlab('TotalVAF')+ylab('cells')+
-       theme(panel.grid.minor=element_blank(), axis.ticks.x=element_blank(),
+       theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(), axis.ticks.x=element_blank(),
              axis.ticks.y=element_blank())
   if (args$`enable-title`) {
     p <- p+ggtitle(sample.name)
@@ -354,7 +354,7 @@ if (num.snvs>1) {
   p <- ggplot(df.snv, aes(x=MeanVAF))+
        geom_histogram(fill=histogram.scale2, boundary=0, alpha=0.6)+
        xlab('MeanSNVsVAF')+ylab('cells')+
-       theme(panel.grid.minor=element_blank(), axis.ticks.x=element_blank(),
+       theme(panel.grid.minor=element_blank(),panel.grid.major=element_blank(), axis.ticks.x=element_blank(),
              axis.ticks.y=element_blank())
   if (args$`enable-title`) {
     p <- p+ggtitle(sample.name)
@@ -365,7 +365,7 @@ if (num.snvs>1) {
   p <- ggplot(df.snv, aes(x=SNVCount))+
        geom_histogram(fill=histogram.scale1, binwidth=1, boundary=0, alpha=0.6)+
        xlab('N_VARreadCounts')+ylab('cells')+
-       theme(panel.grid.minor=element_blank(), axis.ticks.x=element_blank(),
+       theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(), axis.ticks.x=element_blank(),
              axis.ticks.y=element_blank())
   if (args$`enable-title`) {
     p <- p+ggtitle(sample.name)
@@ -416,9 +416,9 @@ if (args$`disable-3d-axis`) {
                                zaxis=list(title='', zeroline=F, showline=F,
                                             showticklabels=F, showgrid=F)))
 } else {
-  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'_1')),
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
 }
 if (!args$`disable-slingshot`) {
 saveWidget(f, paste0(dir.name, sample.name, '_TotalVAF_Slingshot',
@@ -459,9 +459,9 @@ if (args$`disable-3d-axis`) {
                                zaxis=list(title='', zeroline=F, showline=F,
                                             showticklabels=F, showgrid=F)))
 } else {
-  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'_1')),
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
 }
 if (!args$`disable-slingshot`) {
 saveWidget(f, paste0(dir.name, sample.name, '_MedianVAF_Slingshot',
@@ -500,9 +500,9 @@ if (args$`disable-3d-axis`) {
                                zaxis=list(title='', zeroline=F, showline=F,
                                             showticklabels=F, showgrid=F)))
 } else {
-  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'_1')),
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
 }
 if (!args$`disable-slingshot`) {
 saveWidget(f, paste0(dir.name, sample.name, '_MeanVAF_Slingshot',
@@ -542,9 +542,9 @@ if (args$`disable-3d-axis`) {
                                zaxis=list(title='', zeroline=F, showline=F,
                                           showticklabels=F, showgrid=F)))
 } else {
-  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'_1')),
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
 }
 if (!args$`disable-slingshot`) {
 saveWidget(f, paste0(dir.name, sample.name, '_N_VARreadCounts_Slingshot',
@@ -583,9 +583,9 @@ if (args$`disable-3d-axis`) {
                                zaxis=list(title='', zeroline=F, showline=F,
                                           showticklabels=F, showgrid=F)))
 } else {
-  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'_1')),
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
 }
 if (!args$`disable-slingshot`) {
 saveWidget(f, paste0(dir.name, sample.name, '_REFreadCounts_Slingshot',
@@ -624,9 +624,9 @@ if (args$`disable-3d-axis`) {
                                zaxis=list(title='', zeroline=F, showline=F,
                                           showticklabels=F, showgrid=F)))
 } else {
-  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+  f <- f %>% layout(scene=list(xaxis=list(title=paste0(dim.title,'_1')),
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
 }
 if (!args$`disable-slingshot`) {
 saveWidget(f, paste0(dir.name, sample.name, '_N_SNV_Slingshot',
@@ -661,8 +661,8 @@ if (args$`disable-3d-axis`) {
 } else {
 f <- f %>% layout(title=paste0('(', sample.name, ')'),
                     scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
 }
 f
 saveWidget(f, paste0(dir.name,file.name),
@@ -695,8 +695,8 @@ for (i in grep('slingPseudotime', colnames(s@colData))) {
   }
   f <- f %>% layout(title=paste0('Lineage ', lineage.i, ' (', sample.name, ')'),
                     scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
   saveWidget(f, paste0(dir.name,file.name),
              selfcontained=F, libdir='lib')
 }}
@@ -790,9 +790,9 @@ for (i in 1:nrow(snvs)) {
   f <- f %>% layout(title=paste0(snvs$CHROM[i], ':', snvs$POS[i], ' ',
                                  snvs$REF[i], '>', snvs$ALT[i], 
                                  ' (', sample.name, ')'),
-                    scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+                    scene=list(xaxis=list(title=paste0(dim.title,'_1')),
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
   }
 
   f
@@ -823,9 +823,9 @@ if (args$`enable-title`) {
   f <- f %>% layout(title=paste0(snvs$CHROM[i], ':', snvs$POS[i], ' ',
                                  snvs$REF[i], '>', snvs$ALT[i], 
                                  ' (', sample.name, ')'),
-                    scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+                    scene=list(xaxis=list(title=paste0(dim.title,'_1')),
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
 }
 f
 file.name <- paste0(sample.name, '-VARreads-', snvs$CHROM[i], '-',
@@ -856,9 +856,9 @@ if (args$`enable-title`) {
   f <- f %>% layout(title=paste0(snvs$CHROM[i], ':', snvs$POS[i], ' ',
                                  snvs$REF[i], '>', snvs$ALT[i], 
                                  ' (', sample.name, ')'),
-                    scene=list(xaxis=list(title=paste0(dim.title,'1')),
-                               yaxis=list(title=paste0(dim.title,'1')),
-                               zaxis=list(title=paste0(dim.title,'1'))))
+                    scene=list(xaxis=list(title=paste0(dim.title,'_1')),
+                               yaxis=list(title=paste0(dim.title,'_2')),
+                               zaxis=list(title=paste0(dim.title,'_3'))))
 }
 f
 file.name <- paste0(sample.name, '-REFreads-', snvs$CHROM[i], '-',
