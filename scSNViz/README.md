@@ -1,9 +1,10 @@
 ## Introduction
 The scSNViz scripts plot information about SNVs provided by the user onto a
 dimensionally reduced representation of the data (either tsne, pca, or umap,
-depending on the script selected). Currently, the script generates a set of 
-plots that represent basic statistics and properties of the SNVs identified
-in the dataset and utilize existing packages, such as Seurat, Slingshot, and scType.
+depending on the dimensionality reduction technique selected selected). 
+Currently, the script generates a set of plots that represent basic statistics 
+and properties of the SNVs identified in the dataset and utilize existing packages,
+such as Seurat, Slingshot, and scType.
  
 ## Input
 The script accepts three inputs:
@@ -36,9 +37,7 @@ The produced figures include:
 ## Installation
 
 Download the file according to the desired dimensionality reduction technique: 
-- [scSNViz_tsne.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_tsne.r) (Updated: 05/28/2024)
-- [scSNViz_pca.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_pca.r) (Updated: 05/28/2024)
-- [scSNViz_umap.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz_umap.r) (Updated: 05/28/2024)
+- [scSNViz.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz.r) (Updated: 05/28/2024)
 
 The following CRAN R packages are required:
 - optparse, stringr, openxlsx, HGNChelper, Seurat, ggplot2, dplyr, plotly, htmlwidgets.
