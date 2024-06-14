@@ -37,7 +37,7 @@ The produced figures include:
 ## Installation
 
 Download the file according to the desired dimensionality reduction technique: 
-- [scSNViz.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz.r) (Updated: 05/28/2024)
+- [scSNViz.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz.r) (Updated: 06/14/2024)
 
 The following CRAN R packages are required:
 - optparse, stringr, openxlsx, HGNChelper, Seurat, ggplot2, dplyr, plotly, htmlwidgets.
@@ -53,7 +53,8 @@ Note too that the matrixStats package (a dependancy of Seurat) needs to be downg
 % Rscript scSNViz.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
 ```
 ```
-% Rscript scSNViz.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/ --dimensionality-reduction=umap \
+% Rscript scSNViz.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
+                         --dimensionality-reduction=umap \
                          --th-vars=1 --th-reads=10 \
                          -i --tissue-type=Liver -c -d -e 
 ```
