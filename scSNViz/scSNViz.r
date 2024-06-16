@@ -1,4 +1,4 @@
-# June 14, 2024
+# June 16, 2024
 suppressPackageStartupMessages({
   library('optparse')
   library('stringr')
@@ -343,7 +343,7 @@ if (num.snvs>1) {
   p <- ggplot(df.snv, aes(x=TotalVAF))+
        geom_histogram(fill=histogram.scale2,boundary=0,alpha=0.6)+
        xlab('TotalVAF')+ylab('cells')+
-       theme(panel.grid.minor=element_blank(), axis.ticks.x=element_blank(),
+       theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(), axis.ticks.x=element_blank(),
              axis.ticks.y=element_blank())
   if (args$`enable-title`) {
     p <- p+ggtitle(sample.name)
@@ -354,7 +354,7 @@ if (num.snvs>1) {
   p <- ggplot(df.snv, aes(x=MeanVAF))+
        geom_histogram(fill=histogram.scale2, boundary=0, alpha=0.6)+
        xlab('MeanSNVsVAF')+ylab('cells')+
-       theme(panel.grid.minor=element_blank(), axis.ticks.x=element_blank(),
+       theme(panel.grid.minor=element_blank(),panel.grid.major=element_blank(), axis.ticks.x=element_blank(),
              axis.ticks.y=element_blank())
   if (args$`enable-title`) {
     p <- p+ggtitle(sample.name)
@@ -365,7 +365,7 @@ if (num.snvs>1) {
   p <- ggplot(df.snv, aes(x=SNVCount))+
        geom_histogram(fill=histogram.scale1, binwidth=1, boundary=0, alpha=0.6)+
        xlab('N_VARreadCounts')+ylab('cells')+
-       theme(panel.grid.minor=element_blank(), axis.ticks.x=element_blank(),
+       theme(panel.grid.minor=element_blank(), panel.grid.major=element_blank(), axis.ticks.x=element_blank(),
              axis.ticks.y=element_blank())
   if (args$`enable-title`) {
     p <- p+ggtitle(sample.name)
@@ -682,21 +682,30 @@ for (i in grep('slingPseudotime', colnames(s@colData))) {
                        marker=list(
                          color=~s@colData[, i],
                          colorscale='YlOrRd',
-                         reversescale=T
+                         reversescale=T, colorbar=list(x=0),
+                         line=list(color=~SNV.N, width=cell.size)
                        ))
-  if (!args$`disable-slingshot`) {
-  f <- f %>% add_trace(data=curve, x=~eval(parse(text = paste0(dim.plotting,'_1'))), y=~eval(parse(text = paste0(dim.plotting,'_2'))), z=~eval(parse(text = paste0(dim.plotting,'_3'))),
-                       mode='lines', showlegend=F,
-                       line=list(width=4, color='black'))
-  file.name <- paste0(sample.name, '_seuratclusters_slingshot-lineage', lineage.i, '.html')
+  if (args$`disable-3d-axis`) {
+      f <- f %>% layout(scene=list(xaxis=list(title='', zeroline=F, showline=F,
+                                          showticklabels=F, showgrid=F),
+                               yaxis=list(title='', zeroline=F, showline=F,
+                                          showticklabels=F, showgrid=F),
+                               zaxis=list(title='', zeroline=F, showline=F,
+                                          showticklabels=F, showgrid=F)))
   } else {
-  
-  file.name <- paste0(sample.name, '_seuratclusters_pseudotime.html')
-  }
-  f <- f %>% layout(title=paste0('Lineage ', lineage.i, ' (', sample.name, ')'),
+  f <- f %>% layout(title=paste0('(', sample.name, ')'),
                     scene=list(xaxis=list(title=paste0(dim.title,'1')),
                                yaxis=list(title=paste0(dim.title,'_2')),
                                zaxis=list(title=paste0(dim.title,'_3'))))
+  }
+  if (!args$`disable-slingshot`) {
+  f <- f %>% add_trace(data=curve, x=~eval(parse(text = paste0(dim.plotting,'_1'))), y=~eval(parse(text = paste0(dim.plotting,'_2'))), z=~eval(parse(text = paste0(dim.plotting,'_3'))),
+                       mode='lines', showlegend=T,
+                       line=list(width=4, color='black'))
+  file.name <- paste0(sample.name, '_seuratclusters_slingshot-lineage', lineage.i, '.html')
+  } else {
+  file.name <- paste0(sample.name, '_seuratclusters_pseudotime.html')
+  }
   saveWidget(f, paste0(dir.name,file.name),
              selfcontained=F, libdir='lib')
 }}
