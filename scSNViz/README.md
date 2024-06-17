@@ -36,7 +36,7 @@ The produced figures include:
 
 ## Installation
 
-Download the file according to the desired dimensionality reduction technique: 
+Download the R file: 
 - [scSNViz.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz.r) (Updated: 06/14/2024)
 
 The following CRAN R packages are required:
