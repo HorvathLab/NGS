@@ -15,6 +15,7 @@ See sample files for reference.
 
 ## Default Output
 scSNViz generates outputs for the set of the sceSNVs and for each individual sceSNV, as follows:
+
 For the set of the sceSNVs, the produced figures include:
 - Histogram of mean VAF per SNV per cell
 - Histogram of the number of SNVs per cell
