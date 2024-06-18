@@ -1,7 +1,7 @@
 ## Introduction
 The scSNViz scripts plot information about SNVs provided by the user onto a
 dimensionally reduced representation of the data (either tsne, pca, or umap,
-depending on the dimensionality reduction technique selected selected). 
+depending on the dimensionality reduction technique selected). 
 Currently, the script generates a set of plots that represent basic statistics 
 and properties of the SNVs identified in the dataset and utilize existing packages,
 such as Seurat, Slingshot, and scType.
