@@ -116,7 +116,7 @@ Note too that the matrixStats package (a dependancy of Seurat) needs to be downg
                          --dimensionality-reduction=tsne \
                          --th-vars=1 --th-reads=10 \
                          -i --tissue-type=Immunesystem \
-                         -c -d -e --color-scale=YlOrRd 
+                         -c -d -e --color-scale=YlGnBu 
 ```
 
 
