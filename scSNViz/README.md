@@ -10,7 +10,62 @@ Additionally, lists of SNVs with cell-barcode information not processed through 
 
 See sample files for reference.
 
-## Default Output
+## Options
+	-h, --help
+		Show this help message and exit
+
+	-r RDS-FILE, --rds-file=RDS-FILE
+		RDS file containing Seurat object.
+
+	-m COUNTSMATRIX-FILE, --countsmatrix-file=COUNTSMATRIX-FILE
+		folder containing STARsolo output folder name that contains
+                     the following files:
+                     barcodes.tsv.gz, features.tsv.gz, and matrix.mtx.gz
+
+	-t SNV-FILE, --snv-file=SNV-FILE
+		scReadCounts file
+
+	-w DIMENSIONALITY-REDUCTION, --dimensionality-reduction=DIMENSIONALITY-REDUCTION
+		options include tSNE, PCA, UMAP. Default=UMAP.
+
+	-x TH-VARS, --th-vars=TH-VARS
+		Threshold for number of sceSNVs. Default=0 (display cells with N_SNVs > 0).
+
+	-y TH-READS, --th-reads=TH-READS
+		Threshold for number of variant reads (N_VAR). Default=0 (consider as sceSNV positions covered with N_VAR > 0).
+
+	-c, --enable-title
+		Enable title. Default=T
+
+	-d, --disable-ind-plots
+		Disable individual SNV plots. Default=F.
+
+	-e, --disable-3d-axis
+		Disable axes in 3D plots. Default=F.
+
+	-g, --disable-slingshot
+		Disable slingshot curves in 3D plots. Default=F.
+
+	-i, --enable-sctype
+		Enable sctype to run. Default=F.
+
+	-j TISSUE-TYPE, --tissue-type=TISSUE-TYPE
+		tissue type for scType; options include:
+                     Immunesystem, Pancreas, Liver, Eye, Kidney, Brain,
+                     Lung, Adrenal, Heart, Intestine, Muscle, Placenta,
+                     Spleen, Stomach, Thymus
+
+	-k COLOR-SCALE, --color-scale=COLOR-SCALE
+		if you would like to change the default color settings with
+                     these options, you may use Blues, Reds, YlOrRd, YlGnBu, plasma, RdBu
+
+	-p, --enable-cell-border
+		Enable cell border. Default=F
+
+	-q, --enable-dynamic-cell-size
+		Enable cell size to depend on number of reads. Default=F
+
+## Output
 scSNViz generates outputs for the set of the sceSNVs and for each individual sceSNV, as follows:
 
 For the set of the sceSNVs, the produced figures include:
@@ -28,7 +83,7 @@ For the set of the sceSNVs, the produced figures include:
 - a text file of summary statistics per cell
   
 For the individual sceSNVs in the set, scSNViz generates gradient color representation plots of the following:
-  - VAF_RNA per cell
+  - Expressed Variant Allele Fraction per cell (VAF_RNA)
   - Number of Reference Reads per cell (N_REF)
   - Number of Variant Reads per cell (N_VAR)
 
