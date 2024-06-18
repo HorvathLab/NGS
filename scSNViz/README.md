@@ -14,7 +14,8 @@ The script accepts three inputs:
 See sample files for reference.
 
 ## Default Output
-The produced figures include:
+scSNViz generates outputs for the set of the sceSNVs and for each individual sceSNV, as follows:
+For the set of the sceSNVs, the produced figures include:
 - Histogram of mean VAF per SNV per cell
 - Histogram of the number of SNVs per cell
 - Histogram of the number of Variant Reads per cell
@@ -26,13 +27,12 @@ The produced figures include:
 - 3D UMAP representation of number of Variant Reads for each cell
 - 3D UMAP representation of number of Reference Reads for each cell
 - 3D UMAP representation of Total VAF per cell (VARreads/(VARreads+REFreads) per cell)
-
-- Individual SNV plots
-  - VAF per cell
-  - Number of Reference Reads per cell
-  - Number of Variant Reads per cell
-
 - a text file of summary statistics per cell
+  
+For the individual sceSNVs in the set, scSNViz generates gradient color representation plots of the following:
+  - VAF_RNA per cell
+  - Number of Reference Reads per cell (N_REF)
+  - Number of Variant Reads per cell (N_VAR)
 
 ## Installation
 
