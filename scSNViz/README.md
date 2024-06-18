@@ -39,10 +39,10 @@ The produced figures include:
 Download the R file: 
 - [scSNViz.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz.r) (Updated: 06/14/2024)
 
-The following CRAN R packages are required:
+The following CRAN packages are required:
 - optparse, stringr, openxlsx, HGNChelper, Seurat, ggplot2, dplyr, plotly, htmlwidgets.
 
-The following Bioconductor R packages are required:
+The following Bioconductor packages are required:
 - glmGamPoi, slingshot.
 
 Note too that the matrixStats package (a dependancy of Seurat) needs to be downgraded to version 1.1.0:
