@@ -6,7 +6,7 @@ The script requires two inputs:
 - STAR solo output directory (-m) that contains features.tsv.gz, barcodes.tsv.gz, and matrix.mtx.gz OR a Seurat object (-r) that was saved as a .RDS
 - SCReadCounts output file (-t) that is tab-delimited and either a .tsv or .txt
   
-Additionally, lists of SNVs with cell-barcode information not processed through SCReadCounts can be submitted in similar format.
+Additionally, lists of SNVs with cell-barcode information not processed through SCReadCounts can be submitted in similar format using the (-t) option.
 
 See sample files for reference.
 
