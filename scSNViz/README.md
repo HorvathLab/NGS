@@ -1,15 +1,12 @@
 ## Introduction
-The scSNViz scripts plot information about SNVs provided by the user onto a
-dimensionally reduced representation of the data (umap, tsne or pca,
-depending on the dimensionality reduction technique selected). 
-Currently, the script generates a set of plots that represent basic statistics 
-and properties of the SNVs identified in the dataset and utilize existing packages,
-such as Seurat, Slingshot, and scType.
+The scSNViz script provides a comprehensive visualization of single cell-specific expressed SNVs (sceSNVs) by mapping them onto a dimensionally reduced representation of the data (e.g., UMAP, t-SNE, or PCA, depending on the selected technique). It generates a series of plots that represent the basic statistics and properties of the SNVs in the dataset. scSNViz integrates existing packages, including Seurat, Slingshot, and scType.
  
 ## Input
-The script accepts three inputs:
+The script requires two inputs:
 - STAR solo output directory (-m) that contains features.tsv.gz, barcodes.tsv.gz, and matrix.mtx.gz OR a Seurat object (-r) that was saved as a .RDS
 - SCReadCounts output file (-t) that is tab-delimited and either a .tsv or .txt
+  
+Additionally, lists of SNVs with cell-barcode information not processed through SCReadCounts can be submitted in similar format.
 
 See sample files for reference.
 
