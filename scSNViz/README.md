@@ -74,7 +74,7 @@ See sample files for reference.
 
 scSNViz generates outputs for the set of the sceSNVs and for each individual sceSNV, as follows:
 
-``
+````
 `sample_SNVs_dimensionality_reduction_xry/`
 │
 ├── Exploratory_Combined_Plots.html
@@ -99,7 +99,7 @@ scSNViz generates outputs for the set of the sceSNVs and for each individual sce
         │   └── 3D REFreads plot HTML files for each sceSNV
         └── `VAF/`
             └── 3D VAF plot HTML files for each sceSNV
-``
+````
 
 **Note:** The `Figures_Individual_Plots_HTML/` directory and its contents are optional and will only be generated if the user requests it using the **-s** option. 
 
