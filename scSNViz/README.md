@@ -104,7 +104,8 @@ sample_SNVs_dimensionality_reduction_xry/
             └── 3D VAF plot HTML files for each sceSNV
 ```
 
-**Note:** The `Figures_Individual_Plots_HTML` directory and its contents are optional and will only be generated if the user requests it using the **-s** option. 
+**Note:** The `Figures_Individual_Plots_HTML` directory and its contents are optional and will only be generated if the user requests it using the **-s** option. <br>
+In `sample_SNVs_dimensionality_reduction_xry`, `dimensionality_reduction` indicates the choice of dimensionality reduction selected, `x` and `y` indicate the variant and the threshold for sceSNVs and the variant reads, respectively.
 
 ## Description
 
