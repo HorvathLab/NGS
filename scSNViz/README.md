@@ -69,7 +69,7 @@ See sample files for reference.
    		Enable CopyKat for displaying CNVs. Default=F
 
      	-s, --save-each-plot
-   		Save plots as separate HTML files. Default=F
+      		Save plots as separate HTML files. Default=F
 
 ## Output
 
