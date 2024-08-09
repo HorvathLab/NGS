@@ -82,7 +82,7 @@ sample_SNVs_dimensionality_reduction_xry/
 │
 ├── Exploratory_Combined_Plots.html
 ├── sample_SNVs-summary.txt
-└── Figures_Individual_Plots_HTML/ (optional)
+└── Figures_Individual_Plots_HTML/   (optional)
     ├── Cell_types_scType.html       (optional)
     ├── CNVs_CopyKat.html            (optional)
     ├── Median_VAF_RNA.html
