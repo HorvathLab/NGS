@@ -79,7 +79,7 @@ scSNViz generates outputs for the set of the sceSNVs and for each individual sce
 │
 ├── Exploratory_Combined_Plots.html
 ├── sample_SNVs-summary.txt
-└── `Figures_Individual_Plots_HTML/` (optional)<sup>*</sup>
+└── ``Figures_Individual_Plots_HTML/`` (optional)<sup>*</sup>
     ├── Cell_types_scType.html       (optional)
     ├── CNVs_CopyKat.html            (optional)
     ├── Median_VAF_RNA.html
