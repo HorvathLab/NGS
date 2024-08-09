@@ -75,30 +75,34 @@ See sample files for reference.
 scSNViz generates outputs for the set of the sceSNVs and for each individual sceSNV, as follows:
 
 ```
-sample_SNVs_dimensionality_reduction_xry/
-│
-├── Exploratory_Combined_Plots.html
-├── sample_SNVs-summary.txt
-└── Figures_Individual_Plots_HTML/
-    ├── Cell_types_scType.html (optional)
-    ├── CNVs_CopyKat.html (optional)
-    ├── Mean_VAF_RNA.html
-    ├── Median_VAF_RNA.html
-    ├── N_REFreads.html
-    ├── Total_VAF_RNA.html
-    ├── N_sceSNVs.html
-    ├── N_VARreads.html
-    ├── N_SNV.png
-    ├── MeanSNVsVAF.png
-    ├── N_VARreadsCounts.png
-    ├── TotalVAF.png
-    └── Individual_sceSNVs/
-        ├── VARreads/
-        │   └── 3D VARreads plot HTML files for each sceSNV
-        ├── REFreads/
-        │   └── 3D REFreads plot HTML files for each sceSNV
-        └── VAF/
-            └── 3D VAF plot HTML files for each sceSNV
+
+| **With Figures_Individual_Plots_HTML** | **Without Figures_Individual_Plots_HTML** |
+| --- | --- |
+| `sample_SNVs_dimensionality_reduction_xry/` | `sample_SNVs_dimensionality_reduction_xry/` |
+| │ | │ |
+| ├── Exploratory_Combined_Plots.html | ├── Exploratory_Combined_Plots.html |
+| ├── sample_SNVs-summary.txt | ├── sample_SNVs-summary.txt |
+| └── Figures_Individual_Plots_HTML/ | └── Individual_sceSNVs/ |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── Cell_types_scType.html (optional) | &nbsp;&nbsp;&nbsp;&nbsp; ├── VARreads/ |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── CNVs_CopyKat.html (optional) | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── 3D VARreads plot HTML files for each sceSNV |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── Median_VAF_RNA.html | &nbsp;&nbsp;&nbsp;&nbsp; ├── REFreads/ |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── Mean_VAF_RNA.html | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── 3D REFreads plot HTML files for each sceSNV |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── N_REFreads.html | &nbsp;&nbsp;&nbsp;&nbsp; └── VAF/ |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── Total_VAF_RNA.html | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── 3D VAF plot HTML files for each sceSNV |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── N_sceSNVs.html | |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── N_VARreads.html | |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── Histogram_N_SNV.png | |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── Histogram_N_VARreadsCounts.png | |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── Histogram_MeanSNVsVAF.png | |
+| &nbsp;&nbsp;&nbsp;&nbsp; ├── Histogram_TotalVAF.png | |
+| &nbsp;&nbsp;&nbsp;&nbsp; └── Individual_sceSNVs/ | |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── VARreads/ | |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── 3D VARreads plot HTML files for each sceSNV | |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ├── REFreads/ | |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── 3D REFreads plot HTML files for each sceSNV | |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── VAF/ | |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── 3D VAF plot HTML files for each sceSNV | |
+
 ```
 
 ### Description
