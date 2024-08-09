@@ -34,8 +34,8 @@ See sample files for reference.
 	-y TH-READS, --th-reads=TH-READS
 		Threshold for number of variant reads (N_VAR). Default=0 (consider as sceSNV positions covered with N_VAR > 0).
 
-	-c, --enable-title
-		Enable title. Default=T
+	-c, --disable-title
+		Disable title for individual SNV plots. Default=F
 
 	-d, --disable-ind-plots
 		Disable individual SNV plots. Default=F.
@@ -59,7 +59,7 @@ See sample files for reference.
 		if you would like to change the default color settings with
                      these options, you may use Blues, Reds, YlOrRd, YlGnBu, plasma, RdBu
 
-	-p, --enable-cell-border
+	-b, --enable-cell-border
 		Enable cell border. Default=F
 
 	-q, --enable-dynamic-cell-size
@@ -68,6 +68,9 @@ See sample files for reference.
   	-u, --enable-copykat
    		Enable CopyKat for displaying CNVs. Default=F
 
+        -s, --save-each-plot
+   		Save plots as separate HTML files. Default=F
+
 ## Output
 
 ### Directory structure
@@ -75,11 +78,11 @@ See sample files for reference.
 scSNViz generates outputs for the set of the sceSNVs and for each individual sceSNV, as follows:
 
 ```
-`sample_SNVs_dimensionality_reduction_xry/`
+sample_SNVs_dimensionality_reduction_xry/
 │
 ├── Exploratory_Combined_Plots.html
 ├── sample_SNVs-summary.txt
-└── ``Figures_Individual_Plots_HTML/`` (optional)<sup>*</sup>
+└── Figures_Individual_Plots_HTML/ (optional)
     ├── Cell_types_scType.html       (optional)
     ├── CNVs_CopyKat.html            (optional)
     ├── Median_VAF_RNA.html
@@ -92,12 +95,12 @@ scSNViz generates outputs for the set of the sceSNVs and for each individual sce
     ├── Histogram_N_VARreadsCounts.png
     ├── Histogram_MeanSNVsVAF.png
     ├── Histogram_TotalVAF.png
-    └── `Individual_sceSNVs/`
-        ├── `VARreads/`
+    └── Individual_sceSNVs/
+        ├── VARreads/
         │   └── 3D VARreads plot HTML files for each sceSNV
-        ├── `REFreads/`
+        ├── REFreads/
         │   └── 3D REFreads plot HTML files for each sceSNV
-        └── `VAF/`
+        └── VAF/
             └── 3D VAF plot HTML files for each sceSNV
 ```
 
