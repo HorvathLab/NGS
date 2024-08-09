@@ -103,7 +103,7 @@ scSNViz generates outputs for the set of the sceSNVs and for each individual sce
 
 **Note:** The `Figures_Individual_Plots_HTML` directory and its contents are optional and will only be generated if the user requests it using the **-s** option. 
 
-### Description
+## Description
 
 For the set of the sceSNVs, the separately produced figures show the following:
 
