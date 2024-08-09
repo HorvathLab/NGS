@@ -75,13 +75,13 @@ See sample files for reference.
 scSNViz generates outputs for the set of the sceSNVs and for each individual sceSNV, as follows:
 
 ```
-sample_SNVs_dimensionality_reduction_xry/
+`sample_SNVs_dimensionality_reduction_xry/`
 │
 ├── Exploratory_Combined_Plots.html
 ├── sample_SNVs-summary.txt
-└── Figures_Individual_Plots_HTML/  (optional)<sup>*</sup>
-    ├── Cell_types_scType.html      (optional)
-    ├── CNVs_CopyKat.html           (optional)
+└── `Figures_Individual_Plots_HTML/` (optional)<sup>*</sup>
+    ├── Cell_types_scType.html       (optional)
+    ├── CNVs_CopyKat.html            (optional)
     ├── Median_VAF_RNA.html
     ├── Mean_VAF_RNA.html
     ├── N_REFreads.html
@@ -92,12 +92,12 @@ sample_SNVs_dimensionality_reduction_xry/
     ├── Histogram_N_VARreadsCounts.png
     ├── Histogram_MeanSNVsVAF.png
     ├── Histogram_TotalVAF.png
-    └── Individual_sceSNVs/
-        ├── VARreads/
+    └── `Individual_sceSNVs/`
+        ├── `VARreads/`
         │   └── 3D VARreads plot HTML files for each sceSNV
-        ├── REFreads/
+        ├── `REFreads/`
         │   └── 3D REFreads plot HTML files for each sceSNV
-        └── VAF/
+        └── `VAF/`
             └── 3D VAF plot HTML files for each sceSNV
 ```
 
