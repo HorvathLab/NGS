@@ -1,4 +1,4 @@
-# Aug 9, 2024
+# Aug 20, 2024
 suppressPackageStartupMessages({
   library('optparse')
   library('stringr')
@@ -215,9 +215,15 @@ if (dimensionality.reduction=='umap'){
 # clustering 
 srt <- FindNeighbors(srt, dims = 1:10)
 srt <- FindClusters(srt, resolution = 0.5)
+
+# SNVs file filtering
 snv <- read.table(snv.file, sep='\t', header=T)
 snv.modify<- snv %>% filter(SNVCount>0)
 num.snvs <- nrow(snv.modify)
+# convert '-' to NA in VAF column (here VAF = ∞ or not defined as var, ref = 0)
+snv$VAF[snv$VAF == '-'] <- NA
+# convert VAF to numeric
+snv$VAF <- as.numeric(snv$VAF)
 
 
 # if scType option is selected, create cell type labels
