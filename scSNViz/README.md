@@ -40,6 +40,9 @@ See sample files for reference.
 	-d, --disable-ind-plots
 		Disable individual SNV plots. Default=F.
 
+  	-v, --disable-ind-plots
+   		Display individual scSNV plots in the combined HTML. Default=F.
+
 	-e, --disable-3d-axis
 		Disable axes in 3D plots. Default=F.
 
@@ -138,7 +141,7 @@ For the set of the sceSNVs, the separately produced figures show the following:
 ## Installation
 
 Download the R file: 
-- [scSNViz.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz.r) (Updated: 07/27/2024)
+- [scSNViz.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz.r) (Updated: 10/01/2024)
 
 The following CRAN packages are required:
 - optparse, stringr, openxlsx, HGNChelper, Seurat, ggplot2, dplyr, plotly, htmlwidgets, htmltools, jsonlite.
