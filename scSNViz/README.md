@@ -40,7 +40,7 @@ See sample files for reference.
 	-d, --disable-ind-plots
 		Disable individual SNV plots. Default=F.
 
-  	-v, --disable-ind-plots
+  	-v, --display-ind-plots
    		Display individual scSNV plots in the combined HTML. Default=F.
 
 	-e, --disable-3d-axis
