@@ -40,8 +40,8 @@ See sample files for reference.
 	-d, --disable-ind-plots
 		Disable individual SNV plots. Default=F.
 
-  	-v, --display-ind-plots
-   		Display individual scSNV plots in the combined HTML. Default=F.
+  	-v, --hide-ind-plots
+   		Hide individual scSNV plots in the combined HTML. Default=F.
 
 	-e, --disable-3d-axis
 		Disable axes in 3D plots. Default=F.
@@ -100,9 +100,9 @@ sample_SNVs_dimensionality_reduction_xry/
     ├── Histogram_TotalVAF.png
     └── Individual_sceSNVs/
         ├── VARreads/
-        │   └── 3D VARreads plot HTML files for each sceSNV
+        │   └── 3D N_VAR plot HTML files for each sceSNV
         ├── REFreads/
-        │   └── 3D REFreads plot HTML files for each sceSNV
+        │   └── 3D N_REF plot HTML files for each sceSNV
         └── VAF/
             └── 3D VAF plot HTML files for each sceSNV
 ```
@@ -131,8 +131,8 @@ For the set of the sceSNVs, the separately produced figures show the following:
 
 **Individual_sceSNVs**: contains 3D dmensionality reduction plots for _individual sceSNV_ of the following:
   - Expressed Variant Allele Fraction per cell (VAF_RNA)
-  - Number of Reference Reads per cell (REFreads)
-  - Number of Variant Reads per cell (VARreads)
+  - Number of Reference Reads per cell (N_REF)
+  - Number of Variant Reads per cell (N_VAR)
 
 **Exploratory_Combined_Plots**: displays all the separately generated plots above into one single html for modularity
 
@@ -141,7 +141,7 @@ For the set of the sceSNVs, the separately produced figures show the following:
 ## Installation
 
 Download the R file: 
-- [scSNViz.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz.r) (Updated: 10/01/2024)
+- [scSNViz.r](https://raw.githubusercontent.com/HorvathLab/NGS/master/scSNViz/scSNViz.r) (Updated: 10/23/2024)
 
 The following CRAN packages are required:
 - optparse, stringr, openxlsx, HGNChelper, Seurat, ggplot2, dplyr, plotly, htmlwidgets, htmltools, jsonlite.
