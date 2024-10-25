@@ -1,4 +1,4 @@
-# Last updated: Oct 23, 2024
+# Last updated: Oct 1, 2024
 
 suppressPackageStartupMessages({
   library('optparse')
@@ -38,7 +38,10 @@ parser <- add_option(parser, c('-y', '--th-reads'),
 parser <- add_option(parser, c('-c', '--disable-title'),
                      type='logical', default=F, action='store_true',
                      help='Disable title for individual SNV plots. Default=F')
-parser <- add_option(parser, c('-v', '--hide-ind-plots'),
+parser <- add_option(parser, c('-d', '--disable-ind-plots'),
+                     type='logical', default=F, action='store_true',
+                     help='Disable individual scSNV plots. Default=F.')
+parser <- add_option(parser, c('-v', '--display-ind-plots'),
                      type='logical', default=F, action='store_true',
                      help='Display individual scSNV plots in the combined HTML. Default=F.')
 parser <- add_option(parser, c('-e', '--disable-3d-axis'),
@@ -386,11 +389,13 @@ colnames(curves)[1:3] <- c(paste0(dim.plotting, '_1'), paste0(dim.plotting, '_2'
 # create directories (if they doesn't exist) for saving each plots as seperate html
 if (args$`save-each-plot`) { 
   dir.create(file.path(dir.name, "Figures_Individual_Plots_HTML"), showWarnings = FALSE)
-  dir.create(file.path(dir.name, "Figures_Individual_Plots_HTML", "Individual_sceSNVs"), showWarnings = FALSE)
-  dir.create(file.path(dir.name, "Figures_Individual_Plots_HTML", "Individual_sceSNVs", "VAF"), showWarnings = FALSE)
-  dir.create(file.path(dir.name, "Figures_Individual_Plots_HTML", "Individual_sceSNVs", "N_VAR"), showWarnings = FALSE)
-  dir.create(file.path(dir.name, "Figures_Individual_Plots_HTML", "Individual_sceSNVs", "N_REF"), showWarnings = FALSE)
+  if (!args$`disable-ind-plots`) {
+    dir.create(file.path(dir.name, "Figures_Individual_Plots_HTML", "Individual_sceSNVs"), showWarnings = FALSE)
+    dir.create(file.path(dir.name, "Figures_Individual_Plots_HTML", "Individual_sceSNVs", "VAF"), showWarnings = FALSE)
+    dir.create(file.path(dir.name, "Figures_Individual_Plots_HTML", "Individual_sceSNVs", "VARreads"), showWarnings = FALSE)
+    dir.create(file.path(dir.name, "Figures_Individual_Plots_HTML", "Individual_sceSNVs", "REFreads"), showWarnings = FALSE)
   }
+}
 
 
 ### ==================================================== HISTOGRAMS ========================================================== ###
@@ -438,9 +443,9 @@ plot_descriptions <- list(
   "Median_VAF_RNA" = "Median VAF_RNA is calculated as the median of the VAF_RNA across all individual sceSNVs and is intended to provide an assessment of the central tendency of the SNV expression levels across cell populations. Only sceSNVs loci from the submitted list are considered, after applying the user-selected thresholds.",
   "Cell types (scType)" = "Classification of individual cells into distinct types using the scType tool. scType employs predefined marker gene sets and a scoring algorithm to analyze single-cell RNA sequencing (scRNA-seq) data, assigning each cell to a specific type based on its gene expression profile. The expected tissue type for the analysis is expected to be submitted by the user.",
   "CNVs (CopyKat)" = "Copy number alterations (CNAs) detected using the CopyKat tool designed to infer genomic CNVs across individual cells using scRNA-seq data. By comparing gene expression profiles, CopyKat identifies regions of the genome that have been amplified or deleted, which can be indicative of genetic abnormalities such as those found in cancer cells.",
-  "VAF_RNA" = "Expressed Variant Allele Fraction. For each individual sceSNV VAF_RNA is calculated as the ratio of the number of variant reads (N_VAR) divided by the total number of reads (N_VAR + N_REF) covering the sceSNV locus (VAF_RNA = N_VAR / (N_VAR + N_REF).",
-  "N_VAR" = "Absolute number of reads bearing the variant nucleotide at the sceSNV locus.",
-  "N_REF" = "Absolute number of reads bearing the reference nucleotide at the sceSNV locus."
+  "VAF_RNA" = "VAF_RNA: expressed Variant Allele Fraction. For each individual sceSNV VAF_RNA is calculated as the ratio of the number of variant reads (N_VAR) divided by the total number of reads (N_VAR + N_REF) covering the sceSNV locus (VAF_RNA = N_VAR / (N_VAR + N_REF).",
+  "VARreads" = "N_VAR: absolute number of reads bearing the variant nucleotide at the sceSNV locus.",
+  "REFreads" = "N_REF: absolute number of reads bearing the reference nucleotide at the sceSNV locus."
 )
 
 
@@ -706,12 +711,12 @@ write.table(df.3dplot, paste0(dir.name, sample.name, '-summary.txt'), sep='\t', 
 
 ### ==================================================== INDIVIDUAL scSNV PLOTS ========================================================== ###
 
-# Make plots that contain N_VAR, N_REF, dimensional reduction plots, Slingshot
+# Make plots that contain VARreads, REFreads, dimensional reduction plots, Slingshot
 
 # initializing individual scSNV plots (for compatibility among -v, -d, and -s options)
 individual_SNV_html <- NULL  
 
-if (!args$`hide-ind-plots`) {
+if (!args$`disable-ind-plots`) {
   # colors for VAF
   pal <- c('#EBEBEB', '#85C1E9', '#E74C3C', '#B03A2E', '#641E16')
   df.snv <- snv
@@ -740,12 +745,12 @@ if (!args$`hide-ind-plots`) {
 
     # generate VAF plot
     y$vaf.label <- 'Undetected'
-    y$vaf.label[y$vaf==0] <- '0 VAF, N_VAR Only'
+    y$vaf.label[y$vaf==0] <- '0 VAF, REFreads Only'
     y$vaf.label[0<y$vaf & y$vaf<=0.25] <- '0<VAF<=0.25'
     y$vaf.label[0.25<y$vaf & y$vaf<=0.75] <- '0.25<VAF<=0.75'
     y$vaf.label[0.75<y$vaf & y$vaf<=1.00] <- '0.75<VAF<=1.00'
     y$vaf.label <- factor(y$vaf.label, levels=c('Undetected',
-      '0 VAF, N_REF Only', '0<VAF<=0.25', '0.25<VAF<=0.75', '0.75<VAF<=1.00'))
+      '0 VAF, REFreads Only', '0<VAF<=0.25', '0.25<VAF<=0.75', '0.75<VAF<=1.00'))
 
     f_vaf <- plot_ly(type='scatter3d', mode='markers+lines')
     for (j in 1:5) {
@@ -772,7 +777,7 @@ if (!args$`hide-ind-plots`) {
     
     plots[['VAF']] <- f_vaf
 
-    # generate N_VAR plot
+    # generate VARreads plot
     f_varreads <- plot_ly(type='scatter3d', mode='markers+lines') %>%
       add_trace(data=subset(y, is.na(vaf)==0),
                 x=~x, y=~y, z=~z,
@@ -783,24 +788,24 @@ if (!args$`hide-ind-plots`) {
                             colorscale='YlOrRd', showscale=T, opacity=0.50,
                             line=list(color='#FEE5D9', width=1),
                             colorbar=list(len=0.5, y=0.2)), 
-                name='Cells with N_VAR') %>%
+                name='Cells with VARreads') %>%
       add_trace(data=subset(y, is.na(vaf)==1),
                 x=~x, y=~y, z=~z,
                 size=ifelse(args$`enable-dynamic-cell-size`, 
                             ~(snv.reads + ref.reads)/max(c(snv.reads, ref.reads), na.rm=TRUE)*10, 0.05),
                 type='scatter3d', mode='markers',
                 marker=list(color='#EBEBEB', line=list(width=0), opacity=0.50), 
-                name='Cells without N_VAR')
+                name='Cells without VARreads')
 
-      f_varreads <- f_varreads %>% layout(title='N_VAR', 
+      f_varreads <- f_varreads %>% layout(title='VARreads', 
                                           titlefont = list(color=title_color),
                                           scene=list(xaxis=list(title=paste0(dim.title,'_1')),
                                                       yaxis=list(title=paste0(dim.title,'_2')),
                                                       zaxis=list(title=paste0(dim.title,'_3'))))
   
-    plots[['N_VAR']] <- f_varreads
+    plots[['VARreads']] <- f_varreads
 
-    # generate N_REF plot
+    # generate REFreads plot
     f_refreads <- plot_ly(type='scatter3d', mode='markers+lines') %>%
       add_trace(data=subset(y, vaf==0 & ref.reads>0),
                 x=~x, y=~y, z=~z,
@@ -811,22 +816,22 @@ if (!args$`hide-ind-plots`) {
                             colorscale='Blues', showscale=T, opacity=0.50,
                             line=list(color='#EFF3FF', width=1),
                             colorbar=list(len=0.5, y=0.2)),
-                name='Cells with N_REF') %>%
+                name='Cells with REFreads') %>%
       add_trace(data=subset(y, (vaf==0 & ref.reads==0)|(is.na(vaf)==1)|(vaf>0)),
                 x=~x, y=~y, z=~z,
                 size=ifelse(args$`enable-dynamic-cell-size`, 
                             ~(snv.reads + ref.reads)/max(c(snv.reads, ref.reads), na.rm=TRUE)*10, 0.05),
                 type='scatter3d', mode='markers',
                 marker=list(color='#EBEBEB', line=list(width=0), opacity=0.50), 
-                name='Cells without N_REF')
+                name='Cells without REFreads')
 
-      f_refreads <- f_refreads %>% layout(title='N_REF', 
+      f_refreads <- f_refreads %>% layout(title='REFreads', 
                                           titlefont = list(color=title_color),
                                           scene=list(xaxis=list(title=paste0(dim.title,'_1')),
                                                      yaxis=list(title=paste0(dim.title,'_2')),
                                                      zaxis=list(title=paste0(dim.title,'_3'))))
   
-    plots[['N_REF']] <- f_refreads
+    plots[['REFreads']] <- f_refreads
 
     
     if (!args$`disable-slingshot`) {
@@ -846,8 +851,8 @@ if (!args$`hide-ind-plots`) {
     plots <- generate_snv_plots(snv, title_color='blue')
     list(
       VAF = list(id = paste0("plot_VAF_", gsub(":", "_", snv)), json = plotly_json(plots[['VAF']])),
-      N_VAR = list(id = paste0("plot_N_VAR_", gsub(":", "_", snv)), json = plotly_json(plots[['N_VAR']])),
-      N_REF = list(id = paste0("plot_N_REF_", gsub(":", "_", snv)), json = plotly_json(plots[['N_REF']]))
+      VARreads = list(id = paste0("plot_VARreads_", gsub(":", "_", snv)), json = plotly_json(plots[['VARreads']])),
+      REFreads = list(id = paste0("plot_REFreads_", gsub(":", "_", snv)), json = plotly_json(plots[['REFreads']]))
     )
   })
 
@@ -858,7 +863,7 @@ if (!args$`hide-ind-plots`) {
     save_snv_plot <- function(plot, snv, plot_type) {
       snv_clean <- gsub(":", "_", snv)
       file_name <- paste0(plot_type, "_", snv_clean, ".html")
-      folder <- switch(plot_type, "VAF" = "VAF", "N_VAR" = "N_VAR", "N_REF" = "N_REF")
+      folder <- switch(plot_type, "VAF" = "VAF", "VARreads" = "VARreads", "REFreads" = "REFreads")
       file_path <- file.path(dir.name, 'Figures_Individual_Plots_HTML', 'Individual_sceSNVs', folder, file_name)
 
       if (!args$`disable-title`) {
@@ -875,12 +880,13 @@ if (!args$`hide-ind-plots`) {
     for (snv in snv_options) {
       plots <- generate_snv_plots(snv, title_color='black')
       save_snv_plot(plots[['VAF']], snv, "VAF")
-      save_snv_plot(plots[['N_VAR']], snv, "N_VAR")
-      save_snv_plot(plots[['N_REF']], snv, "N_REF")
+      save_snv_plot(plots[['VARreads']], snv, "VARreads")
+      save_snv_plot(plots[['REFreads']], snv, "REFreads")
     }
   }
 
   # HTML code for individual sceSNV plots 
+  if (args$`display-ind-plots`) {
     individual_SNV_html <- paste0('
       <!DOCTYPE html>
       <html>
@@ -919,11 +925,11 @@ if (!args$`hide-ind-plots`) {
           <div id="plotContainer_VAF" class="plot-item">
               <div class="plot-title" data-plot-id="VAF_RNA">VAF</div>
           </div>
-          <div id="plotContainer_N_VAR" class="plot-item">
-              <div class="plot-title" data-plot-id="N_VAR">N_VAR</div>
+          <div id="plotContainer_VARreads" class="plot-item">
+              <div class="plot-title" data-plot-id="VARreads">VARreads</div>
           </div>
-          <div id="plotContainer_N_REF" class="plot-item">
-              <div class="plot-title" data-plot-id="N_REF">N_REF</div>
+          <div id="plotContainer_REFreads" class="plot-item">
+              <div class="plot-title" data-plot-id="REFreads">REFreads</div>
           </div>
           </div>
           <script>
@@ -935,7 +941,7 @@ if (!args$`hide-ind-plots`) {
 
           function updatePlot() {
               var snv = $("#snv").val();
-              var plotIds = ["VAF", "N_VAR", "N_REF"];
+              var plotIds = ["VAF", "VARreads", "REFreads"];
               plotIds.forEach(function(plotType) {
               var plotId = "plot_" + plotType + "_" + snv.replace(/:/g, "_");
               var plotData = plots[plotId];
@@ -961,6 +967,10 @@ if (!args$`hide-ind-plots`) {
       </html>'
     )
   }
+} else {
+  # if individual scSNV plots are disabled
+  individual_SNV_html <- NULL
+}
 
 
 # the link HTML to show/hide the histograms
@@ -969,34 +979,17 @@ link_html <- '<br><button id="toggleButton" onclick="toggleHistograms()" style="
 # JavaScript function to toggle the visibility of the histograms
 toggle_histogram_script <- '
     <script>
-        // Ensure histograms are hidden on page load and set button text correctly
-        document.addEventListener("DOMContentLoaded", function() {
-            var histograms = document.getElementById("histograms");
-            var toggleButton = document.getElementById("toggleButton");
-
-            // Initially hide histograms and set button text
-            if (histograms.style.display === "" || histograms.style.display === "none") {
-                histograms.style.display = "none";
-                toggleButton.textContent = "View Histograms";
-            } else {
-                histograms.style.display = "grid";
-                toggleButton.textContent = "Hide Histograms";
-            }
-        });
-
-        function toggleHistograms() {
-            var histograms = document.getElementById("histograms");
-            var toggleButton = document.getElementById("toggleButton");
-
-            // Toggle visibility and button text
-            if (histograms.style.display === "none") {
-                histograms.style.display = "grid";
-                toggleButton.textContent = "Hide Histograms";
-            } else {
-                histograms.style.display = "none";
-                toggleButton.textContent = "View Histograms";
-            }
+    function toggleHistograms() {
+        var histograms = document.getElementById("histograms");
+        var toggleButton = document.getElementById("toggleButton");
+        if (histograms.style.display === "none") {
+        histograms.style.display = "grid";
+        toggleButton.textContent = "Hide Histograms";
+        } else {
+        histograms.style.display = "none";
+        toggleButton.textContent = "View Histograms";
         }
+    }
     </script>
 '
 
@@ -1016,9 +1009,9 @@ title_popup_script <- '
             "Median_VAF_RNA": "Median VAF_RNA is calculated as the median of the VAF_RNA across all individual sceSNVs and is intended to provide an assessment of the central tendency of the SNV expression levels across cell populations. Only sceSNVs loci from the submitted list are considered, after applying the user-selected thresholds.",
             "Cell types (scType)": "Classification of individual cells into distinct types using the scType tool. scType employs predefined marker gene sets and a scoring algorithm to analyze single-cell RNA sequencing (scRNA-seq) data, assigning each cell to a specific type based on its gene expression profile. The expected tissue type for the analysis is expected to be submitted by the user.",
             "CNVs (CopyKat)": "Copy number alterations (CNAs) detected using the CopyKat tool designed to infer genomic CNVs across individual cells using scRNA-seq data. By comparing gene expression profiles, CopyKat identifies regions of the genome that have been amplified or deleted, which can be indicative of genetic abnormalities such as those found in cancer cells.",
-            "VAF_RNA": "Expressed Variant Allele Fraction. For each individual sceSNV VAF_RNA is calculated as the ratio of the number of variant reads (N_VAR) divided by the total number of reads (N_VAR + N_REF) covering the sceSNV locus (VAF_RNA = N_VAR / (N_VAR + N_REF).",
-            "N_VAR": "Absolute number of reads bearing the variant nucleotide at the sceSNV locus.",  
-            "N_REF": "Absolute number of reads bearing the reference nucleotide at the sceSNV locus."
+            "VAF_RNA": "VAF_RNA: expressed Variant Allele Fraction. For each individual sceSNV VAF_RNA is calculated as the ratio of the number of variant reads (N_VAR) divided by the total number of reads (N_VAR + N_REF) covering the sceSNV locus (VAF_RNA = N_VAR / (N_VAR + N_REF).",
+            "VARreads": "N_VAR: absolute number of reads bearing the variant nucleotide at the sceSNV locus.",  
+            "REFreads": "N_REF: absolute number of reads bearing the reference nucleotide at the sceSNV locus."
             };
 
             var existingTooltip = document.querySelector(`.tooltip-box[data-plot-id="${plotId}"]`);
@@ -1155,7 +1148,7 @@ grid_html <- tags$html(
         div(class = "grid-item histogram", as_widget(plot))
       })
     ),
-    if (!is.null(individual_SNV_html) && !args$`hide-ind-plots`) {
+    if (!is.null(individual_SNV_html) && args$`display-ind-plots`) {
       HTML(individual_SNV_html)
     },
     HTML(toggle_histogram_script),
@@ -1166,4 +1159,3 @@ grid_html <- tags$html(
 # saving the final html file with 3D plots, histograms, and individual sceSNV plots
 output_file <- paste0(dir.name, 'Exploratory_Combined_Plots.html')
 save_html(grid_html, file = output_file)
-                          
