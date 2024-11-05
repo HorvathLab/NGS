@@ -11,6 +11,7 @@ Additionally, lists of SNVs with cell-barcode information not processed through 
 See sample files for reference.
 
 ## Options
+```
 	-h, --help 
 		Show this help message and exit
 
@@ -73,6 +74,7 @@ See sample files for reference.
 
 	-s, --save-each-plot
  		Save plots as separate HTML files. Default=F
+   ```
 
 ## Output
 
