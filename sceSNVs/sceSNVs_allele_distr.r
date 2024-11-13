@@ -1,4 +1,3 @@
-
 suppressWarnings(library('optparse'))
 
 script.desc <-
