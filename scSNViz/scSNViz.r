@@ -1,4 +1,4 @@
-# Last updated: Oct 23, 2024
+# Last updated: Nov 27, 2024
 
 suppressPackageStartupMessages({
   library('optparse')
@@ -740,7 +740,7 @@ if (!args$`hide-ind-plots`) {
 
     # generate VAF plot
     y$vaf.label <- 'Undetected'
-    y$vaf.label[y$vaf==0] <- '0 VAF, N_VAR Only'
+    y$vaf.label[y$vaf==0] <- '0 VAF, N_REF Only'
     y$vaf.label[0<y$vaf & y$vaf<=0.25] <- '0<VAF<=0.25'
     y$vaf.label[0.25<y$vaf & y$vaf<=0.75] <- '0.25<VAF<=0.75'
     y$vaf.label[0.75<y$vaf & y$vaf<=1.00] <- '0.75<VAF<=1.00'
