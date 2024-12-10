@@ -1,5 +1,3 @@
-
-
 ## Sample testing snippet for the modules - preprocess_snv_data, plot_snv_data, individual_snv_plots. 
 #### The sample input data is in the input directory. 
 
