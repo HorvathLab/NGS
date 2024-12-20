@@ -78,9 +78,10 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
                                  dynamic_cell_size = FALSE) {
     selected_parts <- unlist(strsplit(selected_snv, ":"))
     df_subset <- df.snv[df.snv$CHROM == selected_parts[1] &
-                          df.snv$POS == as.numeric(selected_parts[2]) & df.snv$REF ==
-                          selected_parts[3] & df.snv$ALT == selected_parts[4], ]
-
+                          df.snv$POS == as.numeric(selected_parts[2]) & 
+                          df.snv$REF ==selected_parts[3] & 
+                          df.snv$ALT == selected_parts[4], ]
+                          
     vaf <- df_subset$VAF[match(colnames(seurat_object), df_subset$ReadGroup)]
     snv_reads <- df_subset$SNVCount[match(colnames(seurat_object),
                                           df_subset$ReadGroup)]
@@ -192,16 +193,15 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
   }
 
 
-  # function to save plots' josn
+  # function to save plots' json
   plots_json <- lapply(snv_options, function(snv) {
     plots <- generate_snv_plots(snv)
-    list(VAF = list(id = paste0("plot_VAF_", gsub(":", "_", snv)),
-                    json = plotly_json(plots[["VAF"]])),
+    list(VAF = list(id = paste0("plot_VAF_", gsub(":", "_", snv)), json = plotly_json(plots[["VAF"]])),
          N_VAR = list(id = paste0("plot_N_VAR_", gsub(":", "_", snv)), json = plotly_json(plots[["N_VAR"]])),
          N_REF = list(id = paste0("plot_N_REF_", gsub(":", "_", snv)), json = plotly_json(plots[["N_REF"]])))
   })
-
   plots_json <- unlist(plots_json, recursive = FALSE)
+
   if (save_each_plot && !is.null(output_dir)) {
     for (snv in snv_options) {
       plots <- generate_snv_plots(snv)
@@ -222,7 +222,9 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
 
     }
   }
-
-  return(plots_json)
+  snv_out <- list()
+  snv_out[["plots_json"]] <- plots_json
+  snv_out[["snv_options"]] <- snv_options
+  return(snv_out)
 }
 

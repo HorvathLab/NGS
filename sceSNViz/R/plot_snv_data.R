@@ -92,6 +92,7 @@ plot_snv_data <- function(seurat_object, df_3dplot, output_dir = NULL, include_h
                                                     "_2"), paste0(toupper(dimensionality_reduction),
                                                                   "_3"))
   }
+  histograms <- list()
   if (include_histograms) {
     hist_list <- list(list(aes = aes(x = TotalVAF), xlab = "TotalVAF",
                            file_suffix = "Histogram_TotalVAF"), list(aes = aes(x = MeanVAF),
@@ -100,15 +101,13 @@ plot_snv_data <- function(seurat_object, df_3dplot, output_dir = NULL, include_h
                            file_suffix = "Histogram_N_VARreadCounts"), list(aes = aes(x = SNV.N),
                                                                             xlab = "N_SNV", file_suffix = "Histogram_N_SNV"))
     for (hist_info in hist_list) {
-      if (!as.character(hist_info$aes)[2] %in% colnames(seurat_object@meta.data))
-        next
       p <- ggplot(seurat_object@meta.data, hist_info$aes) +
         geom_histogram(fill = histogram_scale2, boundary = 0,
                        alpha = 0.6) + xlab(hist_info$xlab) + ylab("Cells") +
         theme(axis.text = element_text(size = 12), axis.title = element_text(size = 14),
               panel.grid.minor = element_blank(), panel.grid.major = element_blank(),
               axis.ticks.x = element_blank(), axis.ticks.y = element_blank())
-      plots[[hist_info$xlab]] <- ggplotly(p)
+      histograms[[hist_info$xlab]] <- ggplotly(p)
       if (save_each_plot && !is.null(output_dir)) {
         ggsave(file = file.path(output_dir, "Figures_Individual_Plots_HTML",
                                 paste0(hist_info$file_suffix, ".png")), plot = p,
@@ -117,9 +116,11 @@ plot_snv_data <- function(seurat_object, df_3dplot, output_dir = NULL, include_h
     }
   }
   plot_descriptions <- list(SNV.N = "Number of Detected SNVs per Cell",
-                            SNVCount = "Total Variant Reads per Cell", RefCount = "Total Reference Reads per Cell",
+                            SNVCount = "Total Variant Reads per Cell", 
+                            RefCount = "Total Reference Reads per Cell",
                             TotalVAF = "Total VAF (Variant Allele Fraction) per Cell",
-                            MeanVAF = "Mean VAF across All Loci per Cell", MedianVAF = "Median VAF across All Loci per Cell")
+                            MeanVAF = "Mean VAF across All Loci per Cell", 
+                            MedianVAF = "Median VAF across All Loci per Cell")
   dimensionality_reduction <- tolower(dimensionality_reduction)
   dim_plotting <- toupper(dimensionality_reduction)
   for (metric in names(plot_descriptions)) {
@@ -148,7 +149,7 @@ plot_snv_data <- function(seurat_object, df_3dplot, output_dir = NULL, include_h
     plot <- plot %>% layout(scene = list(xaxis = list(title = paste0(dim_plotting,
                                                                      "_1")), yaxis = list(title = paste0(dim_plotting,
                                                                                                          "_2")), zaxis = list(title = paste0(dim_plotting,
-                                                                                                                                             "_3"))), title = plot_descriptions[[metric]])
+                                                                                                                                             "_3"))))
     if (disable_3d_axis) {
       plot <- plot %>% layout(scene = list(xaxis = list(title = NULL,
                                                         showticklabels = FALSE), yaxis = list(title = NULL,
@@ -296,5 +297,6 @@ plot_snv_data <- function(seurat_object, df_3dplot, output_dir = NULL, include_h
                  selfcontained = FALSE, libdir = "lib")
     }
   }
+  plots[["histograms"]] <- histograms
   return(plots)
 }
