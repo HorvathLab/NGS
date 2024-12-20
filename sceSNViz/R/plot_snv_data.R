@@ -123,46 +123,105 @@ plot_snv_data <- function(seurat_object, df_3dplot, output_dir = NULL, include_h
                             MedianVAF = "Median VAF across All Loci per Cell")
   dimensionality_reduction <- tolower(dimensionality_reduction)
   dim_plotting <- toupper(dimensionality_reduction)
-  for (metric in names(plot_descriptions)) {
-    if (!metric %in% colnames(df_3dplot))
-      next
-    plot <- plot_ly(type = "scatter3d", mode = "lines+markers") %>%
-      add_markers(data = df_3dplot[df_3dplot[["Undetected"]] ==
-                                     0, ], x = ~get(paste0(dim_plotting, "_1")), y = ~get(paste0(dim_plotting,
-                                                                                                 "_2")), z = ~get(paste0(dim_plotting, "_3")),
-                  marker = list(color = ~get(metric), colorscale = color_scale,
-                                reversescale = reversescale_option, size = cell_size,
-                                showscale = TRUE, colorbar = list(title = metric,
-                                                                  thickness = 20, len = 0.5), line = list(color = ~get(metric),
-                                                                                                          width = cell_size)), opacity = 0.8, name = "expressed sceSNV loci") %>%
-      add_markers(data = df_3dplot[df_3dplot[["Undetected"]] ==
-                                     1, ], x = ~get(paste0(dim_plotting, "_1")), y = ~get(paste0(dim_plotting,
-                                                                                                 "_2")), z = ~get(paste0(dim_plotting, "_3")),
-                  marker = list(color = color_undetected, size = cell_size,
-                                opacity = 0.5), name = "undetected")
-    if (!is.null(curves)) {
-      plot <- plot %>% add_trace(data = curves, x = ~get(paste0(dim_plotting,
-                                                                "_1")), y = ~get(paste0(dim_plotting, "_2")),
-                                 z = ~get(paste0(dim_plotting, "_3")), split = ~Lineage,
-                                 mode = "lines", line = list(width = 2))
-    }
-    plot <- plot %>% layout(scene = list(xaxis = list(title = paste0(dim_plotting,
-                                                                     "_1")), yaxis = list(title = paste0(dim_plotting,
-                                                                                                         "_2")), zaxis = list(title = paste0(dim_plotting,
-                                                                                                                                             "_3"))))
-    if (disable_3d_axis) {
-      plot <- plot %>% layout(scene = list(xaxis = list(title = NULL,
-                                                        showticklabels = FALSE), yaxis = list(title = NULL,
-                                                                                              showticklabels = FALSE), zaxis = list(title = NULL,
-                                                                                                                                    showticklabels = FALSE)))
-    }
-    plots[[metric]] <- plot
-    if (save_each_plot && !is.null(output_dir)) {
-      saveWidget(as_widget(plot), file = file.path(output_dir,
-                                                   "Figures_Individual_Plots_HTML", paste0(metric,
-                                                                                           ".html")), selfcontained = F, libdir = "lib")
-    }
+
+
+generate_plot <- function(metric, df_3dplot, dim_plotting, color_scale, reversescale_option, 
+                          cell_size, color_undetected, curves, disable_3d_axis) {
+  plot <- plot_ly(type = "scatter3d", mode = "lines+markers") %>%
+    add_markers(
+      data = df_3dplot[df_3dplot[["Undetected"]] == 0, ],
+      x = ~get(paste0(dim_plotting, "_1")),
+      y = ~get(paste0(dim_plotting, "_2")),
+      z = ~get(paste0(dim_plotting, "_3")),
+      marker = list(
+        color = ~get(metric),
+        colorscale = color_scale,
+        reversescale = reversescale_option,
+        size = cell_size,
+        showscale = TRUE,
+        colorbar = list(x = 0.85, y = 0.5, thickness = 20, len = 0.5),
+        line = list(color = ~get(metric), width = cell_size)
+      ),
+      opacity = 0.8,
+      name = "expressed sceSNV loci"
+    ) %>%
+    add_markers(
+      data = df_3dplot[df_3dplot[["Undetected"]] == 1, ],
+      x = ~get(paste0(dim_plotting, "_1")),
+      y = ~get(paste0(dim_plotting, "_2")),
+      z = ~get(paste0(dim_plotting, "_3")),
+      marker = list(color = color_undetected, size = cell_size, opacity = 0.5),
+      name = "undetected"
+    )
+  
+  if (!is.null(curves)) {
+    plot <- plot %>%
+      add_trace(
+        data = curves,
+        x = ~get(paste0(dim_plotting, "_1")),
+        y = ~get(paste0(dim_plotting, "_2")),
+        z = ~get(paste0(dim_plotting, "_3")),
+        split = ~Lineage,
+        mode = "lines",
+        line = list(width = 2)
+      )
   }
+  
+  plot <- plot %>%
+    layout(
+      scene = list(
+        xaxis = list(title = paste0(dim_plotting, "_1")),
+        yaxis = list(title = paste0(dim_plotting, "_2")),
+        zaxis = list(title = paste0(dim_plotting, "_3"))
+      )
+    )
+  
+  if (disable_3d_axis) {
+    plot <- plot %>%
+      layout(
+        scene = list(
+          xaxis = list(title = NULL, showticklabels = FALSE),
+          yaxis = list(title = NULL, showticklabels = FALSE),
+          zaxis = list(title = NULL, showticklabels = FALSE)
+        )
+      )
+  }
+  
+  return(plot)
+}
+
+
+plots <- list() 
+
+for (metric in names(plot_descriptions)) {
+  if (!metric %in% colnames(df_3dplot))
+    next
+  
+  plot <- generate_plot(
+    metric = metric, 
+    df_3dplot = df_3dplot, 
+    dim_plotting = dim_plotting, 
+    color_scale = color_scale, 
+    reversescale_option = reversescale_option, 
+    cell_size = cell_size, 
+    color_undetected = color_undetected, 
+    curves = curves, 
+    disable_3d_axis = disable_3d_axis
+  )
+  
+  plots[[metric]] <- plot
+  
+  if (save_each_plot && !is.null(output_dir)) {
+    saveWidget(
+      as_widget(plot),
+      file = file.path(output_dir, "Figures_Individual_Plots_HTML", paste0(metric, ".html")),
+      selfcontained = FALSE,
+      libdir = "lib"
+    )
+  }
+}
+
+
   if (include_cell_types && "customclassif" %in% colnames(df_3dplot)) {
     cell_type_plot <- plot_ly(type = "scatter3d", mode = "lines+markers") %>%
       add_trace(data = df_3dplot, x = ~get(paste0(toupper(dimensionality_reduction),
