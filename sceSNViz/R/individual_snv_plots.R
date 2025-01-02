@@ -74,7 +74,7 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
   }
 
 
-  generate_snv_plots <- function(selected_snv, title_color = "blue",
+generate_snv_plots <- function(selected_snv, title_color = "blue",
                                  dynamic_cell_size = FALSE) {
     selected_parts <- unlist(strsplit(selected_snv, ":"))
     df_subset <- df.snv[df.snv$CHROM == selected_parts[1] &
@@ -83,14 +83,13 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
                           df.snv$ALT == selected_parts[4], ]
                           
     vaf <- df_subset$VAF[match(colnames(seurat_object), df_subset$ReadGroup)]
-    snv_reads <- df_subset$SNVCount[match(colnames(seurat_object),
-                                          df_subset$ReadGroup)]
-    ref_reads <- df_subset$RefCount[match(colnames(seurat_object),
-                                          df_subset$ReadGroup)]
+    snv_reads <- df_subset$SNVCount[match(colnames(seurat_object), df_subset$ReadGroup)]
+    ref_reads <- df_subset$RefCount[match(colnames(seurat_object), df_subset$ReadGroup)]
     y <- data.frame(x = df.dim[, 1], y = df.dim[, 2], z = df.dim[, 3],
                     vaf = vaf, ref_reads = ref_reads, snv_reads = snv_reads)
 
     plots <- list()
+
     y$vaf_label <- "Undetected"
     y$vaf_label[y$vaf == 0] <- "0 VAF, N_REF Only"
     y$vaf_label[0 < y$vaf & y$vaf <= 0.25] <- "0<VAF<=0.25"
@@ -106,11 +105,13 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
       if (dynamic_cell_size) {
         f_vaf <- f_vaf %>% add_trace(data = subset(y, vaf_label == cur_label),
                                      x = ~x, y = ~y, z = ~z,
-                                     size = ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads), na.rm = TRUE)) * 10, type = "scatter3d",
-                                     mode = "markers", marker = list(color = pal[j], line = list(width = 0)), name = cur_label)
+                                     size = ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads), na.rm = TRUE)) * 10,
+                                     type = "scatter3d", mode = "markers", 
+                                     marker = list(color = pal[j], line = list(width = 0)), name = cur_label)
       }
       else {
-        f_vaf <- f_vaf %>% add_trace(data = subset(y, vaf_label == cur_label), x = ~x, y = ~y, z = ~z,
+        f_vaf <- f_vaf %>% add_trace(data = subset(y, vaf_label == cur_label),
+                                     x = ~x, y = ~y, z = ~z,
                                      size = 0.05, type = "scatter3d", mode = "markers",
                                      marker = list(color = pal[j], line = list(width = 0)),
                                      name = cur_label)
@@ -123,12 +124,13 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
                                    z = ~get(paste0(dim.title, "_3")),
                                    split = ~Lineage, mode = "lines", line = list(width = 2))
     }
-    f_vaf <- f_vaf %>% layout(title = list(text = "VAF_RNA", font = list(color = title_color)),
+    f_vaf <- f_vaf %>% layout(title = list(text = "VAF_RNA", 
+                              font = list(color = title_color)),
                               scene = list(xaxis = list(title = paste0(dim.title, "_1")),
                                            yaxis = list(title = paste0(dim.title, "_2")),
                                            zaxis = list(title = paste0(dim.title, "_3"))))
 
-    plots[["VAF"]] <- f_vaf
+    plots[['VAF']] <- f_vaf
 
     # make N_VAR plots
     f_varreads <- plot_ly(type = "scatter3d", mode = "markers+lines") %>%
@@ -156,7 +158,7 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
                                                      yaxis = list(title = paste0(dim.title, "_2")),
                                                      zaxis = list(title = paste0(dim.title, "_3"))))
 
-    plots[["N_VAR"]] <- f_varreads
+    plots[['N_VAR']] <- f_varreads
 
     # make N_REF plots
     f_refreads <- plot_ly(type = "scatter3d", mode = "markers+lines") %>%
@@ -188,19 +190,36 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
                                                      yaxis = list(title = paste0(dim.title, "_2")),
                                                      zaxis = list(title = paste0(dim.title, "_3"))))
 
-    plots[["N_REF"]] <- f_refreads
+    plots[['N_REF']] <- f_refreads
     return(plots)
   }
 
 
   # function to save plots' json
-  plots_json <- lapply(snv_options, function(snv) {
-    plots <- generate_snv_plots(snv)
-    list(VAF = list(id = paste0("plot_VAF_", gsub(":", "_", snv)), json = plotly_json(plots[["VAF"]])),
-         N_VAR = list(id = paste0("plot_N_VAR_", gsub(":", "_", snv)), json = plotly_json(plots[["N_VAR"]])),
-         N_REF = list(id = paste0("plot_N_REF_", gsub(":", "_", snv)), json = plotly_json(plots[["N_REF"]])))
-  })
+ plots_json <- lapply(snv_options, function(snv) {
+  plots <- generate_snv_plots(snv, title_color = 'blue')
+  list(
+    VAF = list(
+      id = paste0("plot_VAF_", gsub(":", "_", snv)),
+      json = jsonlite::toJSON(plotly::plotly_build(plots[['VAF']])$x, auto_unbox = TRUE)
+    ),
+    N_VAR = list(
+      id = paste0("plot_N_VAR_", gsub(":", "_", snv)),
+      json = jsonlite::toJSON(plotly::plotly_build(plots[['N_VAR']])$x, auto_unbox = TRUE)
+    ),
+    N_REF = list(
+      id = paste0("plot_N_REF_", gsub(":", "_", snv)),
+      json = jsonlite::toJSON(plotly::plotly_build(plots[['N_REF']])$x, auto_unbox = TRUE)
+    )
+  )
+})
+
+
+  saveRDS(plots_json, file = "aaaa.RData")
+
   plots_json <- unlist(plots_json, recursive = FALSE)
+
+  saveRDS(plots_json, file = "bbbb.RData")
 
   if (save_each_plot && !is.null(output_dir)) {
     for (snv in snv_options) {
