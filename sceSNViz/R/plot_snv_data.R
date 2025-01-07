@@ -124,7 +124,7 @@ plot_snv_data <- function(seurat_object, plot_data, processed_snv, output_dir = 
                            file_suffix = "Histogram_N_SNV"))
 
     for (hist_info in hist_list) {
-      p <- ggplot(processed_data$AggregatedSNV, hist_info$aes) +
+      p <- ggplot(seurat_object@meta.data, hist_info$aes) +
         geom_histogram(fill = histogram_scale2, boundary = 0,
                        alpha = 0.6) + xlab(hist_info$xlab) + ylab("Cells") +
         theme(axis.text = element_text(size = 12), axis.title = element_text(size = 14),
