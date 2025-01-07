@@ -2,8 +2,8 @@
 #### The sample input data is in the input directory. Provide an optional output directory (argument output_dir) for the package output. 
 
 ```
-load.lib<-c("optparse", "stringr", "openxlsx", "HGNChelper", "Seurat", "ggplot2", "dplyr", "plotly",
-            "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat")
+load.lib<-c("SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "ggplot2",
+            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat")
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
 sapply(load.lib,require,character=TRUE)
