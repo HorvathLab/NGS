@@ -1,11 +1,15 @@
 #' Preprocess scSNViz Data
 #'
 #' This function preprocesses SNV and Seurat object data, performs dimensionality reduction,
-#' clustering, and computes various statistics for visualization.
+#' clustering, computes various statistics for visualization, and optionally generates statistics.
 #'
 #' @importFrom Seurat RunPCA RunUMAP RunTSNE
 #' @importFrom Seurat Embeddings FindClusters FindNeighbors DefaultAssay DefaultAssay<-
 #' @importFrom Seurat CreateSeuratObject PercentageFeatureSet SCTransform
+#' @importFrom HGNChelper checkGeneSymbols
+#' @importFrom stringr str_to_title
+#' @importFrom dplyr top_n filter arrange mutate group_by
+#' @importFrom stats kruskal.test p.adjust
 #'
 #' @param rds_file Path to the RDS file containing a Seurat object (required if countsmatrix_file is not provided).
 #' @param countsmatrix_file Path to the folder containing STARsolo output files (barcodes.tsv.gz, features.tsv.gz, matrix.mtx.gz).
@@ -16,17 +20,12 @@
 #' @param enable_sctype Logical; enable scType analysis. Default: FALSE.
 #' @param tissue_type Tissue type for scType. Required if enable_sctype is TRUE.
 #' @param color_scale Color scale for plots. Options include Blues, Reds, etc. Default: YlOrRd.
+#' @param generate_statistics Logical; if TRUE, generate SNV statistics. Default: FALSE.
+#' @param output_dir Directory where the statistics files will be saved if `generate_statistics` is TRUE. Default: Current working directory.
 #' @return A Seurat object with processed metadata and embeddings.
-#' @details
-#' This function reads and processes data from an RDS file or STARsolo counts matrix, along with an SNV file.
-#' - **RDS File**: A Seurat object is read and processed if provided.
-#' - **STARsolo Counts Matrix**: If provided, it processes raw counts into a Seurat object.
-#' - **Dimensionality Reduction**: Options include UMAP (umap), PCA (pca), or t-SNE (tsne).
-#' - **Thresholding**: Filters cells based on th_vars (number of SNVs) and th_reads (variant reads per locus).
-#' - **scType Analysis**: If enable_sctype is TRUE, cell-type annotation is performed using the specified tissue_type.
+#' @export
 #'
 #' @examples
-#' # Example usage:
 #' processed_data <- preprocess_snv_data(
 #'   rds_file = "path/to/seurat.rds",
 #'   snv_file = "path/to/snv_file.tsv",
@@ -34,57 +33,129 @@
 #'   th_vars = 1,
 #'   th_reads = 2,
 #'   enable_sctype = TRUE,
-#'   tissue_type = "Immune system"
+#'   tissue_type = "Immunesystem",
+#'   generate_statistics = TRUE,
+#'   th_snv_cells = 10,
+#'   output_dir = "path/to/output"
 #' )
-#'
-#' # Accessing the results:
-#' seurat_object <- processed_data$SeuratObject
-#' plot_data <- processed_data$PlotData
-#' processed_snv <- processed_data$ProcessedSNV
-#'
-#' @export
-#'
 preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_file,
                                 dimensionality_reduction = "UMAP", th_vars = 0, th_reads = 0,
-                                enable_sctype = FALSE, tissue_type = NULL, color_scale = "YlOrRd") {
+                                enable_sctype = FALSE, tissue_type = NULL, color_scale = "YlOrRd",
+                                generate_statistics = FALSE, th_snv_cells = 10, output_dir = NULL) {
 
-  # validate inputs
+  # Validate inputs
   if (is.null(rds_file) & is.null(countsmatrix_file)) {
-    stop("The rds_file and countsmatrix_file must be provided.")
+    stop("Seurat RDS object or STARsolo output directory for counts matrix is required.")
   }
   if (is.null(snv_file)) {
-    stop("The SNV file is required.")
+    stop("The scReadCounts file is required.")
+  }
+
+  if (generate_statistics && is.null(output_dir)) {
+    output_dir <- getwd()
   }
 
   valid_reductions <- c("umap", "pca", "tsne")
   dimensionality_reduction <- tolower(dimensionality_reduction)
   if (!dimensionality_reduction %in% valid_reductions) {
-    stop("Invalid dimensionality_reduction method. Please use one of: 'umap', 'pca', 'tsne'.")
+    stop("You have input a dimensionality reduction that is not supported by this package. Please use pca, umap, or tsne.")
   }
 
-  dim.plotting <- switch(dimensionality_reduction, umap = "UMAP",
-                         pca = "PCA", tsne = "tSNE")
 
-  if (enable_sctype && is.null(tissue_type)) {
-    stop("Tissue type is required when enable_sctype is TRUE.")
+  # Read and process SNV data
+
+  snv <- read.table(snv_file, sep = "\t", header = TRUE)
+
+  if (nrow(snv) == 0) {
+    stop("The SNV file is empty.")
   }
-  if (!is.null(tissue_type)) {
-    tissue_type <- str_to_title(tolower(tissue_type))
-    if (tissue_type %in% c("Immune", "Immunesystem")) {
-      tissue_type <- "Immune system"
+
+  snv <- snv %>% filter(SNVCount > 0)
+  snv$VAF[snv$VAF == "-"] <- NA
+  snv$VAF <- as.numeric(snv$VAF)
+
+  # generate SNV statistics if requested
+  if (generate_statistics) {
+    snv <- snv[!is.na(snv$VAF), ]
+
+    # Filter based on `X.BadRead` and `SNVCount`
+    snv$temp <- snv
+    snv$temp$BadReadFlag <- 0
+    snv$temp$BadReadFlag[snv$temp$`X.BadRead` > 0] <- 1
+    snv.read.filt <- aggregate(BadReadFlag ~ CHROM + POS + REF + ALT, data = snv$temp,
+                               function(x) 100 * sum(x) / length(x))
+    snv.read.filt <- snv.read.filt[snv.read.filt$BadReadFlag <= th_snv_cells, ]
+    snv <- merge(snv, snv.read.filt, by = c("CHROM", "POS", "REF", "ALT"))
+    snv$VAF[snv$SNVCount < th_reads] <- 0
+    if (nrow(snv) == 0) {
+      stop("There are no rows left after filtering.")
+    }
+
+    # cluster assignment
+    srt <- readRDS(rds_file)
+    df.cid <- as.data.frame(srt[["seurat_clusters"]])
+    df.cid <- data.frame(ReadGroup = rownames(df.cid), ClusterID = df.cid[, 1], row.names = NULL)
+    df.snv <- merge(snv, df.cid, by = "ReadGroup")
+
+    snv_groups <- split(df.snv, paste(df.snv$CHROM, df.snv$POS, df.snv$REF, df.snv$ALT, sep = "_"))
+
+    # Kruskal-Wallis test for each SNV across clusters
+    kw_test_statistics <- c()
+    kw_p_values <- c()
+
+    for (snv_key in names(snv_groups)) {
+      snv_data <- snv_groups[[snv_key]]
+      if (length(unique(snv_data$ClusterID)) > 1) {
+        kw_test_result <- kruskal.test(VAF ~ ClusterID, data = snv_data)
+        kw_test_statistics <- c(kw_test_statistics, kw_test_result$statistic)
+        kw_p_values <- c(kw_p_values, kw_test_result$p.value)
+      } else {
+        kw_test_statistics <- c(kw_test_statistics, NA)
+        kw_p_values <- c(kw_p_values, NA)
+      }
+    }
+
+    # adjustment for multiple comparisons
+    kw_p_adj <- p.adjust(kw_p_values, method = "bonferroni")
+
+    df.final <- data.frame(
+      SNV = names(snv_groups),
+      H_statistic = kw_test_statistics,
+      p_value = kw_p_values,
+      p_adj = kw_p_adj
+    )
+
+    df.final <- na.omit(df.final)
+    df.final <- df.final[order(df.final$p_adj), ]
+
+    dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+    write.table(df.final, file = file.path(output_dir, "SNV_Statistics.txt"), sep = "\t", row.names = FALSE)
+    significant_snvs <- df.final[df.final$p_adj < 0.1, ]
+    write.table(significant_snvs, file = file.path(output_dir, "Significant_SNVs.txt"), sep = "\t", row.names = FALSE)
+  }
+
+
+  # Cell type analysis by scType
+
+  if (enable_sctype) {
+    if (is.null(tissue_type)) {
+      stop("- Tissue type is required when enable_sctype is TRUE.")
+    } else {
+      # Normalize and validate tissue type
+      tissue_type <- str_to_title(tolower(tissue_type))
+      if (tissue_type %in% c("Immune", "Immunesystem")) {
+        tissue_type <- "Immune system"
+      }
+      valid_tissue_types <- c("Immune system", "Pancreas", "Liver", "Eye", "Kidney",
+                              "Brain", "Lung", "Adrenal", "Heart", "Intestine", "Muscle",
+                              "Placenta", "Spleen", "Stomach", "Thymus")
+      if (!(tissue_type %in% valid_tissue_types)) {
+        stop(paste("- The tissue type you have provided does not seem to be one of the tissue types that scType accepts:",
+                   paste(valid_tissue_types, collapse = ", ")))
+      }
     }
   }
 
-  # validate tissue types
-  valid_tissue_types <- c("Immune system", "Pancreas", "Liver",
-                          "Eye", "Kidney", "Brain", "Lung", "Adrenal", "Heart",
-                          "Intestine", "Muscle", "Placenta", "Spleen", "Stomach",
-                          "Thymus")
-
-  if (enable_sctype && !(tissue_type %in% valid_tissue_types)) {
-    stop("Invalid tissue type. Available tissues are: ",
-         paste(valid_tissue_types, collapse = ", "))
-  }
   if (!is.null(rds_file)) {
     srt <- readRDS(rds_file)
   }
@@ -181,7 +252,6 @@ preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_f
     dim.plotting <- "UMAP"
   }
 
-
   # clustering
   srt <- FindNeighbors(srt, dims = 1:10)
   srt <- FindClusters(srt, resolution = 0.5)
@@ -215,6 +285,7 @@ preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_f
       srt@meta.data$customclassif[srt@meta.data$seurat_clusters == cl] <- as.character(cl_type$type[1])
     }
   }
+
   srt[["HasSNV"]] <- sapply(srt[["SNVCount"]][, 1], function(x) if (x >= th_reads) 1 else 0)
 
 
@@ -232,10 +303,9 @@ preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_f
     df.3dplot <- merge(df.snv, df.dim, by = 0)
     colnames(df.3dplot)[11:13] <- c(paste0(dim.plotting, "_1"), paste0(dim.plotting, "_2"), paste0(dim.plotting, "_3"))
   }
-
   rownames(df.3dplot) <- df.3dplot$Row.names
   df.3dplot <- df.3dplot[, 2:ncol(df.3dplot)]
+  plot_data <- df.3dplot
 
-
-  return(list(SeuratObject = srt, PlotData = df.3dplot, ProcessedSNV = snv))
+  return(list(SeuratObject = srt, ProcessedSNV = snv, AggregatedSNV = df.snv, PlotData = plot_data))
 }
