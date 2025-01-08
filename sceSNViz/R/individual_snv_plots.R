@@ -198,28 +198,25 @@ generate_snv_plots <- function(selected_snv, title_color = "blue",
   # function to save plots' json
  plots_json <- lapply(snv_options, function(snv) {
   plots <- generate_snv_plots(snv, title_color = 'blue')
+  
   list(
     VAF = list(
       id = paste0("plot_VAF_", gsub(":", "_", snv)),
-      json = jsonlite::toJSON(plotly::plotly_build(plots[['VAF']])$x, auto_unbox = TRUE)
+      json = plotly::plotly_json(plots[['VAF']], jsonedit = FALSE)
     ),
     N_VAR = list(
       id = paste0("plot_N_VAR_", gsub(":", "_", snv)),
-      json = jsonlite::toJSON(plotly::plotly_build(plots[['N_VAR']])$x, auto_unbox = TRUE)
+      json = plotly::plotly_json(plots[['N_VAR']], jsonedit = FALSE)
     ),
     N_REF = list(
       id = paste0("plot_N_REF_", gsub(":", "_", snv)),
-      json = jsonlite::toJSON(plotly::plotly_build(plots[['N_REF']])$x, auto_unbox = TRUE)
+      json = plotly::plotly_json(plots[['N_REF']], jsonedit = FALSE)
     )
+  )}
   )
-})
-
-
-  saveRDS(plots_json, file = "aaaa.RData")
 
   plots_json <- unlist(plots_json, recursive = FALSE)
 
-  saveRDS(plots_json, file = "bbbb.RData")
 
   if (save_each_plot && !is.null(output_dir)) {
     for (snv in snv_options) {
