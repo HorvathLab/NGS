@@ -1,26 +1,26 @@
 #' Generate Report
 #'
-#' This function generates interactive 3D dimensionality reduction plots, histograms, Cell Types Plot, and CopyKat Plot, with the option to save plots individually.
+#' This function combines the outputs of the the "plot_snv_data" and "individual_snv_plots" functions into one interactive
+#' html file for easy analysis of data. 
 #'
-#' @importFrom
+#' @importFrom htmltools div tags HTML save_html
+#' @importFrom plotly as_widget 
 #'
-#' @param plot_object
-#' @param snv_plot_object
-#' @param hide_ind_plots 
+#' @param plot_object Processed plot object generated from plot_snv_data()
+#' @param snv_plot_object Processed SNV plot object generated from individual_snv_plots()
+#' @param hide_ind_plots Logical; determines if individual SNV plots are displated on final HTML report.
+#' @return Generates HTML file in working direcotry named Exploratory_Combined_Plots.html
 #' @details
-#' The function generates various visualizations for SNV data including:
-#' - **3D Plots**: Visualizes metrics such as SNV.N, SNVCount, and TotalVAF.
-#' - **Histograms**: Distribution of metrics including TotalVAF, MeanSNVsVAF, and N_VARreadCounts.
-#' - **Cell Types Plot**: Shows cell types (e.g., custom classifications) with optional slingshot trajectories.
-#' - **CopyKat Plot**: Depicts Copy Number Variations (CNVs) using CopyKat analysis.
-#'
-#' The output_dir parameter specifies where the plots will be saved if save_each_plot is enabled.
+#' The function outputs a combined HTML file. Using the params this can either display the individual SNV plots and the 
+#' SNV data or just the SNV Data. This is saved into an HTML file in the home directory for easy analysis of each plot 
+#' that is generated.
 #'
 #' @examples
 #' # Example usage:
-#'
+#' generate_report(plots, snv_plots, FALSE)
 #'
 #' @export
+#'
 generate_report <- function(plot_object, snv_plot_object = NULL, hide_ind_plots = TRUE){
 
     if(missing(plot_object)){
