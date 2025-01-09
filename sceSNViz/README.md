@@ -13,6 +13,10 @@ library(sceSNViz)
 rds_file_path <- system.file("input", "sample_Seurat_object.rds", package = "sceSNViz")
 snv_file_path <- system.file("input", "sample_SNVs.txt", package = "sceSNViz")
 
+#if above does not work:
+rds_file_path <- "path/to/file/.RDS"
+snv_file_path <- "path/to/file/snv.txt"
+
 cat("\nRunning preprocessing...\n")
 
 # preprocessing the snv data
