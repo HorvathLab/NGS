@@ -38,9 +38,6 @@ See sample files for reference.
 	-c, --disable-title
 		Disable title for individual SNV plots. Default=F
 
-	-d, --disable-ind-plots
-		Disable individual SNV plots. Default=F.
-
   	-v, --hide-ind-plots
    		Hide individual scSNV plots in the combined HTML. Default=F.
 
@@ -165,12 +162,12 @@ Note too that the matrixStats package (a dependancy of Seurat) needs to be downg
 % Rscript scSNViz.r -t sample_SNVs.txt -m SAMNXX_wasp_Solo.out/Gene/filtered/
                          --dimensionality-reduction=umap \
                          --th-vars=1 --th-reads=10 \
-                         -i --tissue-type=Liver -c -d -u  
+                         -i --tissue-type=Liver -c -u  
 ```
 ```
 % Rscript scSNViz.r -t sample_SNVs.txt -r sample_Seurat_object.rds \
                          --dimensionality-reduction=tsne \
                          --th-vars=1 --th-reads=10 \
                          -i --tissue-type=Immunesystem \
-                         -c -d -e --color-scale=YlGnBu 
+                         -c -v -e --color-scale=YlGnBu 
 ```
