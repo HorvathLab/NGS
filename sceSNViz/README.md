@@ -4,6 +4,7 @@
 ```
 load.lib<-c("SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "ggplot2",
             "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer")
+
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
 sapply(load.lib,require,character=TRUE)
@@ -17,7 +18,7 @@ snv_file_path <- system.file("input", "sample_SNVs.txt", package = "sceSNViz")
 rds_file_path <- "path/to/file/.RDS"
 snv_file_path <- "path/to/file/snv.txt"
 
-cat("\nRunning preprocessing...\n")
+output_dir = "output"    # or output directory of your choice
 
 # preprocessing the snv data
 processed_data <- preprocess_snv_data(rds_file = rds_file_path,
@@ -28,15 +29,13 @@ processed_data <- preprocess_snv_data(rds_file = rds_file_path,
                                       enable_sctype = TRUE,
                                       tissue_type = "Immunesystem",
                                       generate_statistics = TRUE,
-                                      output_dir = "output")
-
-cat("\nGenerating plots...\n")
+                                      output_dir = output_dir)
 
 # generate the different 3d dimensionality reduction plots
 plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        plot_data = processed_data$PlotData,
                        processed_snv = processed_data$ProcessedSNV,
-                       output_dir = "output/plots",
+                       output_dir = output_dir,
                        include_histograms = TRUE,  
                        dimensionality_reduction = "umap",
                        include_cell_types = TRUE,
@@ -45,13 +44,10 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        color_scale = "YlOrRd",
                        save_each_plot = TRUE)
 
-
-cat("\nGenerating individual SNV plots...\n")
-
 # generate individual snv plots
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
                                       processed_snv = processed_data$ProcessedSNV,
-                                      output_dir = "output/individual_plots",
+                                      output_dir = output_dir,
                                       slingshot = TRUE,
                                       save_each_plot = TRUE,
                                       dimensionality_reduction = "UMAP",
@@ -63,5 +59,6 @@ generate_report(plot_object = plots)
 #generate a report with individual snv plots
 generate_report(plot_object = plots,
                 snv_plot_object = ind_snv_plots,
-                hide_ind_plots = FALSE)
+                hide_ind_plots = FALSE,
+                output_dir = output_dir)
 ```
