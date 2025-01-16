@@ -24,7 +24,7 @@
 #' @param dimensionality_reduction Dimensionality reduction method used ('UMAP', 'PCA', or 'tSNE').
 #' @param slingshot Logical; whether to include slingshot trajectories in 3D plots. Default: TRUE.
 #' @param color_scale Color scale for plots. Default: 'YlOrRd'.
-#' @param cell_size Numeric; size of points in the plot. Default: 3.
+#' @param cell_border Numeric; thickness of cells'/markers' border in the plot. Default: 0.
 #' @param disable_3d_axis Logical; whether to disable 3D axis labels. Default: FALSE.
 #' @param save_each_plot Logical; whether to save each plot individually. Default: FALSE.
 #' @return A list of generated plots.
@@ -53,7 +53,7 @@
 #'   dimensionality_reduction = "UMAP",
 #'   slingshot = TRUE,
 #'   color_scale = "YlOrRd",
-#'   cell_size = 3,
+#'   cell_border = 0,
 #'   disable_3d_axis = FALSE,
 #'   save_each_plot = TRUE
 #' )
@@ -67,7 +67,7 @@
 plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_data, output_dir = NULL,
                           include_histograms = T, include_cell_types = F, include_snv_dim_red = T,
                           include_copykat = F, dimensionality_reduction = "UMAP", slingshot = T,
-                          color_scale = "YlOrRd", cell_size = 3, disable_3d_axis = F, save_each_plot = F) {
+                          color_scale = "YlOrRd", cell_border = 0, disable_3d_axis = F, save_each_plot = F) {
 
   cat("\nGenerating SNV data plots...\n")
 
@@ -160,7 +160,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
   # Function for generating all SNV related plots excluding individual SNV plots
 
   generate_plot <- function(metric, plot_data, dim_plotting, color_scale, reversescale_option,
-                            cell_size, color_undetected, curves, disable_3d_axis, title) {
+                            cell_border, color_undetected, curves, disable_3d_axis, title) {
     plot <- plot_ly(type = "scatter3d", mode = "lines+markers") %>%
       add_markers(
         data = plot_data[plot_data[["Undetected"]] == 0, ],
@@ -169,9 +169,9 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
         z = ~get(paste0(dim_plotting, "_3")),
         marker = list(
           color = ~get(metric), colorscale = color_scale,
-          reversescale = reversescale_option, size = cell_size,
+          reversescale = reversescale_option, size = cell_border,
           showscale = T, colorbar = list(x = 0.85, y = 0.5, thickness = 20, len = 0.5),
-          line = list(color = ~get(metric), width = cell_size)),
+          line = list(color = ~get(metric), width = cell_border)),
                       opacity = 0.8, name = "expressed sceSNV loci"
       ) %>%
       add_markers(
@@ -179,7 +179,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
         x = ~get(paste0(dim_plotting, "_1")),
         y = ~get(paste0(dim_plotting, "_2")),
         z = ~get(paste0(dim_plotting, "_3")),
-        marker = list(color = color_undetected, size = cell_size,
+        marker = list(color = color_undetected, size = cell_border,
                       opacity = 0.5), name = "undetected"
       )
 
@@ -233,7 +233,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
       dim_plotting = dim_plotting,
       color_scale = color_scale,
       reversescale_option = reversescale_option,
-      cell_size = cell_size,
+      cell_border = cell_border,
       color_undetected = color_undetected,
       curves = curves,
       disable_3d_axis = disable_3d_axis,
@@ -312,7 +312,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
                     z = ~get(paste0(toupper(dimensionality_reduction), "_3")),
                     marker = list(color = ~s@colData[, i], colorscale = "YlOrRd",
                                   reversescale = reversescale_option, colorbar = list(x = 0),
-                                  line = list(color = ~SNV.N, width = cell_size)))
+                                  line = list(color = ~SNV.N, width = cell_border)))
         if (!disable_3d_axis) {
           lineage_plot <- lineage_plot %>% layout(
             scene = list(xaxis = list(title = paste0(toupper(dimensionality_reduction), "_1")),
@@ -396,7 +396,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
             x = ~get(colnames(df_3dplot_snv)[1]),
             y = ~get(colnames(df_3dplot_snv)[2]),
             z = ~get(colnames(df_3dplot_snv)[3]),
-            marker = list(size = cell_size, color = color_scale, opacity = 0.5),
+            marker = list(size = cell_border, color = color_scale, opacity = 0.5),
             text = rownames(df_3dplot_snv), hoverinfo = "text"
       )
 
