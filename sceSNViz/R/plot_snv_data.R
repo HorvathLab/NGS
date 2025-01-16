@@ -389,7 +389,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
       paste0(toupper(dimensionality_reduction), "_3")
     )
 
-    snv_dim_red_plot <- plot_ly(
+    trans_snv_plot <- plot_ly(
       type = "scatter3d", mode = "lines+markers"
     ) %>% add_markers(
             data = df_3dplot_snv,
@@ -401,7 +401,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
       )
 
     if (disable_3d_axis) {
-      snv_dim_red_plot <- snv_dim_red_plot %>% layout(
+      trans_snv_plot <- trans_snv_plot %>% layout(
         scene = list(
           xaxis = list(title = NULL, showticklabels = F),
           yaxis = list(title = NULL, showticklabels = F),
@@ -409,7 +409,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
         )
       )
     } else {
-      snv_dim_red_plot <- snv_dim_red_plot %>% layout(
+      trans_snv_plot <- trans_snv_plot %>% layout(
         title = '',
         scene = list(
           xaxis = list(title = colnames(df_3dplot_snv)[1]),
@@ -420,15 +420,15 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
     }
 
     if (save_each_plot && !is.null(output_dir)) {
-      snv_dim_red_plot <- snv_dim_red_plot %>%
+      trans_snv_plot <- trans_snv_plot %>%
         layout(title = 'SNVs', title = list(font = 'black'), margin = list(t = 50))
-      saveWidget(as_widget(snv_dim_red_plot), file = file.path(
-        output_dir, "SNV_data_plots", "SNV_Plot.html"),
+      saveWidget(as_widget(trans_snv_plot), file = file.path(
+        output_dir, "SNV_data_plots", "Transposed_SNV_Matrix.html"),
         selfcontained = F, libdir = "lib"
       )
     }
 
-    plots[["SNV Plot"]] <- snv_dim_red_plot
+    plots[["Transposed SNV Matrix Plot"]] <- trans_snv_plot
   }
 
 
