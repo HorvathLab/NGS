@@ -53,12 +53,13 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       dimensionality_reduction = "UMAP",
                                       dynamic_cell_size = FALSE)
 
-#generate a report without individual snv plots
-generate_report(plot_object = plots)
-
-#generate a report with individual snv plots
+# generate a report without individual snv plots
 generate_report(plot_object = plots,
-                snv_plot_object = ind_snv_plots,
+                output_dir = output_dir)
+
+# generate a report with individual snv plots
+generate_report(plot_object = plots,
+                ind_snv_object = ind_snv_plots,
                 hide_ind_plots = FALSE,
                 output_dir = output_dir)
 ```
