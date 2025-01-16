@@ -19,7 +19,10 @@
 #'
 #' @examples
 #' # Example usage:
-#'
+#' generate_report(plot_object = plots,
+#'                ind_snv_object = ind_snv_plots,
+#'                hide_ind_plots = FALSE,
+#'                output_dir = output_dir)
 #'
 #' @export
 #'
@@ -266,10 +269,10 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
       </style>
     '
 
-  plot_divs <- lapply(seq_along(all_plots), function(i) {
-    if(names(all_plots)[i] != "histograms"){
-      plot <- all_plots[[i]]
-      plot_id <- names(plot_descriptions)[i]
+    plot_divs <- lapply(names(all_plots), function(plot_id) {
+    if (plot_id != "histograms" && plot_id %in% names(plot_descriptions)) {
+      plot <- all_plots[[plot_id]]
+      
       div(class = "grid-item plot3d",
           div(class = "plot-title",
               `data-plot-id` = plot_id, plot_id),

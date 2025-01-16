@@ -237,10 +237,12 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
       color_undetected = color_undetected,
       curves = curves,
       disable_3d_axis = disable_3d_axis,
-      title = plot_titles[[metric]]
+      title = NULL #plot_titles[[metric]] (duplicate title fix)
     )
 
-    plots[[metric]] <- plot
+    plot_name <- plot_titles[[metric]]
+    plots[[plot_name]] <- plot
+    #plots[[metric]] <- plot (changed naming of the plots in the output for easier matching in generate_report)
 
     file_title <- gsub("[^a-zA-Z0-9]", "_", plot_titles[[metric]])
 
@@ -287,7 +289,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
                      zaxis = list(title = paste0(toupper(dimensionality_reduction), "_3"))))
     }
 
-    plots[["Cell Types Plot"]] <- cell_type_plot
+    plots[["Cell types (scType)"]] <- cell_type_plot
 
     if (save_each_plot) {
       cell_type_plot <- cell_type_plot %>% layout(
@@ -421,14 +423,14 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
 
     if (save_each_plot && !is.null(output_dir)) {
       trans_snv_plot <- trans_snv_plot %>%
-        layout(title = 'SNVs', title = list(font = 'black'), margin = list(t = 50))
+        layout(title = NULL , title = list(font = 'black'), margin = list(t = 50))
       saveWidget(as_widget(trans_snv_plot), file = file.path(
         output_dir, "SNV_data_plots", "Transposed_SNV_Matrix.html"),
         selfcontained = F, libdir = "lib"
       )
     }
 
-    plots[["Transposed SNV Matrix Plot"]] <- trans_snv_plot
+    plots[["Transposed SNV matrix"]] <- trans_snv_plot
   }
 
 
@@ -480,7 +482,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
                                  yaxis = list(title = paste0(toupper(dimensionality_reduction), "_2")),
                                  zaxis = list(title = paste0(toupper(dimensionality_reduction), "_3"))))
     }
-    plots[["CopyKat Plot"]] <- copykat_plot
+    plots[["CNVs (CopyKat)"]] <- copykat_plot
 
     if (save_each_plot) {
       copykat_plot <- copykat_plot %>%
