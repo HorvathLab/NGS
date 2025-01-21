@@ -33,8 +33,9 @@ processed_data <- preprocess_snv_data(rds_file = rds_file_path,
 
 # generate the different 3d dimensionality reduction plots
 plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
-                       plot_data = processed_data$PlotData,
-                       processed_snv = processed_data$ProcessedSNV,
+                       processed_data$ProcessedSNV,
+                       processed_data$AggregatedSNV,
+                       processed_data$PlotData,
                        output_dir = output_dir,
                        include_histograms = TRUE,  
                        dimensionality_reduction = "umap",
@@ -42,7 +43,6 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        include_copykat = FALSE,
                        slingshot = TRUE,
                        color_scale = "YlOrRd",
-                       cell_border = 0,
                        save_each_plot = TRUE)
 
 # generate individual snv plots
