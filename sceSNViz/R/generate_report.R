@@ -57,7 +57,10 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
       "CNVs (CopyKat)" = "Copy number alterations (CNAs) detected using the CopyKat tool designed to infer genomic CNVs across individual cells using scRNA-seq data. By comparing gene expression profiles, CopyKat identifies regions of the genome that have been amplified or deleted, which can be indicative of genetic abnormalities such as those found in cancer cells.",
       "VAF_RNA" = "Expressed Variant Allele Fraction. For each individual sceSNV VAF_RNA is calculated as the ratio of the number of variant reads (N_VAR) divided by the total number of reads (N_VAR + N_REF) covering the sceSNV locus (VAF_RNA = N_VAR / (N_VAR + N_REF).",
       "N_VAR" = "Absolute number of reads bearing the variant nucleotide at the sceSNV locus.",
-      "N_REF" = "Absolute number of reads bearing the reference nucleotide at the sceSNV locus."
+      "N_REF" = "Absolute number of reads bearing the reference nucleotide at the sceSNV locus.",
+      "Custom 1" = "Custom user graph.",
+      "Custom 2" = "Custom user graph.",
+      "Custom 3" = "Custom user graph."
       )
 
   if(!is.null(ind_snv_object)){
@@ -68,46 +71,79 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Individual sceSNV plot selection</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Exploratory Combined Plots</title>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
             <style>
-            body {text-align: center; margin-bottom: 50px;}
-            .center-container {display: inline-block; text-align: left;}
-            .plot-container {margin-top: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 0 20px;}
-            .plot-item {width: 800px; height: 500px; margin-bottom: 50px;}
-            .plot-title {
+            body {
+                text-align: center;
+                margin-bottom: 50px;
+                font-size: 20px;
+                background-color: white;
+            }
+
+            /* Grid Layout */
+            .grid-container { 
+                display: grid; 
+                grid-template-columns: repeat(2, 1fr);  
+                gap: 20px;  
+                justify-content: center;
+                width: 90%;
+                margin: auto;
+            }
+
+            /* Ensure All Plots Stay Equal in Width */
+            .grid-item { 
+                width: 100%;
+                height: auto;
+            }
+
+            /* SNV Selection UI */
+            .selection-container {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            /* Button Styling */
+            button {
+                font-size: 18px;
+                padding: 10px 20px;
+                margin-top: 10px;
                 cursor: pointer;
-                color: blue;
-                font-weight: bold;
-                text-decoration: none;
-                display: inline-block;
+            }
+
+            /* Responsive Fix: Stack Plots on Small Screens */
+            @media (max-width: 900px) {
+                .grid-container {
+                    grid-template-columns: 1fr;
+                }
             }
             </style>
         </head>
         <body>
-            <div class="center-container">
-            <h2>Individual sceSNV plot selection</h2>
-            <label for="snv">Select SNV:</label>
-            <select id="snv">
-                ', paste0('<option value="', snv_options, '">', snv_options, '</option>', collapse = ''), '
-            </select>
-            <br><br>
-            <button id="updatePlot">Update Plot</button>
-            <p id="selectedSNV"></p>
+            <!-- SNV Selection UI -->
+            <div class="selection-container">
+                <h2>Individual SNV Plot Selection</h2>
+                <label for="snv">Select SNV:</label>
+                <select id="snv">
+                    ', paste0('<option value="', snv_options, '">', snv_options, '</option>', collapse = ''), '
+                </select>
+                <button id="updatePlot">Update Plot</button>
+                <p id="selectedSNV"></p>
             </div>
-            <br><br>
-            <div class="plot-container">
-            <div id="plotContainer_VAF" class="plot-item">
-                <div class="plot-title" data-plot-id="VAF_RNA">VAF</div>
+
+            <!-- Grid Layout for Plots -->
+            <div class="grid-container">
+                <div id="plotContainer_VAF" class="grid-item"></div>
+                <div id="plotContainer_N_VAR" class="grid-item"></div>
+                <div id="plotContainer_N_REF" class="grid-item"></div>
             </div>
-            <div id="plotContainer_N_VAR" class="plot-item">
-                <div class="plot-title" data-plot-id="N_VAR">N_VAR</div>
-            </div>
-            <div id="plotContainer_N_REF" class="plot-item">
-                <div class="plot-title" data-plot-id="N_REF">N_REF</div>
-            </div>
-            </div>
+
             <script>
             const plots = {
                 ', paste0(sapply(plots_json, function(p) {
@@ -119,16 +155,17 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
                 var snv = $("#snv").val();
                 var plotIds = ["VAF", "N_VAR", "N_REF"];
                 plotIds.forEach(function(plotType) {
-                var plotId = "plot_" + plotType + "_" + snv.replace(/:/g, "_");
-                var plotData = plots[plotId];
-                if (plotData) {
-                    Plotly.newPlot("plotContainer_" + plotType, plotData.data, plotData.layout, {
-                    responsive: true,
-                    autosize: true,
-                    width: document.getElementById("plotContainer_" + plotType).offsetWidth,
-                    height: document.getElementById("plotContainer_" + plotType).offsetHeight
-                    });
-                }
+                    var plotId = "plot_" + plotType + "_" + snv.replace(/:/g, "_");
+                    var plotData = plots[plotId];
+                    if (plotData) {
+                        var container = document.getElementById("plotContainer_" + plotType);
+                        Plotly.newPlot(container, plotData.data, plotData.layout, {
+                            responsive: true,
+                            autosize: true,
+                            width: container.clientWidth,
+                            height: 500
+                        });
+                    }
                 });
                 $("#selectedSNV").text("Selected SNV: " + snv);
             }
@@ -271,8 +308,10 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
 
     plot_divs <- lapply(names(all_plots), function(plot_id) {
     if (plot_id != "histograms" && plot_id %in% names(plot_descriptions)) {
-      plot <- all_plots[[plot_id]]
       
+      plot <- all_plots[[plot_id]]
+      plot <- plotly::layout(plot, title = list(text = ""))
+
       div(class = "grid-item plot3d",
           div(class = "plot-title",
               `data-plot-id` = plot_id, plot_id),
