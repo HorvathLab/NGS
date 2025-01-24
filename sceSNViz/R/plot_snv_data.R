@@ -216,7 +216,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
           )
         )
     }
-
+    plot <-plot %>% layout(legend= list(itemsizing='constant'))
     return(plot)
   }
 
@@ -237,7 +237,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
       color_undetected = color_undetected,
       curves = curves,
       disable_3d_axis = disable_3d_axis,
-      title = NULL #plot_titles[[metric]] (duplicate title fix)
+      title = plot_titles[[metric]] #(duplicate title fix)
     )
 
     plot_name <- plot_titles[[metric]]
@@ -401,9 +401,11 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
             marker = list(size = cell_border, color = color_scale, opacity = 0.5),
             text = rownames(df_3dplot_snv), hoverinfo = "text"
       )
+    
 
     if (disable_3d_axis) {
       trans_snv_plot <- trans_snv_plot %>% layout(
+        #showlegend = FALSE,
         scene = list(
           xaxis = list(title = NULL, showticklabels = F),
           yaxis = list(title = NULL, showticklabels = F),
@@ -413,6 +415,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
     } else {
       trans_snv_plot <- trans_snv_plot %>% layout(
         title = '',
+        #showlegend = FALSE,
         scene = list(
           xaxis = list(title = colnames(df_3dplot_snv)[1]),
           yaxis = list(title = colnames(df_3dplot_snv)[2]),
