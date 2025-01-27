@@ -1,0 +1,27 @@
+{
+    "id": "F910ED81",
+    "path": "C:/Users/tusha/NGS/scSNViz/R/individual_snv_plots.R",
+    "project_path": "R/individual_snv_plots.R",
+    "type": "r_source",
+    "hash": "2857630182",
+    "contents": "",
+    "dirty": false,
+    "created": 1733791433685.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "62,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1733831146,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1733831146718,
+    "read_only": false,
+    "read_only_alternatives": []
+}
