@@ -43,6 +43,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        include_copykat = FALSE,
                        slingshot = TRUE,
                        color_scale = "YlOrRd",
+                       cell_border = 0,
                        save_each_plot = TRUE)
 
 # generate individual snv plots
