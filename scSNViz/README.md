@@ -9,10 +9,10 @@ install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
 sapply(load.lib,require,character=TRUE)
 
-library(sceSNViz)
+library(scSNViz)
 
-rds_file_path <- system.file("input", "sample_Seurat_object.rds", package = "sceSNViz")
-snv_file_path <- system.file("input", "sample_SNVs.txt", package = "sceSNViz")
+rds_file_path <- system.file("input", "sample_Seurat_object.rds", package = "scSNViz")
+snv_file_path <- system.file("input", "sample_SNVs.txt", package = "scSNViz")
 
 #if above does not work:
 rds_file_path <- "path/to/file/.RDS"
