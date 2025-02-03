@@ -71,83 +71,82 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
         <html>
         <head>
             <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>Exploratory Combined Plots</title>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
             <style>
             body {
                 text-align: center;
-                margin-bottom: 50px;
-                font-size: 20px;
-                background-color: white;
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
             }
-
-            /* Grid Layout */
-            .grid-container {
+            .center-container {
+                display: inline-block;
+                text-align: center;
+                padding: 20px;
+                width: 100%;
+                max-width: 600px;
+                box-sizing: border-box;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .plot-container {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));  /* 1st arg. specifies no of columns */
+                gap: 20px 0px;   /* adjust the gap: 1st value for row spacing, 2nd for column spacing */
                 justify-content: center;
-                width: 90%;
-                margin: auto;
             }
-
-            /* Ensure All Plots Stay Equal in Width */
-            .grid-item {
+            .plot-item {
                 width: 100%;
-                height: auto;
+                height: 90%;
+                height: 350px;
+                margin-top: 100px;
             }
-
-            /* SNV Selection UI */
-            .selection-container {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 20px;
-            }
-
-            /* Button Styling */
-            button {
-                font-size: 18px;
-                padding: 10px 20px;
-                margin-top: 10px;
+            .plot-title {
                 cursor: pointer;
+                color: blue;
+                font-weight: bold;
+                text-decoration: none;
+                display: inline-block;
+                margin-bottom: 25px;
+                margin-top: 0px;
+                width: 20%;
+                height: 10%;
             }
-
-            /* Responsive Fix: Stack Plots on Small Screens */
-            @media (max-width: 900px) {
-                .grid-container {
-                    grid-template-columns: 1fr;
-                }
+            select, button {
+                font-size: 16px;
+                padding: 8px;
             }
             </style>
         </head>
         <body>
-            <!-- SNV Selection UI -->
-            <div class="selection-container">
-                <h2>Individual SNV Plot Selection</h2>
-                <label for="snv">Select SNV:</label>
-                <select id="snv">
-                    ', paste0('<option value="', snv_options, '">', snv_options, '</option>', collapse = ''), '
-                </select>
-                <button id="updatePlot">Update Plot</button>
-                <p id="selectedSNV"></p>
+            <div class="center-container">
+            <h2>Individual sceSNV plot selection</h2>
+            <label for="snv">Select SNV:</label>
+            <select id="snv">
+                ', paste0('<option value="', snv_options, '">', snv_options, '</option>', collapse = ''), '
+            </select>
+            <br><br>
+            <button id="updatePlot">Update Plot</button>
+            <p id="selectedSNV"></p>
             </div>
-
-            <!-- Grid Layout for Plots -->
-            <div class="grid-container">
-                <div id="plotContainer_VAF" class="grid-item"></div>
-                <div id="plotContainer_N_VAR" class="grid-item"></div>
-                <div id="plotContainer_N_REF" class="grid-item"></div>
+            <br><br>
+            <div class="plot-container">
+            <div id="plotContainer_VAF" class="plot-item">
+                <div class="plot-title" data-plot-id="VAF_RNA">VAF</div>
             </div>
-
+            <div id="plotContainer_N_VAR" class="plot-item">
+                <div class="plot-title" data-plot-id="N_VAR">N_VAR</div>
+            </div>
+            <div id="plotContainer_N_REF" class="plot-item">
+                <div class="plot-title" data-plot-id="N_REF">N_REF</div>
+            </div>
+            </div>
             <script>
             const plots = {
-                ', paste0(lapply(plots_json, function(p) {
-                  paste0('"', p$id, '": ', p$json)
+                ', paste0(sapply(plots_json, function(p) {
+                paste0('"', p$id, '": ', p$json)
                 }), collapse = ", "), '
             };
 
@@ -155,17 +154,16 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
                 var snv = $("#snv").val();
                 var plotIds = ["VAF", "N_VAR", "N_REF"];
                 plotIds.forEach(function(plotType) {
-                    var plotId = "plot_" + plotType + "_" + snv.replace(/:/g, "_");
-                    var plotData = plots[plotId];
-                    if (plotData) {
-                        var container = document.getElementById("plotContainer_" + plotType);
-                        Plotly.newPlot(container, plotData.data, plotData.layout, {
-                            responsive: true,
-                            autosize: true,
-                            width: container.clientWidth,
-                            height: 500
-                        });
-                    }
+                var plotId = "plot_" + plotType + "_" + snv.replace(/:/g, "_");
+                var plotData = plots[plotId];
+                if (plotData) {
+                    Plotly.newPlot("plotContainer_" + plotType, plotData.data, plotData.layout, {
+                    responsive: true,
+                    autosize: true,
+                    width: document.getElementById("plotContainer_" + plotType).offsetWidth,
+                    height: document.getElementById("plotContainer_" + plotType).offsetHeight
+                    });
+                }
                 });
                 $("#selectedSNV").text("Selected SNV: " + snv);
             }
@@ -178,7 +176,7 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
             </script>
         </body>
         </html>'
-    )
+      )
   }
 
 
