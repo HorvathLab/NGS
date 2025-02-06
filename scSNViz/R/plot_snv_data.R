@@ -378,7 +378,11 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
     snv_mat <- scale(snv_mat[, colSums(snv_mat) > 0])  # Filter and scale
 
     if (dimensionality_reduction == "tsne") {
-      snv_mat_reduced <- Rtsne(snv_mat, dims = 3, perplexity = max(5, (nrow(snv_mat) - 2) / 3))$Y
+      #snv_mat_reduced <- Rtsne(snv_mat, dims = 3, perplexity = max(5, (nrow(snv_mat) - 2) / 3))$Y
+      n_samples <- nrow(snv_mat)
+      max_allowed <- floor((n_samples - 1) / 3)
+      perplexity_val <- if (max_allowed < 5) max_allowed else 5
+      snv_mat_reduced <- Rtsne(snv_mat, dims = 3, perplexity = perplexity_val)$Y
     } else if (dimensionality_reduction == "pca") {
       snv_mat_reduced <- prcomp(snv_mat, rank. = 3)$x
     } else {

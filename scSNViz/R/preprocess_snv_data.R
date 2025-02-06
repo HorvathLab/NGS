@@ -65,11 +65,11 @@ preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_f
   }
   else {
     if (dimensionality_reduction == 'tsne'){
-      dim.plotting = 'tSNE'
-      dim.title = 'tSNE'
+      dim.plotting = 'TSNE'
+      dim.title = 'TSNE'
     }
     if (dimensionality_reduction == 'pca'){
-      dim.plotting = 'PC'
+      dim.plotting = 'PCA'
       dim.title = 'PCA'
     }
     if (dimensionality_reduction == 'umap'){
@@ -195,7 +195,7 @@ preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_f
   }
   else if (tolower(dimensionality_reduction) == "pca") {
     srt <- RunPCA(srt)
-    srt <- RunUMAP(srt, dims = 1:20, n.components = 3)
+    #srt <- RunUMAP(srt, dims = 1:20, n.components = 3)
   }
   else {
     srt <- RunPCA(srt)
