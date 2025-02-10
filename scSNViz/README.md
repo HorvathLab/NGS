@@ -1,4 +1,4 @@
-## Quickstart for Beginners
+# Quickstart for Beginners
 
 #### Sample input data is in the input directory. Load libraries, define paths to input files, and define the output directory. 
 ```
@@ -92,7 +92,13 @@ generate_report(plot_object = plots,
                 output_dir = output_dir)
 ```
 
-## Workflow for Advanced Users with Integrated Samples
+
+
+
+
+
+
+# Workflow for Advanced Users with Integrated Samples
 
 #### Use integrated data to generate plots; the Default Assay for this example is 'integrated'. Suggested tutorial: ()
 
