@@ -47,7 +47,7 @@ srt <- SCTransform(object = srt, vst.flavor = "v2", method = "glmGamPoi",
 
 #### Preprocess the SNV data and incorporate the Seurat object into the workflow
 ```
-# preprocessing the snv data
+# preprocessing the SNV data
 processed_data <- preprocess_snv_data(rds_file = srt,
                                       snv_file = snv_file,
                                       dimensionality_reduction = "UMAP",
@@ -76,7 +76,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-#### Generate individual snv plots
+#### Generate individual SNV plots
 ```
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
                                       processed_snv = processed_data$ProcessedSNV,
@@ -87,7 +87,7 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       dynamic_cell_size = FALSE)
 ```
 
-#### Generate a report without individual snv plots
+#### Generate a report without individual SNV plots
 ```
 # generate a report without individual snv plots
 generate_report(plot_object = plots,
@@ -95,7 +95,7 @@ generate_report(plot_object = plots,
                 output_dir = output_dir)
 ```
 
-#### Generate a report with individual snv plots
+#### Generate a report with individual SNV plots
 ```
 generate_report(plot_object = plots,
                 ind_snv_object = ind_snv_plots,
