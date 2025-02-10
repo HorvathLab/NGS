@@ -1,4 +1,4 @@
-## Quickstart
+## Quickstart for Beginners
 
 #### Sample input data is in the input directory. Load libraries, define paths to input files, and define the output directory. 
 ```
@@ -69,14 +69,14 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        include_histograms = TRUE,  
                        dimensionality_reduction = "umap",
                        include_cell_types = TRUE,
-                       include_copykat = FALSE,
+                       include_copykat = FALSE, #CNV metrics produced by copykat; this may significantly increase processing time depending on the size of gene counts matrix provided
                        slingshot = TRUE,
                        color_scale = "YlOrRd",
                        cell_border = 0,
                        save_each_plot = TRUE)
 ```
 
-#### Generate individual SNV plots
+#### Generate report
 ```
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
                                       processed_snv = processed_data$ProcessedSNV,
@@ -85,20 +85,65 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       save_each_plot = TRUE,
                                       dimensionality_reduction = "UMAP",
                                       dynamic_cell_size = FALSE)
-```
 
-#### Generate a report without individual SNV plots
-```
-# generate a report without individual snv plots
 generate_report(plot_object = plots,
-                hide_ind_plots = TRUE,
+                ind_snv_object = ind_snv_plots,
+                hide_ind_plots = TRUE, # Set this to FALSE in order to see plots for each individual SNV
                 output_dir = output_dir)
 ```
 
-#### Generate a report with individual SNV plots
+## Workflow for Advanced Users with Integrated Samples
+
+#### Use integrated data to generate plots; the Default Assay for this example is 'integrated'. Suggested tutorial: ()
+
 ```
+srt1 <- CreateSeuratObject(counts = gene.matrix1, min.cells = 3, min.features = 200)
+srt2 <- CreateSeuratObject(counts = gene.matrix2, min.cells = 3, min.features = 200)
+srt3 <- CreateSeuratObject(counts = gene.matrix3, min.cells = 3, min.features = 200)
+
+srt_merged <- merge(x=srt1, y=c(srt2,srt3), add.cell.ids=c('srt1','srt2','srt3'))
+srt_integrated <- IntegrateLayers(object = srt_merged, method = CCAIntegration, normalization.method = "SCT", new.reduction='integrated', verbose = F)
+srt_integrated <- FindNeighbors(srt_integrated, reduction = "integrated", dims = 1:30)
+srt_integrated <- FindClusters(srt_integrated, resolution = 0.6)
+```
+
+#### Preprocess the SNV data and incorporate the integrated Seurat object into the workflow. Generate plots.
+```
+processed_data <- preprocess_snv_data(rds_file = integrated,
+                                      snv_file = snv_file,
+                                      dimensionality_reduction = "UMAP",
+                                      th_vars = 0,
+                                      th_reads = 0,
+                                      enable_integrated = TRUE,
+                                      enable_sctype = TRUE, #to classify cell types using scType
+                                      tissue_type = "Immunesystem", #other tissue options include: Pancreas, Liver, Eye, Kidney, Brain, Lung, Adrenal, Heart, Intestine, Muscle, Placenta, Spleen, Stomach, Thymus
+                                      generate_statistics = TRUE,
+                                      output_dir = output_dir)
+
+plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
+                       processed_data$ProcessedSNV,
+                       processed_data$AggregatedSNV,
+                       processed_data$PlotData,
+                       output_dir = output_dir,
+                       include_histograms = TRUE,  
+                       dimensionality_reduction = "umap",
+                       include_cell_types = TRUE,
+                       include_copykat = FALSE, # this is not recommended for integrated objects
+                       slingshot = TRUE,
+                       color_scale = "YlOrRd",
+                       cell_border = 0,
+                       save_each_plot = TRUE)
+
+ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
+                                      processed_snv = processed_data$ProcessedSNV,
+                                      output_dir = output_dir,
+                                      slingshot = TRUE,
+                                      save_each_plot = TRUE,
+                                      dimensionality_reduction = "UMAP",
+                                      dynamic_cell_size = FALSE)
+
 generate_report(plot_object = plots,
                 ind_snv_object = ind_snv_plots,
-                hide_ind_plots = FALSE,
+                hide_ind_plots = TRUE, # individual plots for each SNV are hidden
                 output_dir = output_dir)
 ```
