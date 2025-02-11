@@ -19,20 +19,20 @@ output_dir = "output"    # or output directory of your choice
 #### Read in the counts matrix (from either an .RDS file of an existing Seurat object or or a counts matrix)
 ```
 gene.matrix <- Read10X(data.dir = countsmatrix_file) # for reading in a countsmatrix, the data.dir may also be the directory for that contains barcodes.tsv, genes.tsv and matrix.mtx, such as: /user/filtered_gene_bc_matrices/hg19/
-srt <- CreateSeuratObject(counts = gene.matrix, project = "Sample", # for reading in 
+srt <- CreateSeuratObject(counts = gene.matrix, project = "Sample",
                   min.cells = 3, min.features = 200)
 ```
 
 #### Quality Control: Filter data and perform scaling and normalization
 ```
 # define the percentage of counts per cell that originate from mitochondrial genes 
-srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-") #this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
+srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
 
 # plot the number of features (or genes) per cell, the number of counts per cell and the percent.mt per cell
-VlnPlot(srt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) #As described in Seurat introductory Vignettes
+VlnPlot(srt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) # As described in Seurat introductory Vignettes
 
 # filter the Seurat object based on the violin plot
-srt <- subset(srt, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5) #As described in Seurat introductory Vignettes
+srt <- subset(srt, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5) # As described in Seurat introductory Vignettes
 ```
 
 #### Scale and normalize the data. Then, run a PCA.
@@ -54,7 +54,7 @@ processed_data <- preprocess_snv_data(rds_obj = srt,
                                       th_vars = 0,
                                       th_reads = 0,
                                       enable_sctype = TRUE, #to classify cell types using sctype
-                                      tissue_type = "Immunesystem", #other tissue options include: Pancreas, Liver, Eye, Kidney, Brain, Lung, Adrenal, Heart, Intestine, Muscle, Placenta, Spleen, Stomach, Thymus
+                                      tissue_type = "Immunesystem", # other tissue options include: Pancreas, Liver, Eye, Kidney, Brain, Lung, Adrenal, Heart, Intestine, Muscle, Placenta, Spleen, Stomach, Thymus
                                       generate_statistics = TRUE,
                                       output_dir = output_dir)
 ```
@@ -69,7 +69,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        include_histograms = TRUE,  
                        dimensionality_reduction = "umap",
                        include_cell_types = TRUE,
-                       include_copykat = FALSE, #CNV metrics produced by copykat; this may significantly increase processing time depending on the size of gene counts matrix provided
+                       include_copykat = FALSE, # CNV metrics produced by copykat; this may significantly increase processing time depending on the size of gene counts matrix provided
                        slingshot = TRUE,
                        color_scale = "YlOrRd",
                        cell_border = 0,
@@ -122,7 +122,7 @@ processed_data <- preprocess_snv_data(rds_file = srt_integrated,
                                       th_reads = 0,
                                       enable_integrated = TRUE,
                                       integrated_reduction_name = 'integrated',
-                                      enable_sctype = TRUE, #to classify cell types using scType
+                                      enable_sctype = TRUE, # to classify cell types using scType
                                       tissue_type = "Immunesystem", #other tissue options include: Pancreas, Liver, Eye, Kidney, Brain, Lung, Adrenal, Heart, Intestine, Muscle, Placenta, Spleen, Stomach, Thymus
                                       generate_statistics = TRUE,
                                       output_dir = output_dir)
