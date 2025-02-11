@@ -2,14 +2,12 @@
 
 #### Sample input data is in the input directory. Load libraries, define paths to input files, and define the output directory. 
 ```
-load.lib<-c("SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "ggplot2",
+load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "ggplot2",
             "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer") # the installation of ("glmGamPoi") is highly recommended
 
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
 sapply(load.lib,require,character=TRUE)
-
-library(scSNViz)
 
 snv_file <- "path/to/file/snv.txt"
 
@@ -100,7 +98,20 @@ generate_report(plot_object = plots,
 
 # Workflow for Advanced Users with Integrated Samples
 
-#### Use integrated data to generate plots; the Default Assay for this example is 'integrated'. Suggested tutorial: ()
+####
+```
+load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "ggplot2",
+            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer") # the installation of ("glmGamPoi") is highly recommended
+
+install.lib <- load.lib[!load.lib %in% installed.packages()]
+for(lib in install.lib) install.packages(lib,dependencies=TRUE)
+sapply(load.lib,require,character=TRUE)
+
+output_dir = "output"    # or output directory of your choice
+```
+
+
+#### Prepare integrated data.
 
 ```
 srt1 <- CreateSeuratObject(counts = gene.matrix1, min.cells = 3, min.features = 200)
@@ -112,6 +123,20 @@ srt_integrated <- IntegrateLayers(object = srt_merged, method = CCAIntegration, 
 srt_integrated <- FindNeighbors(srt_integrated, reduction = "integrated", dims = 1:30)
 srt_integrated <- FindClusters(srt_integrated, resolution = 0.6)
 ```
+
+#### Prepare SNV data.
+```
+snv_srt1 <- read.table(snv_file_srt1, sep = "\t", header = T)
+snv_srt2 <- read.table(snv_file_srt2, sep = "\t", header = T)
+snv_srt3 <- read.table(snv_file_srt3, sep = "\t", header = T)
+
+snv_srt1$ReadGroup = paste0('srt1_',snv_srt1$ReadGroup) # these IDs must match the added cell IDs from above
+snv_srt2$ReadGroup = paste0('srt2_',snv_srt2$ReadGroup) # these IDs must match the added cell IDs from above
+snv_srt3$ReadGroup = paste0('srt3_',snv_srt3$ReadGroup) # these IDs must match the added cell IDs from above
+
+snv_file <- rbind(snv_srt1,snv_srt2,snv_srt3)
+```
+
 
 #### Preprocess the SNV data and incorporate the integrated Seurat object into the workflow. Generate plots.
 ```
