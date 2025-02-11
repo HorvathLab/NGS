@@ -19,10 +19,8 @@ output_dir = "output"    # or output directory of your choice
 
 #### Read in the counts matrix (from either an .RDS file of an existing Seurat object or or a counts matrix)
 ```
-srt <- readRDS(rds_file)
-
-#gene.matrix <- Read10X(data.dir = countsmatrix_file) # for reading in a countsmatrix, the data.dir may also be the directory for that contains barcodes.tsv, genes.tsv and matrix.mtx, such as: /user/filtered_gene_bc_matrices/hg19/
-#srt <- CreateSeuratObject(counts = gene.matrix, project = "Sample", # for reading in 
+gene.matrix <- Read10X(data.dir = countsmatrix_file) # for reading in a countsmatrix, the data.dir may also be the directory for that contains barcodes.tsv, genes.tsv and matrix.mtx, such as: /user/filtered_gene_bc_matrices/hg19/
+srt <- CreateSeuratObject(counts = gene.matrix, project = "Sample", # for reading in 
                   min.cells = 3, min.features = 200)
 ```
 
