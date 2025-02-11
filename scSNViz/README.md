@@ -121,6 +121,7 @@ processed_data <- preprocess_snv_data(rds_file = srt_integrated,
                                       th_vars = 0,
                                       th_reads = 0,
                                       enable_integrated = TRUE,
+                                      integrated_reduction_name = 'integrated',
                                       enable_sctype = TRUE, #to classify cell types using scType
                                       tissue_type = "Immunesystem", #other tissue options include: Pancreas, Liver, Eye, Kidney, Brain, Lung, Adrenal, Heart, Intestine, Muscle, Placenta, Spleen, Stomach, Thymus
                                       generate_statistics = TRUE,
