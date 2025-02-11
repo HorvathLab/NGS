@@ -11,7 +11,6 @@ sapply(load.lib,require,character=TRUE)
 
 library(scSNViz)
 
-rds_file <- "path/to/file/.RDS"
 snv_file <- "path/to/file/snv.txt"
 
 output_dir = "output"    # or output directory of your choice
@@ -49,7 +48,7 @@ srt <- FindClusters(srt, resolution = 0.5)
 #### Preprocess the SNV data and incorporate the Seurat object into the workflow
 ```
 # preprocessing the SNV data
-processed_data <- preprocess_snv_data(rds_file = srt,
+processed_data <- preprocess_snv_data(rds_obj = srt,
                                       snv_file = snv_file,
                                       dimensionality_reduction = "UMAP",
                                       th_vars = 0,
@@ -116,9 +115,9 @@ srt_integrated <- FindClusters(srt_integrated, resolution = 0.6)
 
 #### Preprocess the SNV data and incorporate the integrated Seurat object into the workflow. Generate plots.
 ```
-processed_data <- preprocess_snv_data(rds_file = integrated,
+processed_data <- preprocess_snv_data(rds_file = srt_integrated,
                                       snv_file = snv_file,
-                                      dimensionality_reduction = "UMAP",
+                                      dimensionality_reduction = "UMAP", #you may only generate UMAP plots with integrated samples
                                       th_vars = 0,
                                       th_reads = 0,
                                       enable_integrated = TRUE,
