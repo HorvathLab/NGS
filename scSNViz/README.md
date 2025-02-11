@@ -36,10 +36,13 @@ VlnPlot(srt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 srt <- subset(srt, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5) #As described in Seurat introductory Vignettes
 ```
 
-#### Scale and normalize the data
+#### Scale and normalize the data. Then, run a PCA.
 ```
 srt <- SCTransform(object = srt, vst.flavor = "v2", method = "glmGamPoi",
            vars.to.regress = "percent.mt", verbose = F)
+srt <- RunPCA(srt)
+srt <- FindNeighbors(srt, dims = 1:10)
+srt <- FindClusters(srt, resolution = 0.5)
 
 ```
 
