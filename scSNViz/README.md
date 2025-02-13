@@ -118,13 +118,30 @@ srt1 <- CreateSeuratObject(counts = gene.matrix1, min.cells = 3, min.features = 
 srt2 <- CreateSeuratObject(counts = gene.matrix2, min.cells = 3, min.features = 200)
 srt3 <- CreateSeuratObject(counts = gene.matrix3, min.cells = 3, min.features = 200)
 
+## QC ##
+srt1[["percent.mt"]] <- PercentageFeatureSet(srt1, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
+VlnPlot(srt1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) # As described in Seurat introductory Vignettes
+srt1 <- subset(srt1, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5) # As described in Seurat introductory Vignettes
+
+srt2[["percent.mt"]] <- PercentageFeatureSet(srt2, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
+VlnPlot(srt2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+srt2 <- subset(srt2, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+
+srt3[["percent.mt"]] <- PercentageFeatureSet(srt3, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
+VlnPlot(srt3, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) 
+srt3 <- subset(srt3, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+########
+
 srt_merged <- merge(x=srt1, y=c(srt2,srt3), add.cell.ids=c('srt1','srt2','srt3'))
-srt_integrated <- IntegrateLayers(object = srt_merged, method = CCAIntegration, normalization.method = "SCT", new.reduction='integrated', verbose = F)
+srt_merged[['RNA']]<-split(srt_merged[['RNA']],f=srt_merged$orig.ident)
+srt_merged <- SCTransform(srt_merged, vars.to.regress = "percent.mt", verbose = F)
+srt_merged <- RunPCA(srt_merged)
+srt_integrated <- IntegrateLayers(object = srt_merged, method = CCAIntegration, normalization.method = "SCT", new.reduction='integrated', verbose = F) #any of the suggested integration methods in Seurat may be applied here for the methods parameter
 srt_integrated <- FindNeighbors(srt_integrated, reduction = "integrated", dims = 1:30)
 srt_integrated <- FindClusters(srt_integrated, resolution = 0.6)
 ```
 
-#### Prepare SNV data.
+#### Prepare SNV data
 ```
 snv_srt1 <- read.table(snv_file_srt1, sep = "\t", header = T)
 snv_srt2 <- read.table(snv_file_srt2, sep = "\t", header = T)
