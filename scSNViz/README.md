@@ -151,14 +151,14 @@ snv_srt1$ReadGroup = paste0('srt1_',snv_srt1$ReadGroup) # these IDs must match t
 snv_srt2$ReadGroup = paste0('srt2_',snv_srt2$ReadGroup) # these IDs must match the added cell IDs from above
 snv_srt3$ReadGroup = paste0('srt3_',snv_srt3$ReadGroup) # these IDs must match the added cell IDs from above
 
-snv_file <- rbind(snv_srt1,snv_srt2,snv_srt3)
+snv <- rbind(snv_srt1,snv_srt2,snv_srt3)
 ```
 
 
 #### Preprocess the SNV data and incorporate the integrated Seurat object into the workflow. Generate plots.
 ```
 processed_data <- preprocess_snv_data(rds_file = srt_integrated,
-                                      snv_file = snv_file,
+                                      snv_file = snv,
                                       dimensionality_reduction = "UMAP", #you may only generate UMAP plots with integrated samples
                                       th_vars = 0,
                                       th_reads = 0,
