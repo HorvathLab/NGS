@@ -117,6 +117,9 @@ output_dir = "output"    # or output directory of your choice
 srt1 <- CreateSeuratObject(counts = gene.matrix1, min.cells = 3, min.features = 200)
 srt2 <- CreateSeuratObject(counts = gene.matrix2, min.cells = 3, min.features = 200)
 srt3 <- CreateSeuratObject(counts = gene.matrix3, min.cells = 3, min.features = 200)
+srt1$orig.ident = 'srt1'
+srt2$orig.ident = 'srt2'
+srt3$orig.ident = 'srt3'
 
 ## QC ##
 srt1[["percent.mt"]] <- PercentageFeatureSet(srt1, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
