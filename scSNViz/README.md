@@ -185,6 +185,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        slingshot = FALSE, # this is default, no slingshot option for integrated data
                        color_scale = "YlOrRd",
                        cell_border = 0,
+                       enable_integrated = TRUE,
                        save_each_plot = TRUE)
 
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
