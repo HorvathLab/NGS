@@ -27,6 +27,7 @@
 #' @param cell_border Numeric; thickness of cells'/markers' border in the plot. Default: 0.
 #' @param disable_3d_axis Logical; whether to disable 3D axis labels. Default: FALSE.
 #' @param save_each_plot Logical; whether to save each plot individually. Default: FALSE.
+#' @param enable_integrated Logical; whether to use an integrated Seurat object. Default: FALSE.
 #' @return A list of generated plots.
 #' @details
 #' The function generates various visualizations for SNV data including:
@@ -67,9 +68,16 @@
 plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_data, output_dir = NULL,
                           include_histograms = T, include_cell_types = F, include_snv_dim_red = T,
                           include_copykat = F, dimensionality_reduction = "UMAP", slingshot = T,
-                          color_scale = "YlOrRd", cell_border = 0, disable_3d_axis = F, save_each_plot = F) {
+                          color_scale = "YlOrRd", cell_border = 0, disable_3d_axis = F, save_each_plot = F, enable_integrated = F) {
 
   cat("\nGenerating SNV data plots...\n")
+
+  if (enable_integrated){
+    slingshot=FALSE
+    include_copykat=FALSE
+    if (slingshot==TRUE){print('Turning off the slingshot option - this is not available for integrated objects')}
+    if (include_copykat==TRUE){print('Turning off the copykat option - this is not available for integrated objects')}
+  }
 
   valid_reductions <- c("umap", "pca", "tsne")
   dimensionality_reduction <- tolower(dimensionality_reduction)
@@ -107,7 +115,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
 
   curves <- NULL
   if (slingshot) {
-    sce <- as.SingleCellExperiment(seurat_object)
+    sce <- as.SingleCellExperiment(seurat_object, assay='SCT')
     sce <- slingshot(sce, clusterLabels = "seurat_clusters",
                      reducedDim = toupper(dimensionality_reduction))
     curves <- slingCurves(sce, as.df = T)
@@ -138,9 +146,9 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
 
       histograms[[hist_info$xlab]] <- ggplotly(p)
       if (save_each_plot && !is.null(output_dir)) {
-        ggsave(file = file.path(output_dir, "SNV_data_plots",
+        ggsave(p, file = file.path(output_dir, "SNV_data_plots",
                                 paste0(hist_info$file_suffix, ".png")),
-               plot = p, device = "png")
+              device = "png")
       }
     }
   }
@@ -173,7 +181,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
           reversescale = reversescale_option, showscale = T,
           colorbar = list(x = 0.85, y = 0.5, thickness = 20, len = 0.5),
           line = list(color = ~get(metric), width = cell_border)),
-          name = "expressed sceSNV loci"
+          name = "expressed sceSNV loci", hovertext=plot_data['orig.ident']
       ) %>%
       add_markers(
         data = plot_data[plot_data[["Undetected"]] == 1, ],
@@ -183,7 +191,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
         size = 0.05, opacity = 1.00,
         marker = list(color = color_undetected,
                       line = list(width = cell_border)),
-        name = "undetected"
+        name = "undetected", hovertext=plot_data['orig.ident']
       )
 
     if (!is.null(curves)) {
@@ -221,8 +229,6 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
     return(plot)
   }
 
-
-
   #plots <- list()
 
   for (metric in names(plot_titles)) {
@@ -255,6 +261,36 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
     }
   }
 
+  # INTEGRATED ORIG IDENT PLOT
+
+  if (enable_integrated){
+    origident_plot <- plot_ly(type = "scatter3d", mode = "lines+markers") %>%
+    add_trace(data = plot_data, x = ~get(paste0(toupper(dimensionality_reduction), "_1")),
+                y = ~get(paste0(toupper(dimensionality_reduction), "_2")),
+                z = ~get(paste0(toupper(dimensionality_reduction), "_3")),
+                size = 0.05, opacity = 0.5, mode = "markers", color = ~orig.ident)
+    if (disable_3d_axis) {
+      origident_plot <- origident_plot %>%
+      layout(scene = list(xaxis = list(title = NULL, showticklabels = F, zeroline = F,
+                                         showline = F, showgrid = F),
+                            yaxis = list(title = NULL, showticklabels = F, zeroline = F,
+                                         showline = F, showgrid = F),
+                            zaxis = list(title = NULL, showticklabels = F, zeroline = F,
+                                         showline = F, showgrid = F)))}
+    else {
+      origident_plot <- origident_plot %>% layout(title = '',
+      scene = list(xaxis = list(title = paste0(toupper(dimensionality_reduction), "_1")),
+      yaxis = list(title = paste0(toupper(dimensionality_reduction), "_2")),
+      zaxis = list(title = paste0(toupper(dimensionality_reduction), "_3"))))}
+    
+    plots[["Sample ID"]] <- origident_plot
+    
+    if (save_each_plot && !is.null(output_dir)) {
+      saveWidget(as_widget(origident_plot), file = file.path(
+        output_dir, "SNV_data_plots", "SAMPLE_ID_plot.html"),
+        selfcontained = F, libdir = "lib")
+    }
+    }
 
   # CELL TYPES PLOT
 
@@ -290,7 +326,6 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
                      yaxis = list(title = paste0(toupper(dimensionality_reduction), "_2")),
                      zaxis = list(title = paste0(toupper(dimensionality_reduction), "_3"))))
     }
-
     plots[["Cell types (scType)"]] <- cell_type_plot
 
     if (save_each_plot) {
@@ -501,6 +536,5 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
         selfcontained = F, libdir = "lib")
     }
   }
-
   return(plots)
 }

@@ -58,9 +58,9 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
     "VAF_RNA" = "Expressed Variant Allele Fraction. For each individual sceSNV VAF_RNA is calculated as the ratio of the number of variant reads (N_VAR) divided by the total number of reads (N_VAR + N_REF) covering the sceSNV locus (VAF_RNA = N_VAR / (N_VAR + N_REF).",
     "N_VAR" = "Absolute number of reads bearing the variant nucleotide at the sceSNV locus.",
     "N_REF" = "Absolute number of reads bearing the reference nucleotide at the sceSNV locus.",
+    "Sample ID" = "Integrated UMAP grouped by sample ID.",
     "Custom 1" = "Custom user graph.",
-    "Custom 2" = "Custom user graph.",
-    "Custom 3" = "Custom user graph."
+    "Custom 2" = "Custom user graph."
   )
 
   if(!is.null(ind_snv_object)){
@@ -235,7 +235,8 @@ generate_report <- function(plot_object, ind_snv_object = NULL,
               "CNVs (CopyKat)": "Copy number alterations (CNAs) detected using the CopyKat tool designed to infer genomic CNVs across individual cells using scRNA-seq data. By comparing gene expression profiles, CopyKat identifies regions of the genome that have been amplified or deleted, which can be indicative of genetic abnormalities such as those found in cancer cells.",
               "VAF_RNA": "Expressed Variant Allele Fraction. For each individual sceSNV VAF_RNA is calculated as the ratio of the number of variant reads (N_VAR) divided by the total number of reads (N_VAR + N_REF) covering the sceSNV locus (VAF_RNA = N_VAR / (N_VAR + N_REF).",
               "N_VAR": "Absolute number of reads bearing the variant nucleotide at the sceSNV locus.",
-              "N_REF": "Absolute number of reads bearing the reference nucleotide at the sceSNV locus."
+              "N_REF": "Absolute number of reads bearing the reference nucleotide at the sceSNV locus.",
+              "Sample ID": "Integrated UMAP grouped by sample ID."
               };
 
               var existingTooltip = document.querySelector(`.tooltip-box[data-plot-id="${plotId}"]`);
