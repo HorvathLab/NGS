@@ -11,13 +11,13 @@
 #' @importFrom dplyr top_n filter arrange mutate group_by
 #' @importFrom stats kruskal.test p.adjust
 #'
-#' @param rds_file Path to the RDS file containing a Seurat object (required if countsmatrix_file is not provided).
-#' @param countsmatrix_file Path to the folder containing STARsolo output files (barcodes.tsv.gz, features.tsv.gz, matrix.mtx.gz).
+#' @param rds_obj Processed Seurat object.
 #' @param snv_file Path to the SNV file (required).
 #' @param dimensionality_reduction The dimensionality reduction method (umap, pca, or tsne). Default: umap.
 #' @param th_vars Threshold for number of sceSNVs for a cell to be displayed.. Default: 0.
 #' @param th_reads Threshold for number of variant reads (N_VAR) for a locus to be considered sceSNV. Default: 0.
 #' @param enable_sctype Logical; enable scType analysis for cell types. Default: FALSE.
+#' @param enable_integrated Logical; enable scType analysis for cell types. Default: FALSE.
 #' @param tissue_type Tissue type for scType. Required if enable_sctype is TRUE.
 #' @param color_scale Color scale for plots. Options include Blues, Reds, etc. Default: YlOrRd.
 #' @param generate_statistics Logical; if TRUE, generate SNV significance statistics. Default: FALSE.
@@ -27,7 +27,7 @@
 #'
 #' @examples
 #' processed_data <- preprocess_snv_data(
-#'   rds_file = "path/to/seurat.rds",
+#'   rds_obj = srt,
 #'   snv_file = "path/to/snv_file.tsv",
 #'   dimensionality_reduction = "umap",
 #'   th_vars = 1,
@@ -41,17 +41,17 @@
 #'
 #' @export
 #'
-preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_file,
+preprocess_snv_data <- function(rds_obj = NULL, snv_file = NULL,
                                 dimensionality_reduction = "UMAP", th_vars = 0, th_reads = 0,
-                                enable_sctype = F, tissue_type = NULL, color_scale = "YlOrRd",
+                                enable_sctype = F, tissue_type = NULL, enable_integrated = F, integrated_reduction_name='integrated', color_scale = "YlOrRd",
                                 generate_statistics = F, th_snv_cells = 10, output_dir = NULL) {
 
   # Validate inputs
-  if (is.null(rds_file) & is.null(countsmatrix_file)) {
-    stop("Either Seurat RDS object or STARsolo output directory for counts matrix is required.")
+  if (is.null(rds_obj)) {
+    stop("A Seurat object is required for the rds_obj parameter.")
   }
   if (is.null(snv_file)) {
-    stop("The scReadCounts file is required.")
+    stop("The scReadCounts file is required for the snv_file parameter.")
   }
 
   if (generate_statistics && is.null(output_dir)) {
@@ -78,39 +78,161 @@ preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_f
     }
   }
 
-
-  # Read and process SNV data
-  snv <- read.table(snv_file, sep = "\t", header = T)
-
-  if (nrow(snv) == 0) {
-    stop("The SNV file is empty.")
+  if (enable_integrated && dimensionality_reduction!='umap') {
+    stop('You can only render UMAPs with integrated data, not PCA or TSNE plots. Please leave the dimensionality_reduction parameter as the default, which is UMAP.')
+  }
+  
+  # Cell type analysis by scType
+  if (enable_sctype) {
+    if (is.null(tissue_type)) {
+      stop("- Tissue type is required when enable_sctype is TRUE.")
+    } else {
+      # Normalize and validate tissue type
+      tissue_type <- str_to_title(tolower(tissue_type))
+      if (tissue_type %in% c("Immune", "Immunesystem")) {
+        tissue_type <- "Immune system"
+      }
+      valid_tissue_types <- c("Immune system", "Pancreas", "Liver", "Eye", "Kidney",
+                              "Brain", "Lung", "Adrenal", "Heart", "Intestine", "Muscle",
+                              "Placenta", "Spleen", "Stomach", "Thymus")
+      if (!(tissue_type %in% valid_tissue_types)) {
+        stop(paste("- The tissue type you have provided does not seem to be one of the tissue types that scType accepts:",
+                   paste(valid_tissue_types, collapse = ", ")))
+      }
+    }
   }
 
-  snv.modify <- snv %>% filter(SNVCount > 0)
-  num.snvs <- nrow(snv.modify)
-  snv$VAF[snv$VAF == "-"] <- NA
-  snv$VAF <- as.numeric(snv$VAF)
+  
+  # Read in the read counts data
+  srt <- rds_obj
+  # Perform dimensionality reduction
+  if (enable_integrated){
+      srt <- RunUMAP(srt, dims = 1:20, n.components = 3, reduction=integrated_reduction_name)
+  } else {
+    if (tolower(dimensionality_reduction) == "tsne") {
+      srt <- RunTSNE(srt, dim.embed = 3)
+    }
+    else if (tolower(dimensionality_reduction) == "umap") {
+      srt <- RunUMAP(srt, dims = 1:20, n.components = 3)}
+  }
+  
+  # Read and process SNV data
+  snv_statistics <- function(snv,th.vars=th_vars,th.reads=th_reads){
+    if (nrow(snv) == 0) {
+      stop("The SNV file is empty.")
+    }
+    snv.modify <- snv %>% filter(SNVCount > 0)
+    num.snvs <- nrow(snv.modify)
+    snv$VAF[snv$VAF == "-"] <- NA
+    snv$VAF <- as.numeric(snv$VAF)
+
+    snv.n <- aggregate(SNVCount ~ ReadGroup, data = snv, length)
+    rownames(snv.n) <- snv.n$ReadGroup
+    colnames(snv.n)[2] <- "SNV.N"
+    snv <- merge(snv, snv.n, "ReadGroup", all.x = T)
+
+    if (th.vars > 0) {
+      snv <- snv %>% filter(SNV.N >= th.vars)
+    }
+    if (th.reads > 0) {
+      snv <- snv %>% filter(SNVCount >= th.reads)
+    }
+
+    snv.reads <- aggregate(SNVCount ~ ReadGroup, data = snv, sum)
+    if (max(snv.reads[, "SNVCount"]) == 0) {
+      stop("Even though you have provided a tab-separated file containing SNV information, there aren't any SNV read counts in it.")
+    }
+
+    rownames(snv.reads) <- snv.reads$ReadGroup
+    ref.reads <- aggregate(RefCount ~ ReadGroup, data = snv, sum)
+    rownames(ref.reads) <- snv.reads$ReadGroup
+
+    if (max(snv.reads[, "SNVCount"]) < th.reads) {
+      stop("There aren't any SNVs that satisfy the read threshold.")
+    }
+    if (max(snv.n[, "SNV.N"]) < th.vars) {
+      stop("There aren't any SNVs that satisfy the variant threshold.")
+    }
+
+    vaf.median <- aggregate(VAF ~ ReadGroup, data = snv, median)
+    rownames(vaf.median) <- vaf.median$ReadGroup
+    colnames(vaf.median)[2] <- "Median.VAF"
+    vaf.mean <- aggregate(VAF ~ ReadGroup, data = snv, mean)
+    rownames(vaf.mean) <- vaf.mean$ReadGroup
+    colnames(vaf.mean)[2] <- "Mean.VAF"
+    
+    return(list(snv=snv,vaf.median=vaf.median,vaf.mean=vaf.mean,snv.reads=snv.reads,ref.reads=ref.reads))
+  }
+  snv_file <- read.table(snv_file, sep = "\t", header = T)
+  snv = data.frame()
+  vaf.mean = data.frame()
+  vaf.median = data.frame()
+  snv.reads = data.frame()
+  ref.reads = data.frame()
+  if (length(unique(srt$orig.ident))>1){
+      for (i in 1:length(unique(srt$orig.ident))){
+      #data must be integrated
+        snv_file$sampleid = data.frame(do.call('rbind',strsplit(as.character(snv_file$ReadGroup),'_',fixed=TRUE)))$X1
+        snv_file_subset <- snv_file[snv_file$sampleid == unique(srt$orig.ident)[i],]
+        snv_file_subset$sampleid  = NULL
+        output_list <- snv_statistics(snv=snv_file_subset)
+        # combine statistics with other values from other samples
+        snv=rbind(snv,output_list$snv)
+        vaf.median=rbind(vaf.median,output_list$vaf.median)
+        vaf.mean=rbind(vaf.mean,output_list$vaf.mean)
+        snv.reads=rbind(snv.reads,output_list$snv.reads)
+        ref.reads=rbind(ref.reads,output_list$ref.reads)
+      }} else { #data not integrated
+      snv_file_subset <- snv_file
+      output_list <- snv_statistics(snv_file_subset)
+      snv=output_list$snv
+      vaf.median=output_list$vaf.median
+      vaf.mean=output_list$vaf.mean
+      snv.reads=output_list$snv.reads
+      ref.reads=output_list$ref.reads
+  }
 
 
-  # generate SNV statistics if requested
-  if (generate_statistics) {
+  # Combine read counts and snv data
+  srt[["SNVCount"]] <- 0
+  srt[["SNVCount"]][rownames(snv.reads), 1] <- snv.reads[, "SNVCount"]
+  srt[["RefCount"]] <- 0
+  srt[["RefCount"]][rownames(ref.reads), 1] <- ref.reads[, "RefCount"]
+  srt[["TotalVAF"]] <- 0
+  srt[["TotalVAF"]] <- srt[["SNVCount"]] / (srt[["SNVCount"]] + srt[["RefCount"]])
+  srt[["TotalVAF"]][!is.finite(srt[["TotalVAF"]][, 1]), 1] <- 0
+  srt[["MedianVAF"]] <- 0
+  srt[["MedianVAF"]][rownames(vaf.median), 1] <- vaf.median[, "Median.VAF"]
+  srt[["MedianVAF"]][!is.finite(srt[["MedianVAF"]][, 1]), 1] <- 0
+  srt[["MeanVAF"]] <- 0
+  srt[["MeanVAF"]][rownames(vaf.mean), 1] <- vaf.mean[, "Mean.VAF"]
+  srt[["MeanVAF"]][!is.finite(srt[["MeanVAF"]][, 1]), 1] <- 0
+  snv.n <- unique(snv[, c("ReadGroup", "SNV.N")])
+  rownames(snv.n) <- snv.n[, "ReadGroup"]
+  srt[["SNV.N"]] <- 0
+  srt[["SNV.N"]][rownames(snv.n), 1] <- snv.n[, "SNV.N"]
+  srt[["SNV.N"]][!is.finite(srt[["SNV.N"]][, 1]), 1] <- 0
+  srt[["Undetected"]] <- ifelse((srt[["SNVCount"]] == 0 & srt[["RefCount"]] == 0), 1, 0)
+  srt[["HasSNV"]] <- sapply(srt[["SNVCount"]][, 1], function(x) if (x >= th_reads) 1 else 0)
+
+
+generate_statistics_fnction <- function(snv,th.snv.cells=th_snv_cells){
+  
     snv <- snv[!is.na(snv$VAF), ]
-
     # filter based on `X.BadRead` and `SNVCount`
     snv$temp <- snv
     snv$temp$BadReadFlag <- 0
     snv$temp$BadReadFlag[snv$temp$`X.BadRead` > 0] <- 1
     snv.read.filt <- aggregate(BadReadFlag ~ CHROM + POS + REF + ALT, data = snv$temp,
                                function(x) 100 * sum(x) / length(x))
-    snv.read.filt <- snv.read.filt[snv.read.filt$BadReadFlag <= th_snv_cells, ]
+    snv.read.filt <- snv.read.filt[snv.read.filt$BadReadFlag <= th.snv.cells, ]
     snv <- merge(snv, snv.read.filt, by = c("CHROM", "POS", "REF", "ALT"))
     snv$VAF[snv$SNVCount < th_reads] <- 0
     if (nrow(snv) == 0) {
-      stop("There are no rows left after filtering.")
+      stop("There are no rows left after filtering. You may need to reset your threshold parameters.")
     }
 
     # cluster assignment
-    srt <- readRDS(rds_file)
     df.cid <- as.data.frame(srt[["seurat_clusters"]])
     df.cid <- data.frame(ReadGroup = rownames(df.cid), ClusterID = df.cid[, 1], row.names = NULL)
     df.snv <- merge(snv, df.cid, by = "ReadGroup")
@@ -143,141 +265,33 @@ preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_f
     )
     df.final <- na.omit(df.final)
     df.final <- df.final[order(df.final$p_adj), ]
-
+    return(df.final)
+}
+  # generate SNV statistics if requested
+  if (generate_statistics) {
     dir.create(output_dir, recursive = T, showWarnings = F)
-    write.table(df.final, file = file.path(
-      output_dir, "SNV_Statistics.txt"), sep = "\t", row.names = F)
-    significant_snvs <- df.final[df.final$p_adj < 0.05, ]
-    write.table(significant_snvs, file = file.path(
-      output_dir, "Significant_SNVs.txt"), sep = "\t", row.names = F)
-  }
-
-
-  # Cell type analysis by scType
-
-  if (enable_sctype) {
-    if (is.null(tissue_type)) {
-      stop("- Tissue type is required when enable_sctype is TRUE.")
+    if (enable_integrated){
+      for (i in 1:length(unique(srt$orig.ident))){
+        snv$sampleid = data.frame(do.call('rbind',strsplit(as.character(snv$ReadGroup),'_',fixed=TRUE)))$X1
+        snv_input = snv[snv$sampleid == unique(srt$orig.ident)[i],]
+        df.final <- generate_statistics_fnction(snv=snv_input)
+        write.table(df.final, file = file.path(
+        output_dir, paste0("SNV_Statistics_",unique(srt$orig.ident)[i],".txt")), sep = "\t", row.names = F)
+        significant_snvs <- df.final[df.final$p_adj < 0.05, ]
+        write.table(significant_snvs, file = file.path(
+        output_dir, paste0("Significant_SNVs_",unique(srt$orig.ident)[i],".txt")), sep = "\t", row.names = F)
+      }
     } else {
-      # Normalize and validate tissue type
-      tissue_type <- str_to_title(tolower(tissue_type))
-      if (tissue_type %in% c("Immune", "Immunesystem")) {
-        tissue_type <- "Immune system"
-      }
-      valid_tissue_types <- c("Immune system", "Pancreas", "Liver", "Eye", "Kidney",
-                              "Brain", "Lung", "Adrenal", "Heart", "Intestine", "Muscle",
-                              "Placenta", "Spleen", "Stomach", "Thymus")
-      if (!(tissue_type %in% valid_tissue_types)) {
-        stop(paste("- The tissue type you have provided does not seem to be one of the tissue types that scType accepts:",
-                   paste(valid_tissue_types, collapse = ", ")))
-      }
+      df.final <- generate_statistics_fnction(snv=snv_input)
+      write.table(df.final, file = file.path(
+      output_dir, "SNV_Statistics.txt"), sep = "\t", row.names = F)
+      significant_snvs <- df.final[df.final$p_adj < 0.05, ]
+      write.table(significant_snvs, file = file.path(
+      output_dir, "Significant_SNVs.txt"), sep = "\t", row.names = F)
     }
   }
 
-  # Seurat object processing else conversion of counts matrix file to Seurat object first
-  if (!is.null(rds_file)) {
-    srt <- readRDS(rds_file)
-  }
-  else {
-    gene.matrix <- Read10X(data.dir = countsmatrix_file)
-    srt <- CreateSeuratObject(counts = gene.matrix, project = "Sample",
-                              min.cells = 3, min.features = 200)
-    srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-")
-    srt <- SCTransform(object = srt, vst.flavor = "v2", method = "glmGamPoi",
-                       vars.to.regress = "percent.mt", verbose = F)
-    DefaultAssay(srt) <- "SCT"
-  }
-
-  # dimensionality reduction
-  if (tolower(dimensionality_reduction) == "tsne") {
-    srt <- RunPCA(srt)
-    srt <- RunTSNE(srt, dim.embed = 3)
-  }
-  else if (tolower(dimensionality_reduction) == "pca") {
-    srt <- RunPCA(srt)
-    #srt <- RunUMAP(srt, dims = 1:20, n.components = 3)
-  }
-  else {
-    srt <- RunPCA(srt)
-    srt <- RunUMAP(srt, dims = 1:20, n.components = 3)
-  }
-
-  # clustering
-  srt <- FindNeighbors(srt, dims = 1:10)
-  srt <- FindClusters(srt, resolution = 0.5)
-
-
-  # read the SNV file and perform filtering
-  snv <- read.table(snv_file, sep = "\t", header = T)
-
-  if (nrow(snv) == 0) {
-    stop("The SNV file is empty.")
-  }
-
-  snv.modify <- snv %>% filter(SNVCount > 0)
-  num.snvs <- nrow(snv.modify)
-  snv$VAF[snv$VAF == "-"] <- NA
-  snv$VAF <- as.numeric(snv$VAF)
-
-  snv.n <- aggregate(SNVCount ~ ReadGroup, data = snv, length)
-  rownames(snv.n) <- snv.n$ReadGroup
-  colnames(snv.n)[2] <- "SNV.N"
-  snv <- merge(snv, snv.n, "ReadGroup", all.x = T)
-
-  if (th_vars > 0) {
-    snv <- snv %>% filter(SNV.N >= th_vars)
-  }
-  if (th_reads > 0) {
-    snv <- snv %>% filter(SNVCount >= th_reads)
-  }
-
-
-  snv.reads <- aggregate(SNVCount ~ ReadGroup, data = snv, sum)
-  if (max(snv.reads[, "SNVCount"]) == 0) {
-    stop("Even though you have provided a tab-separated file containing SNV information, there aren't any SNV read counts in it.")
-  }
-
-  rownames(snv.reads) <- snv.reads$ReadGroup
-  ref.reads <- aggregate(RefCount ~ ReadGroup, data = snv, sum)
-  rownames(ref.reads) <- snv.reads$ReadGroup
-
-  if (max(snv.reads[, "SNVCount"]) < th_reads) {
-    stop("There aren't any SNVs that satisfy the read threshold.")
-  }
-  if (max(snv.n[, "SNV.N"]) < th_vars) {
-    stop("There aren't any SNVs that satisfy the variant threshold.")
-  }
-
-  vaf.median <- aggregate(VAF ~ ReadGroup, data = snv, median)
-  rownames(vaf.median) <- vaf.median$ReadGroup
-  colnames(vaf.median)[2] <- "Median.VAF"
-  vaf.mean <- aggregate(VAF ~ ReadGroup, data = snv, mean)
-  rownames(vaf.mean) <- vaf.mean$ReadGroup
-  colnames(vaf.mean)[2] <- "Mean.VAF"
-
-  srt[["SNVCount"]] <- 0
-  srt[["SNVCount"]][rownames(snv.reads), 1] <- snv.reads[, "SNVCount"]
-  srt[["RefCount"]] <- 0
-  srt[["RefCount"]][rownames(ref.reads), 1] <- ref.reads[, "RefCount"]
-  srt[["TotalVAF"]] <- 0
-  srt[["TotalVAF"]] <- srt[["SNVCount"]] / (srt[["SNVCount"]] + srt[["RefCount"]])
-  srt[["TotalVAF"]][!is.finite(srt[["TotalVAF"]][, 1]), 1] <- 0
-  srt[["MedianVAF"]] <- 0
-  srt[["MedianVAF"]][rownames(vaf.median), 1] <- vaf.median[, "Median.VAF"]
-  srt[["MedianVAF"]][!is.finite(srt[["MedianVAF"]][, 1]), 1] <- 0
-  srt[["MeanVAF"]] <- 0
-  srt[["MeanVAF"]][rownames(vaf.mean), 1] <- vaf.mean[, "Mean.VAF"]
-  srt[["MeanVAF"]][!is.finite(srt[["MeanVAF"]][, 1]), 1] <- 0
-  snv.n <- unique(snv[, c("ReadGroup", "SNV.N")])
-  rownames(snv.n) <- snv.n[, "ReadGroup"]
-  srt[["SNV.N"]] <- 0
-  srt[["SNV.N"]][rownames(snv.n), 1] <- snv.n[, "SNV.N"]
-  srt[["SNV.N"]][!is.finite(srt[["SNV.N"]][, 1]), 1] <- 0
-  srt[["Undetected"]] <- ifelse((srt[["SNVCount"]] == 0 & srt[["RefCount"]] == 0), 1, 0)
-  srt[["HasSNV"]] <- sapply(srt[["SNVCount"]][, 1], function(x) if (x >= th_reads) 1 else 0)
-
-
-  # run scType analysis
+  # run scType analysis if requested
   if (enable_sctype) {
     cat("Running scType...\n")
     db_url <- "https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx"
@@ -311,22 +325,23 @@ preprocess_snv_data <- function(rds_file = NULL, countsmatrix_file = NULL, snv_f
   if (enable_sctype) {
     df.snv <- as.data.frame(srt[[c("SNVCount", "RefCount", "TotalVAF", "MedianVAF",
                                    "MeanVAF", "SNV.N", "seurat_clusters", "customclassif",
-                                   "HasSNV", "Undetected")]])
+                                   "HasSNV", "Undetected","orig.ident")]])
+    df.dim <- as.data.frame(Embeddings(srt, reduction = tolower(dimensionality_reduction)))
+    df.3dplot <- merge(df.snv, df.dim, by = 0)
+    colnames(df.3dplot)[13:15] <- c(paste0(dim.plotting, "_1"),
+                                    paste0(dim.plotting, "_2"),
+                                    paste0(dim.plotting, "_3"))
+  }
+  else {
+    df.snv <- as.data.frame(srt[[c("SNVCount", "RefCount", "TotalVAF", "MedianVAF", "MeanVAF",
+                                   "SNV.N", "seurat_clusters", "HasSNV", "Undetected","orig.ident")]])
     df.dim <- as.data.frame(Embeddings(srt, reduction = tolower(dimensionality_reduction)))
     df.3dplot <- merge(df.snv, df.dim, by = 0)
     colnames(df.3dplot)[12:14] <- c(paste0(dim.plotting, "_1"),
                                     paste0(dim.plotting, "_2"),
                                     paste0(dim.plotting, "_3"))
   }
-  else {
-    df.snv <- as.data.frame(srt[[c("SNVCount", "RefCount", "TotalVAF", "MedianVAF", "MeanVAF",
-                                   "SNV.N", "seurat_clusters", "HasSNV", "Undetected")]])
-    df.dim <- as.data.frame(Embeddings(srt, reduction = tolower(dimensionality_reduction)))
-    df.3dplot <- merge(df.snv, df.dim, by = 0)
-    colnames(df.3dplot)[11:13] <- c(paste0(dim.plotting, "_1"),
-                                    paste0(dim.plotting, "_2"),
-                                    paste0(dim.plotting, "_3"))
-  }
+
   rownames(df.3dplot) <- df.3dplot$Row.names
   df.3dplot <- df.3dplot[, 2:ncol(df.3dplot)]
   plot_data <- df.3dplot

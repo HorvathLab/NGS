@@ -62,7 +62,7 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
   curves <- NULL
 
   if (slingshot) {
-    sce <- as.SingleCellExperiment(seurat_object)
+    sce <- as.SingleCellExperiment(seurat_object, assay='SCT')
     if (!dimensionality_reduction %in% names(reducedDims(sce))) {
       reducedDims(sce)[[dimensionality_reduction]] <- Embeddings(seurat_object,
                                                                  reduction = tolower(dimensionality_reduction))
