@@ -140,8 +140,8 @@ srt_integrated <- FindClusters(srt_integrated, resolution = 0.6)
 
 #### Prepare SNV data
 ```
-snv_srt1 <- read.table("snv_file_srt1.tsv", sep = "\t", header = T)
-snv_srt2 <- read.table("snv_file_srt2.tsv", sep = "\t", header = T)
+snv_srt1 <- read.table("sample1_SNVs.tsv", sep = "\t", header = T)
+snv_srt2 <- read.table("sample2_SNVs.tsv", sep = "\t", header = T)
 
 snv_srt1$ReadGroup = paste0('srt1_',snv_srt1$ReadGroup) # these IDs must match the added cell IDs from above
 snv_srt2$ReadGroup = paste0('srt2_',snv_srt2$ReadGroup) # these IDs must match the added cell IDs from above
