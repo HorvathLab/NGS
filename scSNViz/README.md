@@ -9,15 +9,16 @@ install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
 sapply(load.lib,require,character=TRUE)
 
-snv_file <- "path/to/file/snv.txt"
+snv_file <- "sample1_SNVs.tsv"
 
 output_dir = "output"    # or output directory of your choice
 ```
 
-#### Read in the counts matrix (from either an .RDS file of an existing Seurat object or or a counts matrix)
+#### Read in the counts matrix (from either an .RDS file of an existing Seurat object or a counts matrix)
 ```
-gene.matrix <- Read10X(data.dir = countsmatrix_file) # for reading in a countsmatrix, the data.dir may also be the directory for that contains barcodes.tsv, genes.tsv and matrix.mtx, such as: /user/filtered_gene_bc_matrices/hg19/
-srt <- CreateSeuratObject(counts = gene.matrix, min.cells = 3, min.features = 200)
+#gene.matrix <- Read10X(data.dir = countsmatrix_file) # for reading in a countsmatrix, the data.dir may also be the directory for that contains barcodes.tsv, genes.tsv and matrix.mtx, such as: /user/filtered_gene_bc_matrices/hg19/
+#srt <- CreateSeuratObject(counts = gene.matrix, min.cells = 3, min.features = 200)
+srt <- readRDS("input/sample1_Seurat_object.rds")
 ```
 
 #### Quality Control: Filter data and perform scaling and normalization
