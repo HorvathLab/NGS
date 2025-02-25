@@ -17,8 +17,7 @@ output_dir = "output"    # or output directory of your choice
 #### Read in the counts matrix (from either an .RDS file of an existing Seurat object or or a counts matrix)
 ```
 gene.matrix <- Read10X(data.dir = countsmatrix_file) # for reading in a countsmatrix, the data.dir may also be the directory for that contains barcodes.tsv, genes.tsv and matrix.mtx, such as: /user/filtered_gene_bc_matrices/hg19/
-srt <- CreateSeuratObject(counts = gene.matrix, project = "Sample",
-                  min.cells = 3, min.features = 200)
+srt <- CreateSeuratObject(counts = gene.matrix, min.cells = 3, min.features = 200)
 ```
 
 #### Quality Control: Filter data and perform scaling and normalization
@@ -114,12 +113,10 @@ output_dir = "output"    # or output directory of your choice
 #### Prepare integrated data.
 
 ```
-srt1 <- CreateSeuratObject(counts = gene.matrix1, min.cells = 3, min.features = 200)
-srt2 <- CreateSeuratObject(counts = gene.matrix2, min.cells = 3, min.features = 200)
-srt3 <- CreateSeuratObject(counts = gene.matrix3, min.cells = 3, min.features = 200)
+srt1 <- readRDS('sample1_Seurat_object.rds')
+srt2 <- readRDS('sample2_Seurat_object.rds')
 srt1$orig.ident = 'srt1'
 srt2$orig.ident = 'srt2'
-srt3$orig.ident = 'srt3'
 
 ## QC ##
 srt1[["percent.mt"]] <- PercentageFeatureSet(srt1, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
@@ -129,13 +126,9 @@ srt1 <- subset(srt1, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent
 srt2[["percent.mt"]] <- PercentageFeatureSet(srt2, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
 VlnPlot(srt2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 srt2 <- subset(srt2, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
-
-srt3[["percent.mt"]] <- PercentageFeatureSet(srt3, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
-VlnPlot(srt3, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) 
-srt3 <- subset(srt3, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
 ########
 
-srt_merged <- merge(x=srt1, y=c(srt2,srt3), add.cell.ids=c('srt1','srt2','srt3'))
+srt_merged <- merge(x=srt1, y=c(srt2), add.cell.ids=c('srt1','srt2'))
 srt_merged[['RNA']]<-split(srt_merged[['RNA']],f=srt_merged$orig.ident)
 srt_merged <- SCTransform(srt_merged, vars.to.regress = "percent.mt", verbose = F)
 srt_merged <- RunPCA(srt_merged)
@@ -148,13 +141,11 @@ srt_integrated <- FindClusters(srt_integrated, resolution = 0.6)
 ```
 snv_srt1 <- read.table("snv_file_srt1.tsv", sep = "\t", header = T)
 snv_srt2 <- read.table("snv_file_srt2.tsv", sep = "\t", header = T)
-snv_srt3 <- read.table("snv_file_srt3.tsv", sep = "\t", header = T)
 
 snv_srt1$ReadGroup = paste0('srt1_',snv_srt1$ReadGroup) # these IDs must match the added cell IDs from above
 snv_srt2$ReadGroup = paste0('srt2_',snv_srt2$ReadGroup) # these IDs must match the added cell IDs from above
-snv_srt3$ReadGroup = paste0('srt3_',snv_srt3$ReadGroup) # these IDs must match the added cell IDs from above
 
-snv_file <- rbind(snv_srt1,snv_srt2,snv_srt3)
+snv_file <- rbind(snv_srt1,snv_srt2)
 write_tsv(snv_file,paste0(output_dir,'/snv_file.tsv'))
 ```
 
