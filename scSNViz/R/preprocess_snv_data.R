@@ -12,9 +12,9 @@
 #' @importFrom stats kruskal.test p.adjust
 #'
 #' @param rds_obj Processed Seurat object.
-#' @param snv_file Path to the SNV file (required).
+#' @param snv_file SNV file (required).
 #' @param dimensionality_reduction The dimensionality reduction method (umap, pca, or tsne). Default: umap.
-#' @param th_vars Threshold for number of sceSNVs for a cell to be displayed.. Default: 0.
+#' @param th_vars Threshold for number of sceSNVs for a cell to be displayed. Default: 0.
 #' @param th_reads Threshold for number of variant reads (N_VAR) for a locus to be considered sceSNV. Default: 0.
 #' @param enable_sctype Logical; enable scType analysis for cell types. Default: FALSE.
 #' @param enable_integrated Logical; enable scType analysis for cell types. Default: FALSE.
@@ -163,7 +163,7 @@ preprocess_snv_data <- function(rds_obj = NULL, snv_file = NULL,
     
     return(list(snv=snv,vaf.median=vaf.median,vaf.mean=vaf.mean,snv.reads=snv.reads,ref.reads=ref.reads))
   }
-  snv_file <- read.table(snv_file, sep = "\t", header = T)
+  snv_file_tble <- read.table(snv_file, sep = "\t", header = T)
   snv = data.frame()
   vaf.mean = data.frame()
   vaf.median = data.frame()
@@ -172,8 +172,8 @@ preprocess_snv_data <- function(rds_obj = NULL, snv_file = NULL,
   if (length(unique(srt$orig.ident))>1){
       for (i in 1:length(unique(srt$orig.ident))){
       #data must be integrated
-        snv_file$sampleid = data.frame(do.call('rbind',strsplit(as.character(snv_file$ReadGroup),'_',fixed=TRUE)))$X1
-        snv_file_subset <- snv_file[snv_file$sampleid == unique(srt$orig.ident)[i],]
+        snv_file_tble$sampleid = data.frame(do.call('rbind',strsplit(as.character(snv_file_tble$ReadGroup),'_',fixed=TRUE)))$X1
+        snv_file_subset <- snv_file_tble[snv_file_tble$sampleid == unique(srt$orig.ident)[i],]
         snv_file_subset$sampleid  = NULL
         output_list <- snv_statistics(snv=snv_file_subset)
         # combine statistics with other values from other samples
@@ -183,7 +183,7 @@ preprocess_snv_data <- function(rds_obj = NULL, snv_file = NULL,
         snv.reads=rbind(snv.reads,output_list$snv.reads)
         ref.reads=rbind(ref.reads,output_list$ref.reads)
       }} else { #data not integrated
-      snv_file_subset <- snv_file
+      snv_file_subset <- snv_file_tble
       output_list <- snv_statistics(snv_file_subset)
       snv=output_list$snv
       vaf.median=output_list$vaf.median
@@ -282,7 +282,7 @@ generate_statistics_fnction <- function(snv,th.snv.cells=th_snv_cells){
         output_dir, paste0("Significant_SNVs_",unique(srt$orig.ident)[i],".txt")), sep = "\t", row.names = F)
       }
     } else {
-      df.final <- generate_statistics_fnction(snv=snv_input)
+      df.final <- generate_statistics_fnction(snv)
       write.table(df.final, file = file.path(
       output_dir, "SNV_Statistics.txt"), sep = "\t", row.names = F)
       significant_snvs <- df.final[df.final$p_adj < 0.05, ]
