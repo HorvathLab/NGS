@@ -3,7 +3,7 @@
 #### Sample input data is in the input directory. Load libraries, define paths to input files, and define the output directory. 
 ```
 load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "sctransform", "ggplot2", "readr",
-            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer") # the installation of ("glmGamPoi") is highly recommended
+            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer","openxlsx") # the installation of ("glmGamPoi") is highly recommended
 
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
