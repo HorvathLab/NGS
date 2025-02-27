@@ -100,8 +100,8 @@ generate_report(plot_object = plots,
 
 ####
 ```
-load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "ggplot2",
-            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer") # the installation of ("glmGamPoi") is highly recommended
+load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "sctransform", "ggplot2", "readr",
+            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer","openxlsx") # the installation of ("glmGamPoi") is highly recommended
 
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
@@ -122,11 +122,12 @@ srt2$orig.ident = 'srt2'
 ## QC ##
 srt1[["percent.mt"]] <- PercentageFeatureSet(srt1, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
 VlnPlot(srt1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) # As described in Seurat introductory Vignettes
-srt1 <- subset(srt1, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5) # As described in Seurat introductory Vignettes
+srt1 <- subset(srt1, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
+
 
 srt2[["percent.mt"]] <- PercentageFeatureSet(srt2, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
 VlnPlot(srt2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-srt2 <- subset(srt2, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+srt2 <- subset(srt2, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
 ########
 
 srt_merged <- merge(x=srt1, y=c(srt2), add.cell.ids=c('srt1','srt2'))
