@@ -131,7 +131,6 @@ srt2 <- subset(srt2, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount
 ########
 
 srt_merged <- merge(x=srt1, y=c(srt2), add.cell.ids=c('srt1','srt2'))
-srt_merged[['RNA']]<-split(srt_merged[['RNA']],f=srt_merged$orig.ident)
 srt_merged <- SCTransform(srt_merged, vars.to.regress = "percent.mt", verbose = F)
 srt_merged <- RunPCA(srt_merged)
 srt_integrated <- IntegrateLayers(object = srt_merged, method = CCAIntegration, normalization.method = "SCT", new.reduction='integrated', verbose = F) #any of the suggested integration methods in Seurat may be applied here for the methods parameter
