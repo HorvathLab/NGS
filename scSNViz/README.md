@@ -35,7 +35,7 @@ srt <- subset(srt, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_R
 #### Quality Control: Examples of how filtering impacts Violin plot.
 
 ##### Unfiltered
-![Unfiltered Violin Plot](docs/prefilt_vln.png "UNFILTERED",w=10,h=10)
+![Unfiltered Violin Plot](docs/prefilt_vln.png "UNFILTERED"|width=10)
 
 ##### Filtered
 ![Filtered Violin PLot](docs/filt_vln.png "FILTERED",width=10,height=10)
