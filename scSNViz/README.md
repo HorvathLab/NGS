@@ -100,8 +100,8 @@ generate_report(plot_object = plots,
 
 ####
 ```
-load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "ggplot2",
-            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer") # the installation of ("glmGamPoi") is highly recommended
+load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "sctransform", "ggplot2", "readr",
+            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer","openxlsx") # the installation of ("glmGamPoi") is highly recommended
 
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
@@ -122,15 +122,15 @@ srt2$orig.ident = 'srt2'
 ## QC ##
 srt1[["percent.mt"]] <- PercentageFeatureSet(srt1, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
 VlnPlot(srt1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) # As described in Seurat introductory Vignettes
-srt1 <- subset(srt1, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5) # As described in Seurat introductory Vignettes
+srt1 <- subset(srt1, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
+
 
 srt2[["percent.mt"]] <- PercentageFeatureSet(srt2, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
 VlnPlot(srt2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-srt2 <- subset(srt2, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+srt2 <- subset(srt2, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
 ########
 
 srt_merged <- merge(x=srt1, y=c(srt2), add.cell.ids=c('srt1','srt2'))
-srt_merged[['RNA']]<-split(srt_merged[['RNA']],f=srt_merged$orig.ident)
 srt_merged <- SCTransform(srt_merged, vars.to.regress = "percent.mt", verbose = F)
 srt_merged <- RunPCA(srt_merged)
 srt_integrated <- IntegrateLayers(object = srt_merged, method = CCAIntegration, normalization.method = "SCT", new.reduction='integrated', verbose = F) #any of the suggested integration methods in Seurat may be applied here for the methods parameter
@@ -147,14 +147,14 @@ snv_srt1$ReadGroup = paste0('srt1_',snv_srt1$ReadGroup) # these IDs must match t
 snv_srt2$ReadGroup = paste0('srt2_',snv_srt2$ReadGroup) # these IDs must match the added cell IDs from above
 
 snv_file <- rbind(snv_srt1,snv_srt2)
-write_tsv(snv_file,paste0(output_dir,'/snv_file.tsv'))
+write_tsv(snv_file,'snv_file_integrated.tsv')
 ```
 
 
 #### Preprocess the SNV data and incorporate the integrated Seurat object into the workflow. Generate plots.
 ```
 processed_data <- preprocess_snv_data(rds_obj = srt_integrated,
-                                      snv_file = paste0(output_dir,'/snv_file.tsv'),
+                                      snv_file = "snv_file_integrated.tsv",
                                       dimensionality_reduction = "UMAP", #you may only generate UMAP plots with integrated samples
                                       th_vars = 0,
                                       th_reads = 0,
