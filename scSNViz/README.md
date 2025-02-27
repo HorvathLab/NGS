@@ -9,7 +9,7 @@ install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
 sapply(load.lib,require,character=TRUE)
 
-snv_file <- "sample1_SNVs.tsv"
+snv_file <- 'input/sample1_SNVs.tsv'
 
 output_dir = "output"    # or output directory of your choice
 ```
