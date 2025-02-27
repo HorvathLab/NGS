@@ -82,7 +82,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-#### Generate report
+#### Generate the report
 ```
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
                                       processed_snv = processed_data$ProcessedSNV,
@@ -172,7 +172,10 @@ processed_data <- preprocess_snv_data(rds_obj = srt_integrated,
                                       tissue_type = "Immunesystem", #other tissue options include: Pancreas, Liver, Eye, Kidney, Brain, Lung, Adrenal, Heart, Intestine, Muscle, Placenta, Spleen, Stomach, Thymus
                                       generate_statistics = TRUE,
                                       output_dir = output_dir)
+```
 
+#### Generate the different 3d dimensionality reduction plots
+```
 plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        processed_data$ProcessedSNV,
                        processed_data$AggregatedSNV,
@@ -187,7 +190,10 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        cell_border = 0,
                        enable_integrated = TRUE,
                        save_each_plot = TRUE)
+```
 
+#### Generate a report
+```
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
                                       processed_snv = processed_data$ProcessedSNV,
                                       output_dir = output_dir,
@@ -201,5 +207,3 @@ generate_report(plot_object = plots,
                 hide_ind_plots = TRUE, # individual plots for each SNV are hidden
                 output_dir = output_dir)
 ```
-#### 
-![Example Exploratory Plot](docs/integrated_output_example.png "FILTERED")
