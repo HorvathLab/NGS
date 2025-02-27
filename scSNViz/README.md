@@ -201,3 +201,5 @@ generate_report(plot_object = plots,
                 hide_ind_plots = TRUE, # individual plots for each SNV are hidden
                 output_dir = output_dir)
 ```
+#### 
+![Example Exploratory Plot](docs/integrated_output_example.png "FILTERED")
