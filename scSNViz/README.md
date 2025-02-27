@@ -154,7 +154,7 @@ write_tsv(snv_file,'snv_file_integrated.tsv')
 #### Preprocess the SNV data and incorporate the integrated Seurat object into the workflow. Generate plots.
 ```
 processed_data <- preprocess_snv_data(rds_obj = srt_integrated,
-                                      snv_file = snv_file_integrated.tsv,
+                                      snv_file = "snv_file_integrated.tsv",
                                       dimensionality_reduction = "UMAP", #you may only generate UMAP plots with integrated samples
                                       th_vars = 0,
                                       th_reads = 0,
