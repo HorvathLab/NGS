@@ -18,7 +18,7 @@ output_dir = "output"    # or output directory of your choice
 ```
 #gene.matrix <- Read10X(data.dir = countsmatrix_file) # for reading in a countsmatrix, the data.dir may also be the directory for that contains barcodes.tsv, genes.tsv and matrix.mtx, such as: /user/filtered_gene_bc_matrices/hg19/
 #srt <- CreateSeuratObject(counts = gene.matrix, min.cells = 3, min.features = 200)
-srt <- readRDS("sample1_Seurat_object.rds")
+srt <- readRDS('input/sample1_Seurat_object.rds')
 ```
 
 #### Quality Control: Filter data and perform scaling and normalization
