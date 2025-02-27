@@ -30,7 +30,7 @@ srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-") # this is for
 VlnPlot(srt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) # As described in Seurat introductory Vignettes
 
 # filter the Seurat object based on the violin plot
-srt <- subset(srt, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5) # As described in Seurat introductory Vignettes
+srt <- subset(srt, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
 ```
 
 #### Scale and normalize the data. Then, run a PCA.
