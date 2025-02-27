@@ -33,10 +33,10 @@ VlnPlot(srt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 srt <- subset(srt, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
 ```
 #### Quality Control: Examples of how filtering impacts Violin plot.
-```
-[Prefiltered Violin Plot](docs/prefilt_vln.png)
 
-```
+[Unfiltered Violin Plot](docs/prefilt_vln.png)
+[Filtered Violin PLot](docs/filt_vln.png)
+
 
 #### Scale and normalize the data. Then, run a PCA.
 ```
