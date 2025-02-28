@@ -3,11 +3,15 @@
 #### Sample input data is in the input directory. Load libraries, define paths to input files, and define the output directory. 
 ```
 load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "sctransform", "ggplot2", "readr",
-            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer","openxlsx") # the installation of ("glmGamPoi") is highly recommended
+            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "listviewer","openxlsx") # the installation of ("glmGamPoi") is highly recommended
 
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
 sapply(load.lib,require,character=TRUE)
+
+ CopyKat is an optional tool to include in analysis and must be installed seprately
+library(devtools)
+install_github("navinlabcode/copykat")
 
 snv_file <- 'input/sample1_SNVs.tsv'
 
