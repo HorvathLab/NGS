@@ -234,6 +234,7 @@ output_dir/
     ├── Total_VAF_RNA.html
     ├── N_sceSNVs.html
     ├── N_VARreads.html
+    ├── SAMPLE_ID_plot.html          (optional)
     ├── Transposed_SNV_Matrix.html
     ├── Histogram_N_SNV.png
     ├── Histogram_N_VARreadsCounts.png
@@ -264,6 +265,7 @@ For the set of the scSNVs, the separately produced figures show the following:
 &nbsp;&nbsp;&nbsp;&nbsp;**N_VARreads**: 3D UMAP/t-SNE/PCA representation of number of Variant Reads for each cell<br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;**N_REFreads**: 3D UMAP/t-SNE/PCA representation of number of Reference Reads for each cell<br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;**Total_VAF_RNA**: 3D UMAP/t-SNE/PCA representation of Total VAF per cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**SAMPLE_ID_plot**: 3D UMAP/t-SNE/PCA representation of the sample IDs<br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;**Transposed_SNV_Matrix**: 3D UMAP/t-SNE/PCA representation of transposed SNV-Cellbarcode matrix<br><br>
 
 **significant_SNVs.txt**: a text file of significant SNVs (p < 0.05) identified from the statistical significance test (if requested)
