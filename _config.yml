@@ -25,5 +25,5 @@ defaults:
       path: "scSNViz-R-package" 
       type: "pages"             
     values:
-      layout: "default"
+      layout: "scsnviz-r-package"
       title: "scSNViz R package"
