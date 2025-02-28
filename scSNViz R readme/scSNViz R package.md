@@ -219,8 +219,9 @@ scSNViz generates outputs for the set of the scSNVs and for each individual scSN
 output_dir/
 │
 ├── Exploratory_Combined_Plots.html
-├── sample_SNVs-summary.txt
-└── Figures_Individual_Plots_HTML/   (optional)
+├── significant_SNVs.txt             (optional)
+├── SNV_Statistics.txt               (optional)
+└── SNV_data_plots/   
     ├── Cell_types_scType.html       (optional)
     ├── CNVs_CopyKat.html            (optional)
     ├── Median_VAF_RNA.html
@@ -229,22 +230,23 @@ output_dir/
     ├── Total_VAF_RNA.html
     ├── N_sceSNVs.html
     ├── N_VARreads.html
+    ├── Transposed_SNV_Matrix.html
     ├── Histogram_N_SNV.png
     ├── Histogram_N_VARreadsCounts.png
     ├── Histogram_MeanSNVsVAF.png
     ├── Histogram_TotalVAF.png
-    └── Individual_sceSNVs/
-        ├── VARreads/
-        │   └── 3D N_VAR plot HTML files for each sceSNV
-        ├── REFreads/
-        │   └── 3D N_REF plot HTML files for each sceSNV
-        └── VAF/
-            └── 3D VAF plot HTML files for each sceSNV
+└── Individual_sceSNVs/
+    ├── VARreads/
+    │   └── 3D N_VAR plot HTML files for each scSNV
+    ├── REFreads/
+    │   └── 3D N_REF plot HTML files for each scSNV
+    └── VAF/
+        └── 3D VAF plot HTML files for each scSNV
 ```
 
 ## Description
 
-For the set of the sceSNVs, the separately produced figures show the following:
+For the set of the scSNVs, the separately produced figures show the following:
 
 &nbsp;&nbsp;&nbsp;&nbsp;**MeanSNVsVAF**: Histogram of mean VAF per SNV per cell<br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;**N_SNV**: Histogram of the number of SNVs per cell<br><br>
@@ -258,10 +260,13 @@ For the set of the sceSNVs, the separately produced figures show the following:
 &nbsp;&nbsp;&nbsp;&nbsp;**N_VARreads**: 3D UMAP/t-SNE/PCA representation of number of Variant Reads for each cell<br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;**N_REFreads**: 3D UMAP/t-SNE/PCA representation of number of Reference Reads for each cell<br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;**Total_VAF_RNA**: 3D UMAP/t-SNE/PCA representation of Total VAF per cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**Transposed_SNV_Matrix**: 3D UMAP/t-SNE/PCA representation of transposed SNV-Cellbarcode matrix<br><br>
 
-**sample_SNVs-summary**: a text file of the summary statistics per cell
+**significant_SNVs.txt**: a text file of significant SNVs (p < 0.05) identified from the statistical significance test (if requested)
 
-**Individual_sceSNVs**: contains 3D dmensionality reduction plots for _individual sceSNV_ of the following:
+**SNV_Statistics.txt**: a text file displaying the results of the statistical significance test (if requested)
+
+**Individual_sceSNVs**: contains 3D dmensionality reduction plots for _individual SNV_ of the following:
   - Expressed Variant Allele Fraction per cell (VAF_RNA)
   - Number of Reference Reads per cell (N_REF)
   - Number of Variant Reads per cell (N_VAR)
