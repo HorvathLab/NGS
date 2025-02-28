@@ -20,3 +20,10 @@ defaults:
       type: "pages"
     values:
       layout: "scsnviz"
+
+  - scope:
+      path: "scSNViz-R-package" 
+      type: "pages"             
+    values:
+      layout: "default"
+      title: "scSNViz R package"
