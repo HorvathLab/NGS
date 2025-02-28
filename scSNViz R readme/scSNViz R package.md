@@ -207,3 +207,65 @@ generate_report(plot_object = plots,
                 hide_ind_plots = TRUE, # individual plots for each SNV are hidden
                 output_dir = output_dir)
 ```
+
+
+## Output
+
+### Directory structure
+
+scSNViz generates outputs for the set of the scSNVs and for each individual scSNV, as follows:
+
+```
+output_dir/
+│
+├── Exploratory_Combined_Plots.html
+├── sample_SNVs-summary.txt
+└── Figures_Individual_Plots_HTML/   (optional)
+    ├── Cell_types_scType.html       (optional)
+    ├── CNVs_CopyKat.html            (optional)
+    ├── Median_VAF_RNA.html
+    ├── Mean_VAF_RNA.html
+    ├── N_REFreads.html
+    ├── Total_VAF_RNA.html
+    ├── N_sceSNVs.html
+    ├── N_VARreads.html
+    ├── Histogram_N_SNV.png
+    ├── Histogram_N_VARreadsCounts.png
+    ├── Histogram_MeanSNVsVAF.png
+    ├── Histogram_TotalVAF.png
+    └── Individual_sceSNVs/
+        ├── VARreads/
+        │   └── 3D N_VAR plot HTML files for each sceSNV
+        ├── REFreads/
+        │   └── 3D N_REF plot HTML files for each sceSNV
+        └── VAF/
+            └── 3D VAF plot HTML files for each sceSNV
+```
+
+## Description
+
+For the set of the sceSNVs, the separately produced figures show the following:
+
+&nbsp;&nbsp;&nbsp;&nbsp;**MeanSNVsVAF**: Histogram of mean VAF per SNV per cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**N_SNV**: Histogram of the number of SNVs per cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**N_VARreadsCounts**: Histogram of the number of Variant Reads per cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**TotalVAF**: Histogram of the Total VAF per cell (VARreads/(VARreads + REFreads) per cell)<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**Cell_types_scType**: 3D UMAP/t-SNE/PCA representation of the cell types identified by scType<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**CNVs_CopyKat.html**: 3D UMAP/t-SNE/PCA representation of the copy number variations identified by CopyKat<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**Mean_VAF_RNA**: 3D UMAP/t-SNE/PCA representation of mean VAF for each cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**Median_VAF_RNA**: 3D UMAP/t-SNE/PCA representation of median VAF for each cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**N_sceSNVs**: 3D UMAP/t-SNE/PCA representation of number of number of SNVs for each cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**N_VARreads**: 3D UMAP/t-SNE/PCA representation of number of Variant Reads for each cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**N_REFreads**: 3D UMAP/t-SNE/PCA representation of number of Reference Reads for each cell<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;**Total_VAF_RNA**: 3D UMAP/t-SNE/PCA representation of Total VAF per cell<br><br>
+
+**sample_SNVs-summary**: a text file of the summary statistics per cell
+
+**Individual_sceSNVs**: contains 3D dmensionality reduction plots for _individual sceSNV_ of the following:
+  - Expressed Variant Allele Fraction per cell (VAF_RNA)
+  - Number of Reference Reads per cell (N_REF)
+  - Number of Variant Reads per cell (N_VAR)
+
+**Exploratory_Combined_Plots**: displays all the separately generated plots above into one single html for modularity
+
+<br>
