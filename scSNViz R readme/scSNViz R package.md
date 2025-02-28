@@ -53,7 +53,6 @@ srt <- FindClusters(srt, resolution = 0.5)
 
 #### Preprocess the SNV data and incorporate the Seurat object into the workflow
 ```
-# preprocessing the SNV data
 processed_data <- preprocess_snv_data(rds_obj = srt,
                                       snv_file = snv_file,
                                       dimensionality_reduction = "UMAP",
