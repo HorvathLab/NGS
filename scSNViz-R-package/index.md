@@ -108,7 +108,6 @@ generate_report(plot_object = plots,
 
 # Workflow for Advanced Users with Integrated Samples
 
-####
 ```
 load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "sctransform", "ggplot2", "readr",
             "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer","openxlsx") # the installation of ("glmGamPoi") is highly recommended
