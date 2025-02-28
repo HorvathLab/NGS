@@ -1,8 +1,3 @@
----
-layout: default
-title: "scSNViz R package"
----
-
 # Quickstart for Beginners
 
 #### Sample input data is in the input directory. Load libraries, define paths to input files, and define the output directory. 
