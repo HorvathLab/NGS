@@ -82,7 +82,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-#### Generate the report
+#### Generate individual SNV plots
 ```
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
                                       processed_snv = processed_data$ProcessedSNV,
@@ -91,7 +91,10 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       save_each_plot = TRUE,
                                       dimensionality_reduction = "UMAP",
                                       dynamic_cell_size = FALSE)
+```
 
+#### Generate exploratory combined html report
+```
 generate_report(plot_object = plots,
                 ind_snv_object = ind_snv_plots,
                 hide_ind_plots = TRUE, # Set this to FALSE in order to see plots for each individual SNV
@@ -192,7 +195,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-#### Generate a report
+#### Generate individual SNV plots
 ```
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
                                       processed_snv = processed_data$ProcessedSNV,
@@ -201,7 +204,10 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       save_each_plot = TRUE,
                                       dimensionality_reduction = "UMAP",
                                       dynamic_cell_size = FALSE)
+```
 
+#### Generate exploratory combined html report
+```
 generate_report(plot_object = plots,
                 ind_snv_object = ind_snv_plots,
                 hide_ind_plots = TRUE, # individual plots for each SNV are hidden
