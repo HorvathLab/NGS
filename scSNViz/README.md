@@ -129,8 +129,8 @@ output_dir = "output"    # or output directory of your choice
 #### Prepare integrated data.
 
 ```
-srt1 <- readRDS('sample1_Seurat_object.rds')
-srt2 <- readRDS('sample2_Seurat_object.rds')
+srt1 <- readRDS('input/sample1_Seurat_object.rds')
+srt2 <- readRDS('input/sample2_Seurat_object.rds')
 srt1$orig.ident = 'srt1'
 srt2$orig.ident = 'srt2'
 
@@ -155,8 +155,8 @@ srt_integrated <- FindClusters(srt_integrated, resolution = 0.6)
 
 #### Prepare SNV data
 ```
-snv_srt1 <- read.table("sample1_SNVs.tsv", sep = "\t", header = T)
-snv_srt2 <- read.table("sample2_SNVs.tsv", sep = "\t", header = T)
+snv_srt1 <- read.table("input/sample1_SNVs.tsv", sep = "\t", header = T)
+snv_srt2 <- read.table("input/sample2_SNVs.tsv", sep = "\t", header = T)
 
 snv_srt1$ReadGroup = paste0('srt1_',snv_srt1$ReadGroup) # these IDs must match the added cell IDs from above
 snv_srt2$ReadGroup = paste0('srt2_',snv_srt2$ReadGroup) # these IDs must match the added cell IDs from above
