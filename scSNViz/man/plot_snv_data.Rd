@@ -19,7 +19,8 @@ plot_snv_data(
   color_scale = "YlOrRd",
   cell_border = 0,
   disable_3d_axis = F,
-  save_each_plot = F
+  save_each_plot = F,
+  enable_integrated = F
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ plot_snv_data(
 \item{disable_3d_axis}{Logical; whether to disable 3D axis labels. Default: FALSE.}
 
 \item{save_each_plot}{Logical; whether to save each plot individually. Default: FALSE.}
+
+\item{enable_integrated}{Logical; whether to use an integrated Seurat object. Default: FALSE.}
 }
 \value{
 A list of generated plots.
