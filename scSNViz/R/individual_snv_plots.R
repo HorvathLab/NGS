@@ -55,7 +55,7 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
   df.snv <- processed_snv
   df.snv <- df.snv[c("CHROM", "POS", "REF", "ALT", "ReadGroup",
                      "SNVCount", "RefCount", "VAF")]
-  snvs <- unique(df.snv[c("CHROM", "POS", "REF", "ALT")])
+  snvs <- unique(df.snv[c("CHROM", "POS", "REF", "ALT")])[1:50, ] #sets limit to 50 snvs
   snv_options <- paste(snvs$CHROM, snvs$POS, snvs$REF, snvs$ALT, sep = ":")
 
   individual_SNV_html <- NULL
@@ -206,7 +206,7 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
     return(plots)
   }
 
-
+  counter = 0
   # function to save plots' json
   plots_json <- lapply(snv_options, function(snv) {
     plots <- generate_snv_plots(snv, title_color = 'blue')

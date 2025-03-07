@@ -44,8 +44,15 @@ single_snv_plot <- function(seurat_object, processed_snv, snv_of_choice = "CHROM
 
   cat("\nGenerating individual SNV plot...\n")
 
+  is_valid_snv <- function(input) {
+  pattern <- "^[0-9XY]+:[0-9]+:[ACGT]+:[ACGT]+$"
+  return(grepl(pattern, input))
+  }
+
   if (snv_of_choice == "CHROM:POS:REF:ALT"){
-    stop("Input your snv of choice with the following format CHR:POS:REF:ALT")
+    stop("Input your snv of choice with the following format CHR:POS:REF:ALT. Currently input set to default.")
+  } else if (!is_valid_snv(snv_of_choice)){
+    stop("SNV not in valid format CHROM:POS:REF:ALT. Example: 1:155169447:C:T")
   }
 
   valid_reductions <- c("umap", "pca", "tsne")
