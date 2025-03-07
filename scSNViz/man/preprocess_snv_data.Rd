@@ -5,14 +5,15 @@
 \title{Preprocess scSNViz Data}
 \usage{
 preprocess_snv_data(
-  rds_file = NULL,
-  countsmatrix_file = NULL,
-  snv_file,
+  rds_obj = NULL,
+  snv_file = NULL,
   dimensionality_reduction = "UMAP",
   th_vars = 0,
   th_reads = 0,
   enable_sctype = F,
   tissue_type = NULL,
+  enable_integrated = F,
+  integrated_reduction_name = "integrated",
   color_scale = "YlOrRd",
   generate_statistics = F,
   th_snv_cells = 10,
@@ -20,21 +21,21 @@ preprocess_snv_data(
 )
 }
 \arguments{
-\item{rds_file}{Path to the RDS file containing a Seurat object (required if countsmatrix_file is not provided).}
+\item{rds_obj}{Processed Seurat object.}
 
-\item{countsmatrix_file}{Path to the folder containing STARsolo output files (barcodes.tsv.gz, features.tsv.gz, matrix.mtx.gz).}
-
-\item{snv_file}{Path to the SNV file (required).}
+\item{snv_file}{SNV file (required).}
 
 \item{dimensionality_reduction}{The dimensionality reduction method (umap, pca, or tsne). Default: umap.}
 
-\item{th_vars}{Threshold for number of sceSNVs for a cell to be displayed.. Default: 0.}
+\item{th_vars}{Threshold for number of sceSNVs for a cell to be displayed. Default: 0.}
 
 \item{th_reads}{Threshold for number of variant reads (N_VAR) for a locus to be considered sceSNV. Default: 0.}
 
 \item{enable_sctype}{Logical; enable scType analysis for cell types. Default: FALSE.}
 
 \item{tissue_type}{Tissue type for scType. Required if enable_sctype is TRUE.}
+
+\item{enable_integrated}{Logical; enable scType analysis for cell types. Default: FALSE.}
 
 \item{color_scale}{Color scale for plots. Options include Blues, Reds, etc. Default: YlOrRd.}
 
@@ -53,7 +54,7 @@ clustering, computes various statistics for visualization, and optionally genera
 }
 \examples{
 processed_data <- preprocess_snv_data(
-  rds_file = "path/to/seurat.rds",
+  rds_obj = srt,
   snv_file = "path/to/snv_file.tsv",
   dimensionality_reduction = "umap",
   th_vars = 1,
