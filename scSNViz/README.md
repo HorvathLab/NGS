@@ -88,6 +88,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
 
 #### Generate individual SNV plots
 ```
+#Individual SNV's plottable capped at 50 unique.
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
                                       processed_snv = processed_data$ProcessedSNV,
                                       output_dir = output_dir,
@@ -97,15 +98,36 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       dynamic_cell_size = FALSE)
 ```
 
+#### Plot individual SNV
+```
+one_snv_plot <- single_snv_plot(
+       seurat_object = processed_data$SeuratObject,
+       processed_snv = processed_data$ProcessedSNV,
+       snv_of_choice = "1:155169447:C:T",
+       output_dir = "output/individual_plots",
+       slingshot = T,
+       dimensionality_reduction = "UMAP",
+       dynamic_cell_size = F,
+       save_each_plot = T
+     )
+
+```
+
 #### Generate exploratory combined plots report
 ```
 generate_report(plot_object = plots,
                 ind_snv_object = ind_snv_plots,
-                hide_ind_plots = TRUE, # Set this to FALSE in order to see plots for each individual SNV
+                hide_ind_plots = TRUE, # Set this to FALSE in order to see plots for each individual SNV.
                 output_dir = output_dir)
 ```
 
-
+#### Generate exploratory combined plot for single SNV of interest
+```
+generate_report(plot_object = plots,
+                ind_snv_object = one_snv_plot,
+                hide_ind_plots = FALSE,
+                output_dir = output_dir)
+```
 
 
 
