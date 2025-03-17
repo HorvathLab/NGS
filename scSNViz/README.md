@@ -1,6 +1,6 @@
 # Quickstart for Beginners
 
-#### Sample input data is in the input directory. Load libraries, define paths to input files, and define the output directory. 
+#### Load libraries, define paths to input files, and define the output directory. 
 ```
 load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "sctransform", "ggplot2", "readr",
             "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "listviewer","openxlsx") # the installation of ("glmGamPoi") is highly recommended
@@ -14,7 +14,7 @@ library(devtools)
 install_github("navinlabcode/copykat")
 
 snv_file <- 'input/sample1_SNVs.tsv'
-
+srt_obj_file <- 'input/sample1_Seurat_object.rds'
 output_dir = "output"    # or output directory of your choice
 ```
 
@@ -22,7 +22,7 @@ output_dir = "output"    # or output directory of your choice
 ```
 #gene.matrix <- Read10X(data.dir = countsmatrix_file) # for reading in a countsmatrix, the data.dir may also be the directory for that contains barcodes.tsv, genes.tsv and matrix.mtx, such as: /user/filtered_gene_bc_matrices/hg19/
 #srt <- CreateSeuratObject(counts = gene.matrix, min.cells = 3, min.features = 200)
-srt <- readRDS('input/sample1_Seurat_object.rds')
+srt <- readRDS(srt_obj_file)
 ```
 
 #### Quality Control: Filter data and perform scaling and normalization
