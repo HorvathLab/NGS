@@ -253,7 +253,7 @@ single_snv_plot <- function(seurat_object, processed_snv, snv_of_choice = "CHROM
     save_snv_plot <- function(plot, snv, plot_type) {
       snv_clean <- gsub(":", "_", snv)
       file_path <- file.path(
-        output_dir, "Individual_SNV_plots",
+        output_dir,
         plot_type, paste0(plot_type, "_", snv_clean, ".html")
       )
       dir.create(dirname(file_path), showWarnings = F, recursive = T)
