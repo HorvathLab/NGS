@@ -1,4 +1,4 @@
-G#' Preprocess scSNViz Data
+#' Preprocess scSNViz Data
 #'
 #' This function preprocesses SNV and Seurat object data, performs dimensionality reduction,
 #' clustering, computes various statistics for visualization, and optionally generates statistics.
