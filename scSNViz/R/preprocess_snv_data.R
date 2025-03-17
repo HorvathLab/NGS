@@ -1,4 +1,4 @@
-#' Preprocess scSNViz Data
+G#' Preprocess scSNViz Data
 #'
 #' This function preprocesses SNV and Seurat object data, performs dimensionality reduction,
 #' clustering, computes various statistics for visualization, and optionally generates statistics.
@@ -269,7 +269,7 @@ generate_statistics_fnction <- function(snv,th.snv.cells=th_snv_cells){
   # generate SNV statistics if requested
   if (generate_statistics) {
     if ("GoodReads" %in% colnames(snv_file_tble)==FALSE){
-      stop("scSNViz is only able to generate statistics if the snv file input is from SCReadcounts."
+      stop("scSNViz is only able to generate statistics if the snv file input is from SCReadcounts.")
     } else {
     dir.create(output_dir, recursive = T, showWarnings = F)
     if (enable_integrated){
