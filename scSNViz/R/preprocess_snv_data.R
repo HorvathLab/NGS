@@ -123,8 +123,7 @@ preprocess_snv_data <- function(rds_obj = NULL, snv_file = NULL,
     }
     snv.modify <- snv %>% filter(SNVCount > 0)
     num.snvs <- nrow(snv.modify)
-    snv$VAF[snv$VAF == "-"] <- NA
-    snv$VAF <- as.numeric(snv$VAF)
+    snv$VAF <- snv[["SNVCount"]] / (snv[["SNVCount"]] + snv[["RefCount"]])
 
     snv.n <- aggregate(SNVCount ~ ReadGroup, data = snv, length)
     rownames(snv.n) <- snv.n$ReadGroup
