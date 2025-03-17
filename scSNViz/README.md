@@ -142,7 +142,7 @@ generate_report(plot_object = plots,
 ```
 
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/Exploratory_combined_plots.png>
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/Exploratory_combined_plots.png'>
 
 
 #### Generate exploratory combined plot for single SNV of interest
