@@ -54,9 +54,8 @@ VlnPlot(srt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 # filter the Seurat object based on the violin plot
 srt <- subset(srt, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
 ```
-#### Quality Control: Examples of how filtering impacts the violin plots
 
-##### Unfiltered and Filtered
+The below unfiltered and filtered violin plots show the quality control process, filtering cells out based on percent mitochondria, number of features and number of counts.
 
 <img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/prefilt_filt_vln.png' width=50% height=50%>
 
