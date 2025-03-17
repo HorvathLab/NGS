@@ -13,7 +13,7 @@ expression, and. Additionally, scSNViz supports both individual and set-based sc
 comparative assessments across multiple samples, making it a powerful tool for understanding SNV-driven
 regulatory mechanisms and cellular heterogeneity.
 
-![alt](docs/scSNViz_PanelA.png,width=50%, height=50%)
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/scSNViz_PanelA.png',width=50% height=50%>
 
 ## Quickstart for Beginners
 
