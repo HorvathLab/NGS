@@ -56,12 +56,9 @@ srt <- subset(srt, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_R
 ```
 #### Quality Control: Examples of how filtering impacts the violin plots
 
-##### Unfiltered
+##### Unfiltered and Filtered
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/prefilt_vln.png' width=50% height=50%>
-
-
-##### Filtered
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/prefilt_vln.png' width=50% height=50%> 
 <img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/filt_vln.png' width=50% height=50%>
 
 
