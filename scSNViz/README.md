@@ -58,8 +58,7 @@ srt <- subset(srt, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_R
 
 ##### Unfiltered and Filtered
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/prefilt_vln.png' width=50% height=50%> 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/filt_vln.png' width=50% height=50%>
+<img src='[https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/prefilt_vln.png](https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/prefilt_filt_vln.png)' width=50% height=50%>
 
 
 #### Scale and normalize the data. Then, run a PCA.
