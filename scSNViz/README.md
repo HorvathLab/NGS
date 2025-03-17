@@ -1,6 +1,22 @@
-# Quickstart for Beginners
+# scSNViz: visualization and analysis of Cell-Specific Expressed SNVs
+Understanding expressed genetic variation at the single-cell level is crucial for insights into
+transcriptional heterogeneity and gene expression regulation, but there is a scarcity of tools for visualizing
+and analyzing cell-level genetic variants. scSNViz is a dedicated tool for the visualization and analysis of cell-specific expressed
+single nucleotide variants (sceSNVs) in cell-barcoded single-cell RNA sequencing (scRNA-seq) data. It
+integrates established frameworks such as Seurat, Slingshot, scType, and CopyKat into a specialized
+workflow for sceSNV expression analysis. scSNViz enables quantitative 3D visualization of variant allele
+frequencies (VAF_RNA), reference (N_REF) and variant (N_VAR) read counts, while also supporting SNV
+clustering based on shared transcriptional activity. Beyond visualization, scSNViz provides estimation,
+summarization, and graphical representation of SNV expression metrics, facilitating the study of allelic
+dynamics, somatic, germline, and RNA-originating SNVs, transcriptional bursting and lineage-specific
+expression, and. Additionally, scSNViz supports both individual and set-based sceSNV analyses, as well as
+comparative assessments across multiple samples, making it a powerful tool for understanding SNV-driven
+regulatory mechanisms and cellular heterogeneity.
 
-#### Load libraries, define paths to input files, and define the output directory. 
+
+## Quickstart for Beginners
+
+#### Load libraries, define paths to input files, and define the output directory.
 ```
 load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "sctransform", "ggplot2", "readr",
             "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "listviewer","openxlsx") # the installation of ("glmGamPoi") is highly recommended
@@ -133,7 +149,7 @@ generate_report(plot_object = plots,
 
 
 
-# Workflow for Advanced Users with Integrated Samples
+## Workflow for Advanced Users with Integrated Samples
 
 ####
 ```
