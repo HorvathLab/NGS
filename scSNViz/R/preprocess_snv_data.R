@@ -217,7 +217,7 @@ preprocess_snv_data <- function(rds_obj = NULL, snv_file = NULL,
 
 
 generate_statistics_fnction <- function(snv,th.snv.cells=th_snv_cells){
-  
+    
     snv <- snv[!is.na(snv$VAF), ]
     # filter based on `X.BadRead` and `SNVCount`
     snv$temp <- snv
@@ -269,6 +269,9 @@ generate_statistics_fnction <- function(snv,th.snv.cells=th_snv_cells){
 }
   # generate SNV statistics if requested
   if (generate_statistics) {
+    if ("GoodReads" %in% colnames(snv_file_tble)==FALSE){
+      stop("scSNViz is only able to generate statistics if the snv file input is from SCReadcounts."
+    } else {
     dir.create(output_dir, recursive = T, showWarnings = F)
     if (enable_integrated){
       for (i in 1:length(unique(srt$orig.ident))){
@@ -289,7 +292,7 @@ generate_statistics_fnction <- function(snv,th.snv.cells=th_snv_cells){
       write.table(significant_snvs, file = file.path(
       output_dir, "Significant_SNVs.txt"), sep = "\t", row.names = F)
     }
-  }
+  }}
 
   # run scType analysis if requested
   if (enable_sctype) {
