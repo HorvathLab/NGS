@@ -124,7 +124,7 @@ one_snv_plot <- single_snv_plot(
        seurat_object = processed_data$SeuratObject,
        processed_snv = processed_data$ProcessedSNV,
        snv_of_choice = "1:155169447:C:T",
-       output_dir = "output/individual_plots",
+       output_dir = "output/1_155169447_C_T",
        slingshot = T,
        dimensionality_reduction = "UMAP",
        dynamic_cell_size = F,
