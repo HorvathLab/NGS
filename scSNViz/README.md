@@ -149,7 +149,7 @@ generate_report(plot_object = plots,
 
 
 
-## Workflow for Advanced Users with Integrated Samples
+## Workflow for Advanced Users with Multiple Samples to Integrate
 
 ####
 ```
