@@ -9,7 +9,7 @@ install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
 sapply(load.lib,require,character=TRUE)
 
-#CopyKat is an optional tool in analysis and must be installed seprately
+#CopyKat is an optional tool in analysis and must be installed separately
 library(devtools)
 install_github("navinlabcode/copykat")
 
