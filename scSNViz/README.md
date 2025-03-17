@@ -260,3 +260,5 @@ generate_report(plot_object = plots,
                 hide_ind_plots = TRUE, # individual plots for each SNV are hidden
                 output_dir = output_dir)
 ```
+
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/integrated_output_example.png'>
