@@ -15,6 +15,23 @@ regulatory mechanisms and cellular heterogeneity.
 
 <img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/scSNViz_PanelA.png' width=50% height=50%>
 
+## Installation
+
+#### Install scSNViz from GitHub
+
+```
+library(devtools)
+install_github("HorvathLab/NGS", ref = "feature/scSNViz_R_v1.0.0", subdir = "scSNViz")
+```
+If the above fails due to rate limits, try generating a GitHub Personal Access Token (PAT), add it into your environment and then run again. 
+
+Yet another way to try getting the above to work is to configure R to use the Windows Internet API for download: 
+
+```
+options(download.file.method = "wininet")   # can try other methods such as 'libcurl', 'wget', etc.
+install_github("HorvathLab/NGS", ref = "feature/scSNViz_R_v1.0.0", subdir = "scSNViz")
+```
+
 ## Quickstart for Beginners
 
 #### Load libraries, define paths to input files, and define the output directory.
