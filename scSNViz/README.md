@@ -262,6 +262,8 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/integrated_plot.png'>
+
 #### Generate a report
 ```
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
