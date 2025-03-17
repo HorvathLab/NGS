@@ -102,7 +102,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-<img src='(https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/VAF_3D_UMAP.png' width=50% height=50%>
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/VAF_3D_UMAP.png' width=50% height=50%>
 <img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/histograms.png' width=50% height=50%>
 <img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/transposed_SNV_UMAP.png' width=50% height=50%>
 
