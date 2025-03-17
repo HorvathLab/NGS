@@ -116,6 +116,8 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       dynamic_cell_size = FALSE)
 ```
 
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/individual_snv_plots.png'>
+
 #### Plot individual SNV
 ```
 one_snv_plot <- single_snv_plot(
