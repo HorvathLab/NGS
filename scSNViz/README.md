@@ -101,6 +101,10 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
+<img src='(https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/VAF_3D_UMAP.png' width=50% height=50%>
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/histograms.png' width=50% height=50%>
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/transposed_SNV_UMAP.png' width=50% height=50%>
+
 #### Generate individual SNV plots
 ```
 #Individual SNV's plottable capped at 50 unique.
@@ -135,6 +139,10 @@ generate_report(plot_object = plots,
                 hide_ind_plots = TRUE, # Set this to FALSE in order to see plots for each individual SNV.
                 output_dir = output_dir)
 ```
+
+
+<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/Exploratory_combined_plots.png' width=50% height=50%>
+
 
 #### Generate exploratory combined plot for single SNV of interest
 ```
