@@ -101,7 +101,7 @@ processed_data <- preprocess_snv_data(rds_obj = srt,
                                       output_dir = output_dir)
 ```
 
-#### Generate the different 3d dimensionality reduction plots
+#### Generate 3d dimensionality reduction plots
 ```
 plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        processed_data$ProcessedSNV,
@@ -244,7 +244,7 @@ processed_data <- preprocess_snv_data(rds_obj = srt_integrated,
                                       output_dir = output_dir)
 ```
 
-#### Generate the different 3d dimensionality reduction plots
+#### Generate 3d dimensionality reduction plots
 ```
 plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        processed_data$ProcessedSNV,
@@ -281,3 +281,9 @@ generate_report(plot_object = plots,
 ```
 
 <img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/integrated_output_example.png'>
+
+#### Contact Information
+Please contact Siera Martinez (siera.martinez@gwu.edu) with any questions.
+
+#### Copyright and licensing
+Code copyright 2024 scSNViz [https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/LICENSE.md ](https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/LICENSE)
