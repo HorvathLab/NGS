@@ -25,7 +25,7 @@ install_github("HorvathLab/NGS", ref = "feature/scSNViz_R_v1.0.0", subdir = "scS
 ```
 If the above fails due to rate limits, try generating a GitHub Personal Access Token (PAT), add it into your environment and then run again. 
 
-Yet another way to try getting the above to work is to configure R to use the Windows Internet API for download: 
+Another way to do this is to configure R to use the Windows Internet API for download: 
 
 ```
 options(download.file.method = "wininet")   # can try other methods such as 'libcurl', 'wget', etc.
