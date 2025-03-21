@@ -127,6 +127,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
 
   histograms <- list()
   if (include_histograms) {
+    options(bitmapType = "cairo-png")
     hist_list <- list(list(aes = aes(x = TotalVAF), xlab = "TotalVAF",
                            file_suffix = "Histogram_TotalVAF", binwidth = 0.05),
                       list(aes = aes(x = MeanVAF), xlab = "MeanSNVsVAF",
@@ -151,6 +152,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
               device = "png")
       }
     }
+    options(bitmapType = "C_X11")
   }
   plots[["histograms"]] <- histograms
 
