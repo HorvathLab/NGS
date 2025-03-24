@@ -142,10 +142,10 @@ one_snv_plot <- single_snv_plot(
        processed_snv = processed_data$ProcessedSNV,
        snv_of_choice = "1:155169447:C:T",
        output_dir = "output/1_155169447_C_T",
-       slingshot = T,
+       slingshot = TRUE,
        dimensionality_reduction = "UMAP",
-       dynamic_cell_size = F,
-       save_each_plot = T
+       dynamic_cell_size = FALSE,
+       save_each_plot = TRUE
      )
 
 ```
