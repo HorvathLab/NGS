@@ -192,23 +192,23 @@ output_dir = "output_advanced_wkflw"    # or output directory of your choice
 #### Prepare integrated data.
 
 ```
-srt1 <- readRDS('input/sample1_Seurat_object.rds')
-srt2 <- readRDS('input/sample2_Seurat_object.rds')
-srt1$orig.ident = 'srt1'
-srt2$orig.ident = 'srt2'
+sample1 <- readRDS('input/sample1_Seurat_object.rds')
+sample2 <- readRDS('input/sample2_Seurat_object.rds')
+sample1$orig.ident = 'sample1'
+sample2$orig.ident = 'sample2'
 
 ## QC ##
-srt1[["percent.mt"]] <- PercentageFeatureSet(srt1, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
-VlnPlot(srt1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) # As described in Seurat introductory Vignettes
-srt1 <- subset(srt1, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
+sample1[["percent.mt"]] <- PercentageFeatureSet(sample1, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
+VlnPlot(sample1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) # As described in Seurat introductory Vignettes
+sample1 <- subset(sample1, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
 
 
-srt2[["percent.mt"]] <- PercentageFeatureSet(srt2, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
-VlnPlot(srt2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-srt2 <- subset(srt2, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
+sample2[["percent.mt"]] <- PercentageFeatureSet(sample2, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
+VlnPlot(sample2, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+sample2 <- subset(sample2, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
 ########
 
-srt_merged <- merge(x=srt1, y=c(srt2), add.cell.ids=c('srt1','srt2'))
+srt_merged <- merge(x=sample1, y=c(sample2), add.cell.ids=c('sample1','sample2'))
 srt_merged <- SCTransform(srt_merged, vars.to.regress = "percent.mt", verbose = F)
 srt_merged <- RunPCA(srt_merged)
 srt_integrated <- IntegrateLayers(object = srt_merged, method = CCAIntegration, normalization.method = "SCT", new.reduction='integrated', verbose = F) #any of the suggested integration methods in Seurat may be applied here for the methods parameter
@@ -218,13 +218,13 @@ srt_integrated <- FindClusters(srt_integrated, resolution = 0.6)
 
 #### Prepare SNV data
 ```
-snv_srt1 <- read.table("input/sample1_SNVs.tsv", sep = "\t", header = T)
-snv_srt2 <- read.table("input/sample2_SNVs.tsv", sep = "\t", header = T)
+snv_sample1 <- read.table("input/sample1_SNVs.tsv", sep = "\t", header = T)
+snv_sample2 <- read.table("input/sample2_SNVs.tsv", sep = "\t", header = T)
 
-snv_srt1$ReadGroup = paste0('srt1_',snv_srt1$ReadGroup) # these IDs must match the added cell IDs from above
-snv_srt2$ReadGroup = paste0('srt2_',snv_srt2$ReadGroup) # these IDs must match the added cell IDs from above
+snv_sample1$ReadGroup = paste0('sample1_',snv_sample1$ReadGroup) # these IDs must match the added cell IDs from above
+snv_sample2$ReadGroup = paste0('sample2_',snv_sample2$ReadGroup) # these IDs must match the added cell IDs from above
 
-snv_file <- rbind(snv_srt1,snv_srt2)
+snv_file <- rbind(snv_sample1,snv_sample2)
 write_tsv(snv_file,'snv_file_integrated.tsv')
 ```
 
