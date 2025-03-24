@@ -138,12 +138,28 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
                            file_suffix = "Histogram_N_SNV", binwidth = 1))
 
     for (hist_info in hist_list) {
-      p <- ggplot(aggregated_snv, hist_info$aes) +
-        geom_histogram(fill = histogram_scale2, boundary = 0, alpha = 0.6, binwidth = hist_info$binwidth) +
+      p <- ggplot(aggregated_snv, hist_info$aes)
+      if (enable_integrated){    
+        n_colors <- length(unique(seurat_object$orig.ident))
+        palette <- distinctColorPalette(n_colors)  
+        for (i in 1:length(unique(seurat_object$orig.ident))){
+          this.id = unique(seurat_object$orig.ident)[i]
+          p <- p + 
+          geom_histogram(data=aggregated_snv[aggregated_snv$orig.ident==this.id,],
+          fill = palette[i], boundary = 0, alpha = 0.3, binwidth = hist_info$binwidth, show.legend = TRUE)
+        }
+        p <- p +
         xlab(hist_info$xlab) + ylab("Cells") +
         theme(axis.text = element_text(size = 12), axis.title = element_text(size = 14),
               panel.grid.minor = element_blank(), panel.grid.major = element_blank(),
               axis.ticks.x = element_blank(), axis.ticks.y = element_blank())
+      } else{
+        p <- p + geom_histogram(fill = histogram_scale2, boundary = 0, alpha = 0.6, binwidth = hist_info$binwidth) +
+        xlab(hist_info$xlab) + ylab("Cells") +
+        theme(axis.text = element_text(size = 12), axis.title = element_text(size = 14),
+              panel.grid.minor = element_blank(), panel.grid.major = element_blank(),
+              axis.ticks.x = element_blank(), axis.ticks.y = element_blank())
+      }
 
       histograms[[hist_info$xlab]] <- ggplotly(p)
       if (save_each_plot && !is.null(output_dir)) {
@@ -171,9 +187,11 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
 
   generate_plot <- function(metric, plot_data, dim_plotting, color_scale, reversescale_option,
                             cell_border, color_undetected, curves, disable_3d_axis, title) {
-    plot <- plot_ly(type = "scatter3d", mode = "lines+markers") %>%
-      add_markers(
-        data = plot_data[plot_data[["Undetected"]] == 0, ],
+    plot <- plot_ly(type = "scatter3d", mode = "lines+markers") 
+    for (i in 1:length(unique(seurat_object$orig.ident))){
+      this.id = unique(seurat_object$orig.ident)[i]
+      plot <- plot %>% add_markers(
+        data = plot_data[plot_data[["Undetected"]] == 0 & plot_data[["orig.ident"]] == this.id, ],
         x = ~get(paste0(dim_plotting, "_1")),
         y = ~get(paste0(dim_plotting, "_2")),
         z = ~get(paste0(dim_plotting, "_3")),
@@ -183,18 +201,19 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
           reversescale = reversescale_option, showscale = T,
           colorbar = list(x = 0.85, y = 0.5, thickness = 20, len = 0.5),
           line = list(color = ~get(metric), width = cell_border)),
-          name = "expressed sceSNV loci", hovertext=plot_data['orig.ident']
-      ) %>%
-      add_markers(
-        data = plot_data[plot_data[["Undetected"]] == 1, ],
+          name = paste0(this.id," expressed sceSNV loci"), hovertext=plot_data["orig.ident"]
+      )
+      plot <- plot %>% add_markers(
+        data = plot_data[plot_data[["Undetected"]] == 1 & plot_data[["orig.ident"]] == this.id, ],
         x = ~get(paste0(dim_plotting, "_1")),
         y = ~get(paste0(dim_plotting, "_2")),
         z = ~get(paste0(dim_plotting, "_3")),
         size = 0.05, opacity = 1.00,
         marker = list(color = color_undetected,
                       line = list(width = cell_border)),
-        name = "undetected", hovertext=plot_data['orig.ident']
+        name = paste0(this.id," undetected"), hovertext=plot_data["orig.ident"]
       )
+      }
 
     if (!is.null(curves)) {
       plot <- plot %>%
@@ -297,11 +316,19 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
   # CELL TYPES PLOT
 
   if (include_cell_types && "customclassif" %in% colnames(plot_data)) {
-    cell_type_plot <- plot_ly(type = "scatter3d", mode = "lines+markers") %>%
+    if (enable_integrated){
+      plot_data['origident_customclassif'] = paste0(plot_data$orig.ident,' ',plot_data$customclassif)
+      cell_type_plot <- plot_ly(type = "scatter3d", mode = "lines+markers") %>%
+        add_trace(data = plot_data, x = ~get(paste0(toupper(dimensionality_reduction), "_1")),
+                  y = ~get(paste0(toupper(dimensionality_reduction), "_2")),
+                  z = ~get(paste0(toupper(dimensionality_reduction), "_3")),
+                  size = 0.05, opacity = 0.5, mode = "markers", color = ~origident_customclassif)
+    } else {
       add_trace(data = plot_data, x = ~get(paste0(toupper(dimensionality_reduction), "_1")),
                 y = ~get(paste0(toupper(dimensionality_reduction), "_2")),
                 z = ~get(paste0(toupper(dimensionality_reduction), "_3")),
                 size = 0.05, opacity = 0.5, mode = "markers", color = ~customclassif)
+    }
     if (slingshot && !is.null(curves)) {
       cell_type_plot <- cell_type_plot %>%
         add_trace(
