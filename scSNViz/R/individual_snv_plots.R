@@ -15,6 +15,7 @@
 #' @param dimensionality_reduction Dimensionality reduction method ('UMAP', 'PCA', 'tSNE'). Default: "UMAP".
 #' @param dynamic_cell_size Logical; whether to scale cell size dynamically based on SNV and reference read counts. Default: FALSE.
 #' @param save_each_plot Logical; whether to save each plot individually. Default: FALSE.
+#' @param enable_integrated Logical; whether to use an integrated Seurat object. Default: FALSE.
 #' @return A list containing JSON content for VAF, N_VAR, and N_REF plots.
 #' @details
 #' This function generates individual SNV plots using processed SNV data (processed_snv) and the dimensionality
@@ -38,7 +39,7 @@
 #' @export
 #'
 individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL, slingshot = T,
-                                 dimensionality_reduction = "UMAP", dynamic_cell_size = F, save_each_plot = F) {
+                                 dimensionality_reduction = "UMAP", dynamic_cell_size = F, save_each_plot = F, enable_integrated = F) {
 
   cat("\nGenerating individual SNV plots...\n")
 
@@ -54,7 +55,7 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
   colnames(df.dim) <- c("x", "y", "z")
   df.snv <- processed_snv
   df.snv <- df.snv[c("CHROM", "POS", "REF", "ALT", "ReadGroup",
-                     "SNVCount", "RefCount", "VAF")]
+                     "SNVCount", "RefCount", "VAF", "sampleid")]
   snvs <- head(unique(df.snv[c("CHROM", "POS", "REF", "ALT")]), 50) #sets limit to 50 snvs
   snv_options <- paste(snvs$CHROM, snvs$POS, snvs$REF, snvs$ALT, sep = ":")
 
@@ -86,23 +87,44 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
     vaf <- df_subset$VAF[match(colnames(seurat_object), df_subset$ReadGroup)]
     snv_reads <- df_subset$SNVCount[match(colnames(seurat_object), df_subset$ReadGroup)]
     ref_reads <- df_subset$RefCount[match(colnames(seurat_object), df_subset$ReadGroup)]
-    y <- data.frame(x = df.dim[, 1], y = df.dim[, 2], z = df.dim[, 3],
-                    vaf = vaf, ref_reads = ref_reads, snv_reads = snv_reads)
+    sample_id <- df_subset$sampleid[match(colnames(seurat_object), df_subset$ReadGroup)]
+    if (enable_integrated){
+      y <- data.frame(x = df.dim[, 1], y = df.dim[, 2], z = df.dim[, 3],
+                      vaf = vaf, ref_reads = ref_reads, snv_reads = snv_reads, sampleid = sample_id)
+    } else {
+      y <- data.frame(x = df.dim[, 1], y = df.dim[, 2], z = df.dim[, 3],
+                      vaf = vaf, ref_reads = ref_reads, snv_reads = snv_reads)
+    }
 
     plots <- list()
-
-    y$vaf_label <- "Undetected"
-    y$vaf_label[y$vaf == 0] <- "0 VAF, N_REF Only"
-    y$vaf_label[0 < y$vaf & y$vaf <= 0.25] <- "0<VAF<=0.25"
-    y$vaf_label[0.25 < y$vaf & y$vaf <= 0.75] <- "0.25<VAF<=0.75"
-    y$vaf_label[0.75 < y$vaf & y$vaf <= 1] <- "0.75<VAF<=1.00"
-    y$vaf_label <- factor(y$vaf_label, levels = c("Undetected", "0 VAF, N_REF Only",
-                                                  "0<VAF<=0.25", "0.25<VAF<=0.75",
-                                                  "0.75<VAF<=1.00"))
-
+    if (enable_integrated){
+      lvls_all = c()
+      for (i in 1:length(unique(y$sampleid)[!is.na(unique(y$sampleid))])){
+        this.id = unique(y$sampleid)[!is.na(unique(y$sampleid))][i]
+        y$vaf_label[y$sampleid == this.id] <- paste0(this.id," Undetected")
+        y$vaf_label[y$vaf == 0 & y$sampleid == this.id] <- paste0(this.id, " 0 VAF, N_REF Only")
+        y$vaf_label[0 < y$vaf & y$vaf <= 0.25 & y$sampleid == this.id] <- paste0(this.id, " 0<VAF<=0.25")
+        y$vaf_label[0.25 < y$vaf & y$vaf <= 0.75 & y$sampleid == this.id] <- paste0(this.id, " 0.25<VAF<=0.75")
+        y$vaf_label[0.75 < y$vaf & y$vaf <= 1 & y$sampleid == this.id] <- paste0(this.id, " 0.75<VAF<=1.00")
+        lvls = c(paste0(this.id," Undetected"), paste0(this.id," 0 VAF, N_REF Only"),
+                                                      paste0(this.id," 0<VAF<=0.25"), paste0(this.id," 0.25<VAF<=0.75"),
+                                                      paste0(this.id," 0.75<VAF<=1.00"))
+        lvls_all = c(lvls,lvls_all)
+      }
+      y$vaf_label <- factor(y$vaf_label, levels = lvls_all)
+    } else {
+      y$vaf_label <- "Undetected"
+      y$vaf_label[y$vaf == 0] <- "0 VAF, N_REF Only"
+      y$vaf_label[0 < y$vaf & y$vaf <= 0.25] <- "0<VAF<=0.25"
+      y$vaf_label[0.25 < y$vaf & y$vaf <= 0.75] <- "0.25<VAF<=0.75"
+      y$vaf_label[0.75 < y$vaf & y$vaf <= 1] <- "0.75<VAF<=1.00"
+      y$vaf_label <- factor(y$vaf_label, levels = c("Undetected", "0 VAF, N_REF Only",
+                                                    "0<VAF<=0.25", "0.25<VAF<=0.75",
+                                                    "0.75<VAF<=1.00"))
+    }
     # VAF plots
     f_vaf <- plot_ly(type = "scatter3d", mode = "markers+lines")
-    for (j in 1:5) {
+    for (j in 1:length(levels(y$vaf_label))) {
       cur_label <- levels(y$vaf_label)[j]
       if (dynamic_cell_size) {
         f_vaf <- f_vaf %>%
@@ -138,21 +160,24 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
     plots[['VAF']] <- f_vaf
 
     # N_VAR plots
-    f_varreads <- plot_ly(type = "scatter3d", mode = "markers+lines") %>%
-      add_trace(data = subset(y, !is.na(vaf)),
+    f_varreads <- plot_ly(type = "scatter3d", mode = "markers+lines")
+    for (i in 1:length(unique(y$sampleid)[!is.na(unique(y$sampleid))])) {
+      this.id = unique(y$sampleid)[!is.na(unique(y$sampleid))][i]
+      f_varreads <- f_varreads %>%
+      add_trace(data = subset(y, !is.na(vaf) & sampleid==this.id),
                 x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
                 ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
                 na.rm = T)) * 10, 0.05), type = "scatter3d", mode = "markers",
                 marker = list(reversescale = T, color = ~snv_reads, colorscale = "YlOrRd",
                 showscale = T, opacity = 0.5, line = list(color = "#FEE5D9", width = 1),
-                colorbar = list(len = 0.5, y = 0.2)), name = "Cells with N_VAR") %>%
-      add_trace(data = subset(y, is.na(vaf)),
+                colorbar = list(len = 0.5, y = 0.2)), name = paste0(this.id, " Cells with N_VAR")) %>%
+      add_trace(data = subset(y, is.na(vaf) & sampleid==this.id),
                 x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
                 ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
                 na.rm = T)) * 10, 0.05), type = "scatter3d", mode = "markers",
                 marker = list(color = "#EBEBEB", line = list(width = 0), opacity = 0.5),
-                name = "Cells without N_VAR")
-
+                name = paste0(this.id, " Cells without N_VAR"))
+    }
     if (!is.null(curves)) {
       f_varreads <- f_varreads %>%
         add_trace(data = curves,
@@ -170,24 +195,24 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
     plots[['N_VAR']] <- f_varreads
 
     # N_REF plots
-    f_refreads <- plot_ly(type = "scatter3d", mode = "markers+lines") %>%
-      add_trace(data = subset(y, vaf == 0 & ref_reads > 0),
-                x = ~x, y = ~y, z = ~z,
-                size = ifelse(dynamic_cell_size,
-                ~(snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
-                na.rm = T) * 10, 0.05), type = "scatter3d", mode = "markers",
-                marker = list(reversescale = T, color = ~ref_reads,
-                colorscale = "Blues", showscale = T, opacity = 0.5,
-                line = list(color = "#EFF3FF", width = 1),
-                colorbar = list(len = 0.5, y = 0.2)), name = "Cells with N_REF") %>%
-      add_trace(data = subset(y, (vaf == 0 & ref_reads == 0) | (is.na(vaf) == 1) | (vaf > 0)),
-                x = ~x, y = ~y, z = ~z,
-                size = ifelse(dynamic_cell_size,
-                ~(snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
-                na.rm = T) * 10, 0.05), type = "scatter3d", mode = "markers",
+    f_refreads <- plot_ly(type = "scatter3d", mode = "markers+lines")
+    for (i in 1:length(unique(y$sampleid)[!is.na(unique(y$sampleid))])) {
+      this.id = unique(y$sampleid)[!is.na(unique(y$sampleid))][i]
+      f_refreads <- f_refreads %>%
+      add_trace(data = subset(y, vaf == 0 & ref_reads > 0 & sampleid==this.id),
+                x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
+                ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
+                na.rm = T)) * 10, 0.05), type = "scatter3d", mode = "markers",
+                marker = list(reversescale = T, color = ~snv_reads, colorscale = "YlOrRd",
+                showscale = T, opacity = 0.5, line = list(color = "#FEE5D9", width = 1),
+                colorbar = list(len = 0.5, y = 0.2)), name = paste0(this.id, " Cells with N_REF")) %>%
+      add_trace(data = subset(y, (vaf == 0 & ref_reads == 0) | (is.na(vaf) == 1) | (vaf > 0) & sampleid==this.id),
+                x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
+                ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
+                na.rm = T)) * 10, 0.05), type = "scatter3d", mode = "markers",
                 marker = list(color = "#EBEBEB", line = list(width = 0), opacity = 0.5),
-                name = "Cells without N_REF")
-
+                name = paste0(this.id, " Cells without N_REF"))
+    }
     if (!is.null(curves)) {
       f_refreads <- f_refreads %>%
         add_trace(data = curves,
