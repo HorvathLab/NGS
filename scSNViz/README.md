@@ -272,7 +272,8 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       slingshot = FALSE,
                                       save_each_plot = TRUE,
                                       dimensionality_reduction = "UMAP",
-                                      dynamic_cell_size = FALSE)
+                                      dynamic_cell_size = FALSE,
+                                      enable_integrated = TRUE)
 
 generate_report(plot_object = plots,
                 ind_snv_object = ind_snv_plots,
