@@ -189,7 +189,6 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
                             cell_border, color_undetected, curves, disable_3d_axis, title) {
     plot <- plot_ly(type = "scatter3d", mode = "lines+markers") 
     max_metric_val = max(plot_data[plot_data[["Undetected"]] == 0,metric])
-    print(max_metric_val)
     for (i in 1:length(unique(seurat_object$orig.ident))){
       this.id = unique(seurat_object$orig.ident)[i]
       if (any(plot_data[plot_data[["Undetected"]] == 0 & plot_data[["orig.ident"]] == this.id, metric]==max_metric_val)){
