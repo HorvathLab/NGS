@@ -330,9 +330,10 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
   # CELL TYPES PLOT
 
   if (include_cell_types && "customclassif" %in% colnames(plot_data)) {
+     plot_data['origident_customclassif'] = paste0(plot_data$orig.ident,' ',plot_data$customclassif)
+     cell_type_plot <- plot_ly(type = "scatter3d", mode = "lines+markers")
     if (enable_integrated){
-      plot_data['origident_customclassif'] = paste0(plot_data$orig.ident,' ',plot_data$customclassif)
-      cell_type_plot <- plot_ly(type = "scatter3d", mode = "lines+markers") %>%
+      cell_type_plot <- cell_type_plot %>%
         add_trace(data = plot_data, x = ~get(paste0(toupper(dimensionality_reduction), "_1")),
                   y = ~get(paste0(toupper(dimensionality_reduction), "_2")),
                   z = ~get(paste0(toupper(dimensionality_reduction), "_3")),
