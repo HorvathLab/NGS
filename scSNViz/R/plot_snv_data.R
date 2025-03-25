@@ -188,8 +188,11 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
   generate_plot <- function(metric, plot_data, dim_plotting, color_scale, reversescale_option,
                             cell_border, color_undetected, curves, disable_3d_axis, title) {
     plot <- plot_ly(type = "scatter3d", mode = "lines+markers") 
+    max_metric_val = max(plot_data[plot_data[["Undetected"]] == 0,metric])
+    print(max_metric_val)
     for (i in 1:length(unique(seurat_object$orig.ident))){
       this.id = unique(seurat_object$orig.ident)[i]
+      if (any(plot_data[plot_data[["Undetected"]] == 0 & plot_data[["orig.ident"]] == this.id, metric]==max_metric_val)){
       plot <- plot %>% add_markers(
         data = plot_data[plot_data[["Undetected"]] == 0 & plot_data[["orig.ident"]] == this.id, ],
         x = ~get(paste0(dim_plotting, "_1")),
@@ -202,7 +205,19 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
           colorbar = list(x = 0.85, y = 0.5, thickness = 20, len = 0.5),
           line = list(color = ~get(metric), width = cell_border)),
           name = paste0(this.id," expressed sceSNV loci"), hovertext=plot_data["orig.ident"]
-      )
+      )} else {
+             plot <- plot %>% add_markers(
+        data = plot_data[plot_data[["Undetected"]] == 0 & plot_data[["orig.ident"]] == this.id, ],
+        x = ~get(paste0(dim_plotting, "_1")),
+        y = ~get(paste0(dim_plotting, "_2")),
+        z = ~get(paste0(dim_plotting, "_3")),
+        size = 0.05, opacity = 1.00,
+        marker = list(
+          color = ~get(metric), colorscale = color_scale,
+          reversescale = reversescale_option,
+          line = list(color = ~get(metric), width = cell_border)),
+          name = paste0(this.id," expressed sceSNV loci"), hovertext=plot_data["orig.ident"])
+      }
       plot <- plot %>% add_markers(
         data = plot_data[plot_data[["Undetected"]] == 1 & plot_data[["orig.ident"]] == this.id, ],
         x = ~get(paste0(dim_plotting, "_1")),
