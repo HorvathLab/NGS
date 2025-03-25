@@ -161,17 +161,27 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
 
     # N_VAR plots
     f_varreads <- plot_ly(type = "scatter3d", mode = "markers+lines")
+    max_metric_val = max(y['snv_reads'], na.rm=T)
     for (i in 1:length(unique(y$sampleid)[!is.na(unique(y$sampleid))])) {
       this.id = unique(y$sampleid)[!is.na(unique(y$sampleid))][i]
-      f_varreads <- f_varreads %>%
-      add_trace(data = subset(y, !is.na(vaf) & sampleid==this.id),
+      if (any(subset(y, !is.na(vaf) & sampleid==this.id)$snv_reads==max_metric_val)){
+      f_varreads <- f_varreads %>% add_trace(data = subset(y, !is.na(vaf) & sampleid==this.id),
                 x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
                 ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
                 na.rm = T)) * 10, 0.05), type = "scatter3d", mode = "markers",
                 marker = list(reversescale = T, color = ~snv_reads, colorscale = "YlOrRd",
                 showscale = T, opacity = 0.5, line = list(color = "#FEE5D9", width = 1),
-                colorbar = list(len = 0.5, y = 0.2)), name = paste0(this.id, " Cells with N_VAR")) %>%
-      add_trace(data = subset(y, is.na(vaf) & sampleid==this.id),
+                colorbar = list(len = 0.5, y = 0.2)), name = paste0(this.id, " Cells with N_VAR"))
+      } else {
+      f_varreads <- f_varreads %>% add_trace(data = subset(y, !is.na(vaf) & sampleid==this.id),
+                x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
+                ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
+                na.rm = T)) * 10, 0.05), type = "scatter3d", mode = "markers",
+                marker = list(reversescale = T, color = ~snv_reads, colorscale = "YlOrRd",
+                showscale = F, opacity = 0.5, line = list(color = "#FEE5D9", width = 1)),
+                name = paste0(this.id, " Cells with N_VAR"))   
+      }
+      f_varreads <- f_varreads %>% add_trace(data = subset(y, is.na(vaf) & sampleid==this.id),
                 x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
                 ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
                 na.rm = T)) * 10, 0.05), type = "scatter3d", mode = "markers",
@@ -196,8 +206,10 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
 
     # N_REF plots
     f_refreads <- plot_ly(type = "scatter3d", mode = "markers+lines")
+    max_metric_val = max(y['ref_reads'], na.rm=T)
     for (i in 1:length(unique(y$sampleid)[!is.na(unique(y$sampleid))])) {
       this.id = unique(y$sampleid)[!is.na(unique(y$sampleid))][i]
+      if (any(subset(y, !is.na(vaf) & sampleid==this.id)$ref_reads==max_metric_val)){
       f_refreads <- f_refreads %>%
       add_trace(data = subset(y, vaf == 0 & ref_reads > 0 & sampleid==this.id),
                 x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
@@ -205,7 +217,18 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
                 na.rm = T)) * 10, 0.05), type = "scatter3d", mode = "markers",
                 marker = list(reversescale = T, color = ~snv_reads, colorscale = "YlOrRd",
                 showscale = T, opacity = 0.5, line = list(color = "#FEE5D9", width = 1),
-                colorbar = list(len = 0.5, y = 0.2)), name = paste0(this.id, " Cells with N_REF")) %>%
+                colorbar = list(len = 0.5, y = 0.2)), name = paste0(this.id, " Cells with N_REF"))
+      } else {
+      f_refreads <- f_refreads %>%
+      add_trace(data = subset(y, vaf == 0 & ref_reads > 0 & sampleid==this.id),
+                x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
+                ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
+                na.rm = T)) * 10, 0.05), type = "scatter3d", mode = "markers",
+                marker = list(reversescale = T, color = ~snv_reads, colorscale = "YlOrRd",
+                showscale = F, opacity = 0.5, line = list(color = "#FEE5D9", width = 1)),
+                name = paste0(this.id, " Cells with N_REF"))        
+      }
+      f_refreads <- f_refreads  %>%
       add_trace(data = subset(y, (vaf == 0 & ref_reads == 0) | (is.na(vaf) == 1) | (vaf > 0) & sampleid==this.id),
                 x = ~x, y = ~y, z = ~z, size = ifelse(dynamic_cell_size,
                 ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
