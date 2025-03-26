@@ -27,5 +27,5 @@ echo "scSNViz/" >> .git/info/sparse-checkout
 git pull origin feature/scSNViz_R_v1.0.0
 ```
 
-# Install package using Rstudio
+# Build package using Rstudio
 Open the scSNViz.Rproj file in Rstudio. Select Build>Install Package.
