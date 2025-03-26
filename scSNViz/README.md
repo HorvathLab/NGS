@@ -59,6 +59,7 @@ output_dir = "output"    # or output directory of your choice
 #sample1 <- CreateSeuratObject(counts = gene.matrix, min.cells = 3, min.features = 200, project = 'Sample1')
 sample1 <- readRDS(srt_obj_file)
 sample1@project.name = 'Sample1' # set the project name
+sample1$orig.ident = 'Sample1' # set the project name
 ```
 
 #### Quality Control: Filter data and perform scaling and normalization
