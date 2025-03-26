@@ -26,7 +26,7 @@
 #'
 #' @examples
 #' # Example usage:
-#' snv_plots <- individual_snv_plots(
+#' ind_snv_plots <- individual_snv_plots(
 #'   seurat_object = processed_data$SeuratObject,
 #'   processed_snv = processed_data$ProcessedSNV,
 #'   output_dir = "output/individual_plots",
