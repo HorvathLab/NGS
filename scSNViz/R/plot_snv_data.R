@@ -147,7 +147,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
       for (i in seq_along(unique(seurat_object$orig.ident))) {
         p <- p + geom_histogram(
           data = aggregated_snv[aggregated_snv$orig.ident == unique(seurat_object$orig.ident)[i], ],
-          aes(y = after_stat(count), fill = factor(orig.ident)),  # 🔹 Removed text aesthetic
+          aes(y = after_stat(count), fill = factor(orig.ident)),
           boundary = 0, alpha = 0.3, binwidth = hist_info$binwidth, show.legend = TRUE
         )
       }
@@ -157,12 +157,11 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
         xlab(hist_info$xlab) + ylab("Cells") +
         theme_minimal()
 
-      # 🔹 ggplotly now uses default hover info without "text" aesthetic
       histograms[[hist_info$xlab]] <- ggplotly(p)
 
     } else {
       p <- p + geom_histogram(
-        aes(y = after_stat(count)),  # 🔹 Removed text aesthetic
+        aes(y = after_stat(count)),
         fill = histogram_scale2, boundary = 0, alpha = 0.6, binwidth = hist_info$binwidth
       ) +
         xlab(hist_info$xlab) + ylab("Cells") +
