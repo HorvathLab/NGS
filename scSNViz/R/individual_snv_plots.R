@@ -88,7 +88,6 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
     snv_reads <- df_subset$SNVCount[match(colnames(seurat_object), df_subset$ReadGroup)]
     ref_reads <- df_subset$RefCount[match(colnames(seurat_object), df_subset$ReadGroup)]
     sample_id <- df_subset$sampleid[match(colnames(seurat_object), df_subset$ReadGroup)]
-
     y <- data.frame(x = df.dim[, 1], y = df.dim[, 2], z = df.dim[, 3],
                       vaf = vaf, ref_reads = ref_reads, snv_reads = snv_reads, sampleid = sample_id)
 
@@ -123,22 +122,39 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
     for (j in 1:length(levels(y$vaf_label))) {
       cur_label <- levels(y$vaf_label)[j]
       if (dynamic_cell_size) {
-        f_vaf <- f_vaf %>%
-          add_trace(
+        if (enable_integrated){
+          f_vaf <- f_vaf %>% add_trace(
             data = subset(y, vaf_label == cur_label), x = ~x, y = ~y, z = ~z,
                           size = ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
                           na.rm = T)) * 10, type = "scatter3d", mode = "markers",
-                          marker = list(color = pal[j], line = list(width = 0)), name = cur_label
+                          marker = list(color = pal[((j-1)%%5)+1], line = list(width = 0)), name = cur_label
             )
+        } else {
+          f_vaf <- f_vaf %>%
+            add_trace(
+              data = subset(y, vaf_label == cur_label), x = ~x, y = ~y, z = ~z,
+                            size = ~((snv_reads + ref_reads) / max(c(snv_reads, ref_reads),
+                            na.rm = T)) * 10, type = "scatter3d", mode = "markers",
+                            marker = list(color = pal[j], line = list(width = 0)), name = cur_label
+              )
+        }
       }
       else {
-        f_vaf <- f_vaf %>%
-          add_trace(
-            data = subset(y, vaf_label == cur_label), x = ~x, y = ~y, z = ~z,
-                          size = 0.05, type = "scatter3d", mode = "markers",
-                          marker = list(color = pal[j], line = list(width = 0)), name = cur_label
-            )
-      }
+        if (enable_integrated){
+          f_vaf <- f_vaf %>%
+            add_trace(
+              data = subset(y, vaf_label == cur_label), x = ~x, y = ~y, z = ~z,
+                            size = 0.05, type = "scatter3d", mode = "markers",
+                            marker = list(color = pal[((j-1)%%5)+1], line = list(width = 0)), name = cur_label
+              )
+        } else {
+          f_vaf <- f_vaf %>%
+            add_trace(
+              data = subset(y, vaf_label == cur_label), x = ~x, y = ~y, z = ~z,
+                            size = 0.05, type = "scatter3d", mode = "markers",
+                            marker = list(color = pal[j], line = list(width = 0)), name = cur_label
+              )
+      }}
     }
     if (!is.null(curves)) {
       f_vaf <- f_vaf %>% add_trace(data = curves,
