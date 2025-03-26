@@ -11,7 +11,8 @@ individual_snv_plots(
   slingshot = T,
   dimensionality_reduction = "UMAP",
   dynamic_cell_size = F,
-  save_each_plot = F
+  save_each_plot = F,
+  enable_integrated = F
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ individual_snv_plots(
 \item{dynamic_cell_size}{Logical; whether to scale cell size dynamically based on SNV and reference read counts. Default: FALSE.}
 
 \item{save_each_plot}{Logical; whether to save each plot individually. Default: FALSE.}
+
+\item{enable_integrated}{Logical; whether to use an integrated Seurat object. Default: FALSE.}
 }
 \value{
 A list containing JSON content for VAF, N_VAR, and N_REF plots.

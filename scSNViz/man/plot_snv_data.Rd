@@ -84,7 +84,7 @@ plots <- plot_snv_data(
   output_dir = "output/plots",
   include_histograms = TRUE,
   include_cell_types = TRUE,
-  include_snv_dim_red = TRUE,
+  include_snv_dim_red = FALSE,
   include_copykat = FALSE,
   dimensionality_reduction = "UMAP",
   slingshot = TRUE,
