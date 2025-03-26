@@ -2,9 +2,9 @@ name: R-CMD-check
 
 on:
   push:
-    branches: [ "feature/scSNViz_R_v1.0.0" ]
+    branches: [ "CI/CD_automation/scSNViz_R_v1.0.0" ]
   pull_request:
-    branches: [ "feature/scSNViz_R_v1.0.0" ]
+    branches: [ "CI/CD_automation/scSNViz_R_v1.0.0" ]
 
 jobs:
   R-CMD-check:
