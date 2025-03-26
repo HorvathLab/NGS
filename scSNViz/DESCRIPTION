@@ -20,7 +20,8 @@ Imports:
         Rtsne,
         ggplot2, 
         dplyr, 
-        plotly, 
+        plotly,
+        randomcoloR,
         listviewer, 
         htmlwidgets, 
         htmltools
