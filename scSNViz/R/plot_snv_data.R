@@ -138,36 +138,45 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
                            file_suffix = "Histogram_N_SNV", binwidth = 1))
 
     for (hist_info in hist_list) {
-      p <- ggplot(aggregated_snv, hist_info$aes)
-      if (enable_integrated){    
-        n_colors <- length(unique(seurat_object$orig.ident))
-        palette <- distinctColorPalette(n_colors)  
-        for (i in 1:length(unique(seurat_object$orig.ident))){
-          this.id = unique(seurat_object$orig.ident)[i]
-          p <- p + 
-          geom_histogram(data=aggregated_snv[aggregated_snv$orig.ident==this.id,],
-          fill = palette[i], boundary = 0, alpha = 0.3, binwidth = hist_info$binwidth, show.legend = TRUE)
-        }
-        p <- p +
-        xlab(hist_info$xlab) + ylab("Cells") +
-        theme(axis.text = element_text(size = 12), axis.title = element_text(size = 14),
-              panel.grid.minor = element_blank(), panel.grid.major = element_blank(),
-              axis.ticks.x = element_blank(), axis.ticks.y = element_blank())
-      } else{
-        p <- p + geom_histogram(fill = histogram_scale2, boundary = 0, alpha = 0.6, binwidth = hist_info$binwidth) +
-        xlab(hist_info$xlab) + ylab("Cells") +
-        theme(axis.text = element_text(size = 12), axis.title = element_text(size = 14),
-              panel.grid.minor = element_blank(), panel.grid.major = element_blank(),
-              axis.ticks.x = element_blank(), axis.ticks.y = element_blank())
+    p <- ggplot(aggregated_snv, hist_info$aes)
+
+    if (enable_integrated) {    
+      n_colors <- length(unique(seurat_object$orig.ident))
+      palette <- distinctColorPalette(n_colors)  
+
+      for (i in seq_along(unique(seurat_object$orig.ident))) {
+        p <- p + geom_histogram(
+          data = aggregated_snv[aggregated_snv$orig.ident == unique(seurat_object$orig.ident)[i], ],
+          aes(y = after_stat(count), fill = factor(orig.ident)),  # 🔹 Removed text aesthetic
+          boundary = 0, alpha = 0.3, binwidth = hist_info$binwidth, show.legend = TRUE
+        )
       }
 
+      p <- p +
+        scale_fill_manual(values = palette, name = "Sample") +  
+        xlab(hist_info$xlab) + ylab("Cells") +
+        theme_minimal()
+
+      # 🔹 ggplotly now uses default hover info without "text" aesthetic
       histograms[[hist_info$xlab]] <- ggplotly(p)
-      if (save_each_plot && !is.null(output_dir)) {
-        ggsave(p, file = file.path(output_dir, "SNV_data_plots",
-                                paste0(hist_info$file_suffix, ".png")),
-              device = "png")
-      }
+
+    } else {
+      p <- p + geom_histogram(
+        aes(y = after_stat(count)),  # 🔹 Removed text aesthetic
+        fill = histogram_scale2, boundary = 0, alpha = 0.6, binwidth = hist_info$binwidth
+      ) +
+        xlab(hist_info$xlab) + ylab("Cells") +
+        theme_minimal()
+
+      histograms[[hist_info$xlab]] <- ggplotly(p)
     }
+
+    if (save_each_plot && !is.null(output_dir)) {
+      ggsave(p, file = file.path(output_dir, "SNV_data_plots",
+                                paste0(hist_info$file_suffix, ".png")),
+            device = "png")
+    }
+  }
     options(bitmapType = "C_X11")
   }
   plots[["histograms"]] <- histograms
