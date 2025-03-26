@@ -11,6 +11,8 @@
 #' @importFrom Matrix sparseMatrix
 #' @importFrom umap umap
 #' @importFrom Rtsne Rtsne
+#' @importFrom randomcoloR distinctColorPalette
+#' @importFrom slingshot slingshot slingCurves
 #'
 #' @param seurat_object Processed Seurat object with SNV metadata.
 #' @param processed_snv Processed SNV data.
