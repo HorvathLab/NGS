@@ -348,6 +348,8 @@ generate_statistics_fnction <- function(snv,th.snv.cells=th_snv_cells){
   df.3dplot <- df.3dplot[, 2:ncol(df.3dplot)]
   plot_data <- df.3dplot
 
+  if (!enable_integrated) {snv$sampleid <- srt@project.name}
+
   return(list(SeuratObject = srt, ProcessedSNV = snv,
               AggregatedSNV = df.snv, PlotData = plot_data))
 }
