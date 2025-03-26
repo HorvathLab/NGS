@@ -431,6 +431,15 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
 
   # SNV dimensionality reduction plot integration
   # Plot SNVs - This is a transposed SNV-Cellbarcode matrix
+  if (include_snv_dim_red){
+    processed_snv$SNV <- paste0(processed_snv$CHROM, "_", processed_snv$POS, "_",
+                                processed_snv$REF, ">", processed_snv$ALT)
+    unique_snvs <- unique(processed_snv$SNV)
+    if (length(unique_snvs)<100){
+      cat("You need at least 100 unique SNVs to create a transposed SNV plot. Moving past that part now...\n")
+      include_snv_dim_red = FALSE
+    }
+  }
 
   if (include_snv_dim_red) {
     processed_snv$SNV <- paste0(processed_snv$CHROM, "_", processed_snv$POS, "_",
@@ -441,42 +450,37 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
     if (length(unique_snvs) == 0 || length(unique_readgroups) == 0) {
       stop("processed_snv contains no valid SNVs or ReadGroups.")
     }
-
-    processed_snv$snv_idx <- match(processed_snv$SNV, unique_snvs)
-    processed_snv$readgroups_idx <- match(processed_snv$ReadGroup, unique_readgroups)
-
-    snv_mat_VAR <- sparseMatrix(
-      i = processed_snv$snv_idx,
-      j = processed_snv$readgroups_idx,
-      x = processed_snv$SNVCount
-    )
-    rownames(snv_mat_VAR) <- unique_snvs
-    colnames(snv_mat_VAR) <- unique_readgroups
-
-    snv_mat_REF <- sparseMatrix(
-      i = processed_snv$snv_idx,
-      j = processed_snv$readgroups_idx,
-      x = processed_snv$RefCount
-    )
-    rownames(snv_mat_REF) <- unique_snvs
-    colnames(snv_mat_REF) <- unique_readgroups
-
-    snv_mat <- cbind(as.matrix(snv_mat_VAR), as.matrix(snv_mat_REF))
-    snv_mat <- scale(snv_mat[, colSums(snv_mat) > 0])  # Filter and scale
-
+    
+    processed_snv_flt = processed_snv[is.numeric(processed_snv$VAF)==1 & is.finite(processed_snv$VAF)==TRUE,]
+    cell_ids = data.frame(ReadGroup = unique(processed_snv_flt$ReadGroup),cell_n=(1:length(unique(processed_snv_flt$ReadGroup))))
+    snv_ids = data.frame(SNV = unique(processed_snv_flt$SNV),snv_val=(1:length(unique(processed_snv_flt$SNV))))
+    df_transpose = merge(processed_snv_flt,cell_ids, on='ReadGroup',how='left')
+    df_transpose = merge(df_transpose,snv_ids, on='ReadGroup',how='left')
+    
+    mtx = Matrix(0, nrow=length(unique(df_transpose$ReadGroup)), ncol=length(unique(df_transpose$SNV)))
+    
+    mtx[cbind(df_transpose$cell_n,df_transpose$snv_val)] <- df_transpose$VAF
+    colnames(mtx) <- snv_ids$SNV
+    rownames(mtx) <- cell_ids$ReadGroup
+    srt_transposed <- CreateSeuratObject(mtx,min.features=1)
+    srt_transposed <- NormalizeData(srt_transposed, verbose=F)
+    srt_transposed <- FindVariableFeatures(srt_transposed, verbose=F)
+    srt_transposed <- ScaleData(srt_transposed, verbose=F)
+    
     if (dimensionality_reduction == "tsne") {
-      #snv_mat_reduced <- Rtsne(snv_mat, dims = 3, perplexity = max(5, (nrow(snv_mat) - 2) / 3))$Y
-      n_samples <- nrow(snv_mat)
-      max_allowed <- floor((n_samples - 1) / 3)
-      perplexity_val <- if (max_allowed < 5) max_allowed else 5
-      snv_mat_reduced <- Rtsne(snv_mat, dims = 3, perplexity = perplexity_val)$Y
+      srt_transposed = RunTSNE(srt_transposed, dim.embed = 3, verbose=F)
+      snv_mat_reduced <- as.data.frame(Embeddings(srt_transposed, reduction = dimensionality_reduction))
     } else if (dimensionality_reduction == "pca") {
-      snv_mat_reduced <- prcomp(snv_mat, rank. = 3)$x
+      srt_transposed = RunPCA(srt_transposed, dim.embed = 3, verbose=F)
+      snv_mat_reduced <- as.data.frame(Embeddings(srt_transposed, reduction = dimensionality_reduction))
     } else {
-      n_neighbors <- ifelse(nrow(snv_mat) > 30, 5, 3)
-      snv_mat_reduced <- umap(snv_mat, n_neighbors = n_neighbors, n_components = 3)$layout
+      srt_transposed = RunPCA(srt_transposed, verbose=F)
+      srt_transposed <- FindNeighbors(srt_transposed, verbose=F)
+      srt_transposed <- FindClusters(srt_transposed, verbose=F)
+      srt_transposed = RunUMAP(srt_transposed, n.components = 3, dims=1:20, verbose=F)
+      snv_mat_reduced <- as.data.frame(Embeddings(srt_transposed, reduction = dimensionality_reduction))
     }
-
+    
     df_3dplot_snv <- as.data.frame(snv_mat_reduced)
     colnames(df_3dplot_snv) <- c(
       paste0(toupper(dimensionality_reduction), "_1"),
