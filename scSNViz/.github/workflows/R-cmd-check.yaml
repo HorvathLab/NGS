@@ -5,6 +5,7 @@ on:
     branches: [ "CI/CD_automation/scSNViz_R_v1.0.0" ]
   pull_request:
     branches: [ "CI/CD_automation/scSNViz_R_v1.0.0" ]
+  workflow_dispatch:
 
 jobs:
   R-CMD-check:
