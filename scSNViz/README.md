@@ -56,20 +56,21 @@ output_dir = "output"    # or output directory of your choice
 #### Read in the counts matrix (from either an .RDS file of an existing Seurat object or a counts matrix)
 ```
 #gene.matrix <- Read10X(data.dir = countsmatrix_file) # for reading in a countsmatrix, the data.dir may also be the directory for that contains barcodes.tsv, genes.tsv and matrix.mtx, such as: /user/filtered_gene_bc_matrices/hg19/
-#srt <- CreateSeuratObject(counts = gene.matrix, min.cells = 3, min.features = 200, project = 'Sample1')
-srt <- readRDS(srt_obj_file)
+#sample1 <- CreateSeuratObject(counts = gene.matrix, min.cells = 3, min.features = 200, project = 'Sample1')
+sample1 <- readRDS(srt_obj_file)
+sample1@project.name = 'Sample1' # set the project name
 ```
 
 #### Quality Control: Filter data and perform scaling and normalization
 ```
 # define the percentage of counts per cell that originate from mitochondrial genes 
-srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
+sample1[["percent.mt"]] <- PercentageFeatureSet(sample1, pattern = "^MT-") # this is for Homo sapiens. If the organism is Mus musculus, then: pattern = '^mt-'
 
 # plot the number of features (or genes) per cell, the number of counts per cell and the percent.mt per cell
-VlnPlot(srt, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) # As described in Seurat introductory Vignettes
+VlnPlot(sample1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3) # As described in Seurat introductory Vignettes
 
 # filter the Seurat object based on the violin plot
-srt <- subset(srt, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
+sample1 <- subset(sample1, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & nCount_RNA <50000 & percent.mt < 15) # Modify numbers appropriate to your violin plot
 ```
 
 The below unfiltered and filtered violin plots show the quality control process, filtering cells out based on percent mitochondria, number of features and number of counts.
@@ -79,18 +80,18 @@ The below unfiltered and filtered violin plots show the quality control process,
 
 #### Scale and normalize the data. Then, run a PCA.
 ```
-srt <- SCTransform(object = srt, vst.flavor = "v2", method = "glmGamPoi",
+sample1 <- SCTransform(object = sample1, vst.flavor = "v2", method = "glmGamPoi",
            vars.to.regress = "percent.mt", verbose = F)
-srt <- RunPCA(srt)
-srt <- FindNeighbors(srt, dims = 1:10)
-srt <- FindClusters(srt, resolution = 0.5)
+sample1 <- RunPCA(sample1)
+sample1 <- FindNeighbors(sample1, dims = 1:10)
+sample1 <- FindClusters(sample1, resolution = 0.5)
 
 ```
 
 #### Preprocess the SNV data and incorporate the Seurat object into the workflow
 ```
 # preprocessing the SNV data
-processed_data <- preprocess_snv_data(rds_obj = srt,
+processed_data <- preprocess_snv_data(rds_obj = sample1,
                                       snv_file = snv_file,
                                       dimensionality_reduction = "UMAP",
                                       th_vars = 0,
