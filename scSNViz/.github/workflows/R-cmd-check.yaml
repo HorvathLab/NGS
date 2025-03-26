@@ -39,7 +39,7 @@ jobs:
           Rscript -e "if (!requireNamespace('devtools')) install.packages('devtools'); devtools::document()"
 
       - name: Auto-commit documentation updates
-        if: github.ref == 'refs/heads/feature/scSNViz_R_v1.0.0'
+        if: github.ref == 'refs/heads/CI/CD_automation/scSNViz_R_v1.0.0'
         run: |
           git config --global user.email "tushar2016sharma@gmail.com"
           git config --global user.name "Tushar Sharma"
