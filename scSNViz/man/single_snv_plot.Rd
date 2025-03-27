@@ -51,7 +51,7 @@ The plot can be saved individually in the specified output_dir if save_each_plot
 one_snv_plot <- single_snv_plot(
   seurat_object = processed_data$SeuratObject,
   processed_snv = processed_data$ProcessedSNV,
-  snv_of_choice = "1:155169447:C:T"
+  snv_of_choice = "1:155169447:C:T",
   output_dir = "output/individual_plots",
   slingshot = T,
   dimensionality_reduction = "UMAP",

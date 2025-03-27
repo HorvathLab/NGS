@@ -48,7 +48,7 @@ The plots can be saved individually in the specified output_dir if save_each_plo
 }
 \examples{
 # Example usage:
-snv_plots <- individual_snv_plots(
+ind_snv_plots <- individual_snv_plots(
   seurat_object = processed_data$SeuratObject,
   processed_snv = processed_data$ProcessedSNV,
   output_dir = "output/individual_plots",
