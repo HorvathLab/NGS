@@ -94,7 +94,9 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
 }
 
 # Access individual plots:
+\dontrun{
 plot_vaf <- plots$VAF
 plot_snvcount <- plots$SNVCount
+}
 
 }
