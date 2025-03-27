@@ -1,0 +1,81 @@
+name: R-CMD-check
+
+on:
+  push:
+    branches: [ "CI/CD_automation/scSNViz_R_v1.0.0" ]
+  pull_request:
+    branches: [ "CI/CD_automation/scSNViz_R_v1.0.0" ]
+  workflow_dispatch:
+
+jobs:
+  R-CMD-check:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4.0'
+
+      - name: Cache R packages
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-R-${{ hashFiles('scSNViz/DESCRIPTION') }}
+          path: |
+            C:\Users\runneradmin\AppData\Local\Temp\Rtmp*
+
+      - name: Install package dependencies
+        working-directory: scSNViz
+        run: |
+          Rscript -e "install.packages('remotes')"
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
+
+      - name: Install additional dependencies for documentation
+        working-directory: scSNViz
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}   # this should make Github see the TOKEN as PAT
+        run: |
+          Rscript -e "if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager')"
+          Rscript -e "BiocManager::install(c('SingleCellExperiment', 'slingshot'))"
+          Rscript -e "remotes::install_github('navinlabcode/copykat')"
+
+      - name: Generate documentation
+        working-directory: scSNViz
+        run: |
+          Rscript -e "if (!requireNamespace('devtools')) install.packages('devtools')"
+          Rscript -e "devtools::document()"
+
+      - name: Auto-commit documentation updates
+        if: github.ref == 'refs/heads/CI/CD_automation/scSNViz_R_v1.0.0'
+        run: |
+          cd scSNViz
+          git config --global user.email "tushar2016sharma@gmail.com"
+          git config --global user.name "Tushar Sharma"
+          REM Check if there are changes in NAMESPACE or the man folder
+          git status
+          git status --porcelain | findstr /I "NAMESPACE man/" >nul
+          if %errorlevel%==0 (
+            git add NAMESPACE man/
+            git commit -m "Auto-update documentation [skip ci]"
+            git push origin HEAD
+          ) else (
+            echo "No documentation updates to commit."
+          )
+        shell: cmd
+
+      - name: Build package
+        working-directory: scSNViz
+        run: |
+          Rscript -e "devtools::build()"
+
+      - name: Check package
+        working-directory: scSNViz
+        run: |
+          Rscript -e "devtools::check()"

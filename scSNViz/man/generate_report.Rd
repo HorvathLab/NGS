@@ -36,9 +36,11 @@ The output_dir parameter specifies where the plots will be saved if save_each_pl
 }
 \examples{
 # Example usage:
+\dontrun{
 generate_report(plot_object = plots,
                ind_snv_object = ind_snv_plots,
                hide_ind_plots = FALSE,
                output_dir = output_dir)
+}
 
 }
