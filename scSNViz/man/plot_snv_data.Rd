@@ -63,7 +63,7 @@ A list of generated plots.
 This function generates interactive 3D dimensionality reduction plots, histograms, Cell Types Plot, and CopyKat Plot, with the option to save plots individually.
 }
 \details{
-The function generates various visualizations for SNV data including:
+The function generates various visualizations for SNV data in the 'plots' object, including:
 \itemize{
 \item \strong{3D Plots}: Visualizes metrics such as SNV.N, SNVCount, and TotalVAF, etc.
 \item \strong{Histograms}: Distribution of metrics including N_SNV, TotalVAF, MeanSNVsVAF, and N_VARreadCounts.
@@ -76,23 +76,20 @@ The output_dir parameter specifies where the plots will be saved if save_each_pl
 }
 \examples{
 # Example usage:
-plots <- plot_snv_data(
-  seurat_object = processed_data$SeuratObject,
-  processed_snv = processed_data$ProcessedSNV,
-  aggergated_snv = processed_data$AggregatedSNV,
-  plot_data = processed_data$PlotData,
-  output_dir = "output/plots",
-  include_histograms = TRUE,
-  include_cell_types = TRUE,
-  include_snv_dim_red = FALSE,
-  include_copykat = FALSE,
-  dimensionality_reduction = "UMAP",
-  slingshot = TRUE,
-  color_scale = "YlOrRd",
-  cell_border = 0,
-  disable_3d_axis = FALSE,
-  save_each_plot = TRUE
-)
+plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
+                       processed_snv = processed_data$ProcessedSNV,
+                       aggregated_snv = processed_data$AggregatedSNV,
+                       plot_data = processed_data$PlotData,
+                       output_dir = output_dir,
+                       include_histograms = TRUE,  
+                       dimensionality_reduction = "umap",
+                       include_cell_types = TRUE,
+                       include_copykat = FALSE, 
+                       include_snv_dim_red = FALSE,
+                       slingshot = TRUE,
+                       color_scale = "YlOrRd",
+                       cell_border = 0,
+                       save_each_plot = TRUE)
 
 # Access individual plots:
 plot_vaf <- plots$VAF
