@@ -26,6 +26,7 @@
 #'
 #' @examples
 #' # Example usage:
+#' \dontrun{
 #' ind_snv_plots <- individual_snv_plots(
 #'   seurat_object = processed_data$SeuratObject,
 #'   processed_snv = processed_data$ProcessedSNV,
@@ -35,6 +36,7 @@
 #'   dynamic_cell_size = F,
 #'   save_each_plot = T
 #' )
+#' }
 #'
 #' @export
 #'
