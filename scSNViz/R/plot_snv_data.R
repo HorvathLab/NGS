@@ -61,8 +61,10 @@
 #' }
 #'
 #' # Access individual plots:
+#' \dontrun{
 #' plot_vaf <- plots$VAF
 #' plot_snvcount <- plots$SNVCount
+#' }
 #'
 #' @export
 #'
