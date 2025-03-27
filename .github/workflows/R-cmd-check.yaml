@@ -5,6 +5,7 @@ on:
     branches: [ "CI/CD_automation/scSNViz_R_v1.0.0" ]
   pull_request:
     branches: [ "CI/CD_automation/scSNViz_R_v1.0.0" ]
+  workflow_dispatch:
 
 jobs:
   R-CMD-check:
@@ -38,10 +39,12 @@ jobs:
 
       - name: Install additional dependencies for documentation
         working-directory: scSNViz
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}   # this should make Github see the TOKEN as PAT
         run: |
           Rscript -e "if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager')"
           Rscript -e "BiocManager::install(c('SingleCellExperiment', 'slingshot'))"
-          Rscript -e "remotes::install_github('navinlabcode/copykat')"  # Replace with the correct repo if different
+          Rscript -e "remotes::install_github('navinlabcode/copykat')"
 
       - name: Generate documentation
         working-directory: scSNViz
