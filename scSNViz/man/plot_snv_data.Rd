@@ -76,6 +76,7 @@ The output_dir parameter specifies where the plots will be saved if save_each_pl
 }
 \examples{
 # Example usage:
+\dontrun{
 plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        processed_snv = processed_data$ProcessedSNV,
                        aggregated_snv = processed_data$AggregatedSNV,
@@ -90,6 +91,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        color_scale = "YlOrRd",
                        cell_border = 0,
                        save_each_plot = TRUE)
+}
 
 # Access individual plots:
 plot_vaf <- plots$VAF
