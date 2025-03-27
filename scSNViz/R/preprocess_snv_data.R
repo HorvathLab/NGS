@@ -26,18 +26,20 @@
 #' @return A Seurat object with processed metadata and embeddings, processed SNV data, aggregated SNV data, and a data frame for plotting.
 #'
 #' @examples
+#' \dontrun{
 #' processed_data <- preprocess_snv_data(
-#'   rds_obj = srt,
-#'   snv_file = "path/to/snv_file.tsv",
-#'   dimensionality_reduction = "umap",
-#'   th_vars = 1,
-#'   th_reads = 2,
-#'   enable_sctype = T,
-#'   tissue_type = "Immunesystem",
-#'   generate_statistics = T,
-#'   th_snv_cells = 10,
-#'   output_dir = "path/to/output"
-#' )
+#'                     rds_obj = srt,
+#'                     snv_file = "path/to/snv_file.tsv",
+#'                     dimensionality_reduction = "umap",
+#'                     th_vars = 1,
+#'                     th_reads = 2,
+#'                     enable_sctype = T,
+#'                     tissue_type = "Immunesystem",
+#'                     generate_statistics = T,
+#'                     th_snv_cells = 10,
+#'                     output_dir = "path/to/output"
+#'                 )
+#'               }
 #'
 #' @export
 #'
