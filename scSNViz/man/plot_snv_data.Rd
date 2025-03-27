@@ -79,7 +79,7 @@ The output_dir parameter specifies where the plots will be saved if save_each_pl
 plots <- plot_snv_data(
   seurat_object = processed_data$SeuratObject,
   processed_snv = processed_data$ProcessedSNV,
-  aggergated_snv = processed_data$AggregatedSNV
+  aggergated_snv = processed_data$AggregatedSNV,
   plot_data = processed_data$PlotData,
   output_dir = "output/plots",
   include_histograms = TRUE,
