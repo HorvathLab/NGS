@@ -13,7 +13,7 @@ expression, and. Additionally, scSNViz supports both individual and set-based sc
 comparative assessments across multiple samples, making it a powerful tool for understanding SNV-driven
 regulatory mechanisms and cellular heterogeneity.
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/scSNViz_PanelA.png' width=50% height=50%>
+<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/scSNViz_PanelA.png' width=50% height=50%>
 
 ## Installation
 
@@ -21,7 +21,7 @@ regulatory mechanisms and cellular heterogeneity.
 
 ```
 library(devtools)
-install_github("HorvathLab/NGS", ref = "feature/scSNViz_R_v1.0.0", subdir = "scSNViz")
+install_github("HorvathLab/NGS", ref = "scSNViz_R_v1.0.0", subdir = "scSNViz")
 ```
 If the above fails due to rate limits, try generating a GitHub Personal Access Token (PAT), add it into your environment and then run again. 
 
@@ -29,7 +29,7 @@ Another way to do this is to configure R to use the Windows Internet API for dow
 
 ```
 options(download.file.method = "wininet")   # can try other methods such as 'libcurl', 'wget', etc.
-install_github("HorvathLab/NGS", ref = "feature/scSNViz_R_v1.0.0", subdir = "scSNViz")
+install_github("HorvathLab/NGS", ref = "scSNViz_R_v1.0.0", subdir = "scSNViz")
 ```
 
 ## Quickstart for Beginners
@@ -76,7 +76,7 @@ sample1 <- subset(sample1, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & 
 
 The below unfiltered and filtered violin plots show the quality control process, filtering cells out based on percent mitochondria, number of features and number of counts.
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/prefilt_filt_vln.png' width=50% height=50%>
+<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/prefilt_filt_vln.png' width=50% height=50%>
 
 
 #### Scale and normalize the data. Then, run a PCA.
@@ -121,7 +121,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/sample_outputs.png'>
+<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/sample_outputs.png'>
 
 #### Generate individual SNV plots
 ```
@@ -135,7 +135,7 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       dynamic_cell_size = FALSE)
 ```
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/individual_snv_plots.png'>
+<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/individual_snv_plots.png'>
 
 #### Plot single SNV
 ```
@@ -161,7 +161,7 @@ generate_report(plot_object = plots,
 ```
 
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/Exploratory_combined_plots.png'>
+<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/Exploratory_combined_plots.png'>
 
 
 #### Generate exploratory combined plot for single SNV of interest
@@ -264,7 +264,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/integrated_plot.png'>
+<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/integrated_plot.png'>
 
 #### Generate individual SNV plots
 ```
@@ -286,7 +286,7 @@ generate_report(plot_object = plots,
                 output_dir = output_dir)
 ```
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/integrated_output_example.png'>
+<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/integrated_output_example.png'>
 
 
 ## Output
