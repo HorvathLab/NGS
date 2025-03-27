@@ -48,6 +48,7 @@ The plots can be saved individually in the specified output_dir if save_each_plo
 }
 \examples{
 # Example usage:
+\dontrun{
 ind_snv_plots <- individual_snv_plots(
   seurat_object = processed_data$SeuratObject,
   processed_snv = processed_data$ProcessedSNV,
@@ -57,5 +58,6 @@ ind_snv_plots <- individual_snv_plots(
   dynamic_cell_size = F,
   save_each_plot = T
 )
+}
 
 }
