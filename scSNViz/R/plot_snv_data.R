@@ -32,7 +32,7 @@
 #' @param enable_integrated Logical; whether to use an integrated Seurat object. Default: FALSE.
 #' @return A list of generated plots.
 #' @details
-#' The function generates various visualizations for SNV data including:
+#' The function generates various visualizations for SNV data in the 'plots' object, including:
 #' - **3D Plots**: Visualizes metrics such as SNV.N, SNVCount, and TotalVAF, etc.
 #' - **Histograms**: Distribution of metrics including N_SNV, TotalVAF, MeanSNVsVAF, and N_VARreadCounts.
 #' - **Cell Types Plot**: Shows cell types (e.g., custom classifications) with optional slingshot trajectories.
@@ -43,23 +43,20 @@
 #'
 #' @examples
 #' # Example usage:
-#' plots <- plot_snv_data(
-#'   seurat_object = processed_data$SeuratObject,
-#'   processed_snv = processed_data$ProcessedSNV,
-#'   aggergated_snv = processed_data$AggregatedSNV,
-#'   plot_data = processed_data$PlotData,
-#'   output_dir = "output/plots",
-#'   include_histograms = TRUE,
-#'   include_cell_types = TRUE,
-#'   include_snv_dim_red = FALSE,
-#'   include_copykat = FALSE,
-#'   dimensionality_reduction = "UMAP",
-#'   slingshot = TRUE,
-#'   color_scale = "YlOrRd",
-#'   cell_border = 0,
-#'   disable_3d_axis = FALSE,
-#'   save_each_plot = TRUE
-#' )
+#' plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
+#'                        processed_snv = processed_data$ProcessedSNV,
+#'                        aggregated_snv = processed_data$AggregatedSNV,
+#'                        plot_data = processed_data$PlotData,
+#'                        output_dir = output_dir,
+#'                        include_histograms = TRUE,  
+#'                        dimensionality_reduction = "umap",
+#'                        include_cell_types = TRUE,
+#'                        include_copykat = FALSE, 
+#'                        include_snv_dim_red = FALSE,
+#'                        slingshot = TRUE,
+#'                        color_scale = "YlOrRd",
+#'                        cell_border = 0,
+#'                        save_each_plot = TRUE)
 #'
 #' # Access individual plots:
 #' plot_vaf <- plots$VAF
@@ -70,7 +67,8 @@
 plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_data, output_dir = NULL,
                           include_histograms = T, include_cell_types = F, include_snv_dim_red = T,
                           include_copykat = F, dimensionality_reduction = "UMAP", slingshot = T,
-                          color_scale = "YlOrRd", cell_border = 0, disable_3d_axis = F, save_each_plot = F, enable_integrated = F) {
+                          color_scale = "YlOrRd", cell_border = 0, disable_3d_axis = F, save_each_plot = F, 
+                          enable_integrated = F) {
 
   cat("\nGenerating SNV data plots...\n")
 
