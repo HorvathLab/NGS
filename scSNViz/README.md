@@ -250,8 +250,7 @@ processed_data <- preprocess_snv_data(rds_obj = srt_integrated,
                                       output_dir = output_dir)
 ```
 
-#### Generate 3d dimensionality reduction plots
-
+#### Generate 3D dimensionality reduction plots
 ```
 plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        processed_data$ProcessedSNV,
@@ -271,7 +270,8 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
 
 <img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/integrated_plot.png'>
 
-#### Generate a report
+
+#### Generate individual SNV plots
 ```
 ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObject,
                                       processed_snv = processed_data$ProcessedSNV,
@@ -281,7 +281,10 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       dimensionality_reduction = "UMAP",
                                       dynamic_cell_size = FALSE,
                                       enable_integrated = TRUE)
+```
 
+#### Generate exploratory combined plots report
+```
 generate_report(plot_object = plots,
                 ind_snv_object = ind_snv_plots,
                 hide_ind_plots = TRUE, # individual plots for each SNV are hidden
