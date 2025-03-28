@@ -14,7 +14,7 @@ comparative assessments across multiple samples, making it a powerful tool for u
 regulatory mechanisms and cellular heterogeneity.
 
 #<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/scSNViz_PanelA.png' width=50% height=50%>
-![scSNViz_PanelA](scSNViz-R-package/assets/scSNViz_PanelA.png)
+![scSNViz_PanelA](assets/scSNViz_PanelA.png)
 
 ## Installation
 
