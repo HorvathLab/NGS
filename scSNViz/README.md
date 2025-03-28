@@ -177,6 +177,7 @@ generate_report(plot_object = plots,
 
 
 ## Workflow for Advanced Users with Multiple Samples to Integrate
+The following is a workflow that calculates and overlays basic SNV metrics on top of a dimensionality reduction integrated from multiple samples.
 
 ####
 ```
@@ -191,7 +192,8 @@ output_dir = "output_advanced_wkflw"    # or output directory of your choice
 ```
 
 
-#### Prepare integrated data.
+#### Prepare integrated data
+The below workflow is shown for unprocessed Seurat objects. Ideally this workflow is started with Read10X()/CreateSeuratObject() or a Seurat object that has not been processed. If the Seurat object has been processed, already, this may result in errors.
 
 ```
 sample1 <- readRDS('input/sample1_Seurat_object.rds')
@@ -219,6 +221,8 @@ srt_integrated <- FindClusters(srt_integrated, resolution = 0.6)
 ```
 
 #### Prepare SNV data
+The sample labelling must be consistent with the orig.ident set in the step that prepares the integrated data.
+
 ```
 snv_sample1 <- read.table("input/sample1_SNVs.tsv", sep = "\t", header = T)
 snv_sample2 <- read.table("input/sample2_SNVs.tsv", sep = "\t", header = T)
@@ -247,6 +251,7 @@ processed_data <- preprocess_snv_data(rds_obj = srt_integrated,
 ```
 
 #### Generate 3d dimensionality reduction plots
+
 ```
 plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        processed_data$ProcessedSNV,
@@ -256,8 +261,8 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        include_histograms = TRUE,  
                        dimensionality_reduction = "umap",
                        include_cell_types = TRUE,
-                       include_copykat = FALSE, # this is not recommended for integrated objects
-                       slingshot = FALSE, # this is default, no slingshot option for integrated data
+                       include_copykat = FALSE, # this is not currently an option for integrated objects
+                       slingshot = FALSE, # this is not currently an option for integrated objects
                        color_scale = "YlOrRd",
                        cell_border = 0,
                        enable_integrated = TRUE,
