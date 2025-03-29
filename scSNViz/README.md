@@ -121,7 +121,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-<img src='https://github.com/HorvathLab/NGS/blob/feature/scSNViz_R_v1.0.0/scSNViz/docs/sample_outputs.png'>
+<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/sample_outputs.png'>
 
 #### Generate individual SNV plots
 ```
