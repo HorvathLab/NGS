@@ -4,7 +4,7 @@
 
 ```
 library(devtools)
-install_github("HorvathLab/NGS", ref = "feature/scSNViz_R_v1.0.0", subdir = "scSNViz")
+install_github("HorvathLab/NGS", ref = "scSNViz_R_v1.0.0", subdir = "scSNViz")
 ```
 If the above fails due to rate limits, try generating a GitHub Personal Access Token (PAT), add it into your environment and then run again. 
 
@@ -13,7 +13,7 @@ Another way to do this is to configure R to use the Windows Internet API for dow
 ### Option 2:
 ```
 options(download.file.method = "wininet")   # can try other methods such as 'libcurl', 'wget', etc.
-install_github("HorvathLab/NGS", ref = "feature/scSNViz_R_v1.0.0", subdir = "scSNViz")
+install_github("HorvathLab/NGS", ref = "scSNViz_R_v1.0.0", subdir = "scSNViz")
 ```
 
 ### Option 3:
