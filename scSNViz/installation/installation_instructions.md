@@ -24,7 +24,7 @@ git config core.sparseCheckout true
 
 echo "scSNViz/" >> .git/info/sparse-checkout
 
-git pull origin feature/scSNViz_R_v1.0.0
+git pull origin scSNViz_R_v1.0.0
 ```
 
 # Build package using Rstudio
