@@ -126,7 +126,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
 ```
 
 <p align="center">
-  <img src="assets/sample_outputs.png" width="50%" height="50%" alt="sample_outputs">
+  <img src="assets/sample_outputs.png" alt="sample_outputs">
 </p>
 
 #### Generate individual SNV plots
@@ -142,7 +142,7 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
 ```
 
 <p align="center">
-  <img src="assets/individual_snv_plots.png" width="50%" height="50%" alt="individual_snv_plots">
+  <img src="assets/individual_snv_plots.png" alt="individual_snv_plots">
 </p>
 
 #### Plot single SNV
@@ -167,7 +167,7 @@ generate_report(plot_object = plots,
 ```
 
 <p align="center">
-  <img src="assets/Exploratory_combined_plots.png" width="50%" height="50%" alt="Exploratory_combined_plots">
+  <img src="assets/Exploratory_combined_plots.png" alt="Exploratory_combined_plots">
 </p>
 
 #### Generate exploratory combined plot for single SNV of interest
@@ -269,7 +269,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
 ```
 
 <p align="center">
-  <img src="assets/integrated_plot.png" width="50%" height="50%" alt="integrated_plot">
+  <img src="assets/integrated_plot.png" alt="integrated_plot">
 </p>
 
 #### Generate individual SNV plots
@@ -293,7 +293,7 @@ generate_report(plot_object = plots,
 ```
 
 <p align="center">
-  <img src="assets/integrated_output_example.png" width="50%" height="50%" alt="integrated_output_example">
+  <img src="assets/integrated_output_example.png" alt="integrated_output_example">
 </p>
 
 ## Output
