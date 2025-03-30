@@ -37,10 +37,11 @@ install_github("HorvathLab/NGS", ref = "scSNViz_R_v1.0.0", subdir = "scSNViz")
 ## Quickstart for Beginners
 
 #### Load libraries, define paths to input files, and define the output directory.
+
 The input files are located in the input folder on github. The snv file is an output from SCReadCounts. The user may provide a .tsv file that is not from SCReadCounts as long as it is also a .tsv and contains the following columns: CHROM, POS, REF, ALT, ReadGroup, SNVCount, RefCount.
 ```
 load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "sctransform", "ggplot2", "readr",
-            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "listviewer","openxlsx","randomcoloR") # the installation of ("glmGamPoi") is highly recommended
+            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "listviewer", "openxlsx", "randomcoloR") # the installation of ("glmGamPoi") is highly recommended
 
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
@@ -78,8 +79,9 @@ sample1 <- subset(sample1, subset = nFeature_RNA > 1000 & nFeature_RNA < 7500 & 
 
 The below unfiltered and filtered violin plots show the quality control process, filtering cells out based on percent mitochondria, number of features and number of counts.
 
-<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/prefilt_filt_vln.png' width=50% height=50%>
-
+<p align="center">
+  <img src="assets/prefilt_filt_vln.png" width="50%" height="50%" alt="prefilt_filt_vln">
+</p>
 
 #### Scale and normalize the data. Then, run a PCA.
 ```
@@ -113,7 +115,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        processed_data$PlotData,
                        output_dir = output_dir,
                        include_histograms = TRUE,  
-                       dimensionality_reduction = "umap",
+                       dimensionality_reduction = "UMAP",
                        include_cell_types = TRUE,
                        include_copykat = FALSE, # CNV metrics produced by copykat; this may significantly increase processing time depending on the size of gene counts matrix provided
                        include_snv_dim_red = FALSE, # IF, set to TRUE, this function transposes the SNVxBarcode matrix and generates a dimensionality reduction plot to view similarity between SNVs.
@@ -123,7 +125,9 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/sample_outputs.png'>
+<p align="center">
+  <img src="assets/sample_outputs.png" width="50%" height="50%" alt="sample_outputs">
+</p>
 
 #### Generate individual SNV plots
 ```
@@ -137,20 +141,20 @@ ind_snv_plots <- individual_snv_plots(seurat_object = processed_data$SeuratObjec
                                       dynamic_cell_size = FALSE)
 ```
 
-<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/individual_snv_plots.png'>
+<p align="center">
+  <img src="assets/individual_snv_plots.png" width="50%" height="50%" alt="individual_snv_plots">
+</p>
 
 #### Plot single SNV
 ```
-one_snv_plot <- single_snv_plot(
-       seurat_object = processed_data$SeuratObject,
-       processed_snv = processed_data$ProcessedSNV,
-       snv_of_choice = "1:155169447:C:T",
-       output_dir = "output/1_155169447_C_T",
-       slingshot = TRUE,
-       dimensionality_reduction = "UMAP",
-       dynamic_cell_size = FALSE,
-       save_each_plot = TRUE
-     )
+one_snv_plot <- single_snv_plot(seurat_object = processed_data$SeuratObject,
+                                processed_snv = processed_data$ProcessedSNV,
+                                snv_of_choice = "1:155169447:C:T",
+                                output_dir = "output/1_155169447_C_T",
+                                slingshot = TRUE,
+                                dimensionality_reduction = "UMAP",
+                                dynamic_cell_size = FALSE,
+                                save_each_plot = TRUE)
 
 ```
 
@@ -162,9 +166,9 @@ generate_report(plot_object = plots,
                 output_dir = output_dir)
 ```
 
-
-<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/Exploratory_combined_plots.png'>
-
+<p align="center">
+  <img src="assets/Exploratory_combined_plots.png" width="50%" height="50%" alt="Exploratory_combined_plots">
+</p>
 
 #### Generate exploratory combined plot for single SNV of interest
 ```
@@ -176,14 +180,12 @@ generate_report(plot_object = plots,
 
 
 
-
-
 ## Workflow for Advanced Users with Multiple Samples to Integrate
 
 ####
 ```
 load.lib<-c("scSNViz","SingleCellExperiment", "stringr", "HGNChelper", "Matrix", "umap", "Rtsne", "Seurat", "sctransform", "ggplot2", "readr",
-            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer","openxlsx","randomcoloR") # the installation of ("glmGamPoi") is highly recommended
+            "dplyr", "plotly", "htmlwidgets", "htmltools", "jsonlite", "glmGamPoi", "slingshot", "copykat", "listviewer", "openxlsx", "randomcoloR") # the installation of ("glmGamPoi") is highly recommended
 
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
@@ -248,7 +250,7 @@ processed_data <- preprocess_snv_data(rds_obj = srt_integrated,
                                       output_dir = output_dir)
 ```
 
-#### Generate 3d dimensionality reduction plots
+#### Generate 3D dimensionality reduction plots
 ```
 plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        processed_data$ProcessedSNV,
@@ -256,7 +258,7 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        processed_data$PlotData,
                        output_dir = output_dir,
                        include_histograms = TRUE,  
-                       dimensionality_reduction = "umap",
+                       dimensionality_reduction = "UMAP",
                        include_cell_types = TRUE,
                        include_copykat = FALSE, # this is not recommended for integrated objects
                        slingshot = FALSE, # this is default, no slingshot option for integrated data
@@ -266,7 +268,9 @@ plots <- plot_snv_data(seurat_object = processed_data$SeuratObject,
                        save_each_plot = TRUE)
 ```
 
-<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/integrated_plot.png'>
+<p align="center">
+  <img src="assets/integrated_plot.png" width="50%" height="50%" alt="integrated_plot">
+</p>
 
 #### Generate individual SNV plots
 ```
@@ -288,8 +292,9 @@ generate_report(plot_object = plots,
                 output_dir = output_dir)
 ```
 
-<img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/integrated_output_example.png'>
-
+<p align="center">
+  <img src="assets/integrated_output_example.png" width="50%" height="50%" alt="integrated_output_example">
+</p>
 
 ## Output
 
