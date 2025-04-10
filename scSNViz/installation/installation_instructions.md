@@ -1,5 +1,5 @@
 # Install scSNViz from GitHub
-Note: scSNViz has been tested and validated with R versions up to 4.1.1. It can be run through RStudio. For larger single-cell datasets and for workflows involving integration with CopyKat, we recommend using high-performance computing (HPC) environments to ensure optimal performance.
+**Note:** scSNViz has been tested and validated with R versions up to 4.1.1. It can be run through RStudio. For larger single-cell datasets and for workflows involving integration with CopyKat, we recommend using high-performance computing (HPC) environments to ensure optimal performance.
 
 ### Option 1:
 
