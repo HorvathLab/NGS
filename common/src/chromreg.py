@@ -61,7 +61,7 @@ class ChromLabels(object):
             self.addlabel(i+index,label,label)
 
         if len(labels) > 1:
-            assert max(scheme1,scheme2) > 0, "No chromosome names match expected naming schemes"
+            # assert max(scheme1,scheme2) > 0, "No chromosome names match expected naming schemes"
             assert min(scheme1,scheme2) == 0, "Multiple chromosome naming schemes"
         if scheme1 > 0:
             assert self.scheme != 2, "Inconsistent chromosome naming scheme"

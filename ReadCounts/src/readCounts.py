@@ -314,8 +314,17 @@ progress.done()
 
 chrreg = ChromLabelRegistry()
 
+for bamfile in opt.alignments:
+    chrreg.add_bamlabels(bamfile)
+
 for snvfile in snvchroms:
     chrreg.add_labels(snvfile,snvchroms[snvfile])
+
+for snvfile in snvchroms:
+    for bamfile in opt.alignments:
+        for snvchr in snvchroms[snvfile]:
+            if not chrreg.label2label(snvfile,bamfile,snvchr):
+                print("WARNING: Sequence label %s from %s not found in %s"%(snvchr,snvfile,bamfile))
 
 snvdata1 = {}
 for (sf, chr, locus, ref, alt), r in snvdata.items():
@@ -325,9 +334,6 @@ for (sf, chr, locus, ref, alt), r in snvdata.items():
     if snvkey not in snvdata1:
         snvdata1[snvkey] = (chrom,locus,ref,alt,r)
     # print(snvkey,snvdata1[snvkey])
-
-for bamfile in opt.alignments:
-    chrreg.add_bamlabels(bamfile)
 
 chrreg.determine_chrom_order()
 # chrreg.default_chrom_order()
