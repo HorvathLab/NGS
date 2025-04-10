@@ -21,7 +21,7 @@ options(download.file.method = "wininet")   # can try other methods such as 'lib
 install_github("HorvathLab/NGS", ref = "scSNViz_R_v1.0.0", subdir = "scSNViz")
 ```
 
-## Quickstart for Beginners
+## Quickstart
 
 #### Load libraries, define paths to input files, and define the output directory.
 The input files are located in the input folder on github. The snv file is an output from SCReadCounts. The user may provide a .tsv file that is not from SCReadCounts as long as it is also a .tsv and contains the following columns: CHROM, POS, REF, ALT, ReadGroup, SNVCount, RefCount.
@@ -165,7 +165,7 @@ generate_report(plot_object = plots,
 
 
 
-## Workflow for Advanced Users with Multiple Samples to Integrate
+## Integration of Multiple Samples
 The following is a workflow that calculates and overlays basic SNV metrics on top of a dimensionality reduction integrated from multiple samples.
 
 ####
