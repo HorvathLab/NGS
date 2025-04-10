@@ -9,6 +9,7 @@ scSNViz is a specialized tool for the visualization and analysis of single-cell 
 #### Install scSNViz from GitHub
 
 ```
+# Enter commands in R (or R studio, if installed)
 library(devtools)
 install_github("HorvathLab/NGS", ref = "scSNViz_R_v1.0.0", subdir = "scSNViz")
 ```
