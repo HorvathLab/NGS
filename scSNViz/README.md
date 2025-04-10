@@ -177,7 +177,7 @@ install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
 sapply(load.lib,require,character=TRUE)
 
-output_dir = "output_advanced_wkflw"    # or output directory of your choice
+output_dir = "output_integrated_samples"    # or output directory of your choice
 ```
 
 
