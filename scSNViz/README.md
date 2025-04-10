@@ -1,17 +1,8 @@
 # scSNViz: visualization and analysis of Cell-Specific Expressed SNVs
-Understanding expressed genetic variation at the single-cell level is crucial for insights into
-transcriptional heterogeneity and gene expression regulation, but there is a scarcity of tools for visualizing
-and analyzing cell-level genetic variants. scSNViz is a dedicated tool for the visualization and analysis of cell-specific expressed
-single nucleotide variants (sceSNVs) in cell-barcoded single-cell RNA sequencing (scRNA-seq) data. It
-integrates established frameworks such as Seurat, Slingshot, scType, and CopyKat into a specialized
-workflow for sceSNV expression analysis. scSNViz enables quantitative 3D visualization of variant allele
-frequencies (VAF_RNA), reference (N_REF) and variant (N_VAR) read counts, while also supporting SNV
-clustering based on shared transcriptional activity. Beyond visualization, scSNViz provides estimation,
-summarization, and graphical representation of SNV expression metrics, facilitating the study of allelic
-dynamics, somatic, germline, and RNA-originating SNVs, transcriptional bursting and lineage-specific
-expression, and. Additionally, scSNViz supports both individual and set-based sceSNV analyses, as well as
-comparative assessments across multiple samples, making it a powerful tool for understanding SNV-driven
-regulatory mechanisms and cellular heterogeneity.
+scSNViz, a specialized tool for the visualization and analysis of single-cell expressed SNVs from cell-barcoded scRNA-seq data. scSNViz enables quantitative assessment of SNV expression, 2D and 3D visualization of individual or user-defined groups of variants, expression-based clustering of SNVs, and cross-sample comparisons. Beyond visualization, scSNViz enables the estimation, summarization, and graphical representation of SNV expression metrics, facilitating the study of allelic dynamics across somatic, germline, and RNA-originating SNVs. To support integrative transcriptomic analyses, scSNViz interoperates with established frameworks including Seurat for clustering, Slingshot for trajectory inference, scType for cell type annotation, and CopyKat for copy number profiling.![image](https://github.com/user-attachments/assets/67335a5b-c883-4957-bff0-89339c53fc75)
+
+![image](https://github.com/user-attachments/assets/e6bd0132-ba9a-442d-8c9b-e8588c9a1bd2)
+
 
 <img src='https://github.com/HorvathLab/NGS/blob/scSNViz_R_v1.0.0/scSNViz/docs/scSNViz_PanelA.png' width=50% height=50%>
 
