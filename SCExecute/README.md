@@ -7,12 +7,12 @@ commands on multiple processes to improve throughput. Cell-barcodes can
 be [extracted](docs/Barcodes.md) from read-names or BAM-file tags populated by a variety
 of tools, included STARsolo and UMI-tools, and can be restricted to
 barcodes of interest. Implemented in Python3 using the PySAM package and
-[distributed][Current version] for Linux, MacOS, and Python environments, SCExecute builds
+[distributed][Current version] for Linux and Python environments, SCExecute builds
 on other NGS tools from the Horvath lab, including [SCReadCounts](../SCReadCounts#readme).
 
 SCExecute is [available][Current version] as a self-contained binary package for 64-bit
-Linux systems, as Python source, and MacOS (Darwin). The self-contained
-binary package is appropriate for most Linux and MacOS users. The pythonic
+Linux systems and as Python source. The self-contained
+binary package is appropriate for most Linux users. The pythonic
 version requires pysam, numpy and scipy along with other packages (See
 the [install](docs/Installation.md) instructions for more details).
 

@@ -1,11 +1,10 @@
 
 # SCReadCounts Installation #
 
-SCReadCounts is available as a self-contained binary package for 64-bit Intel-based Linux and MacOS (Darwin), and as Python Source. The self-contained binary packages are appropriate for most users. The pythonic version requires pysam, numpy and scipy along with other packages (See the install instructions for more details). Conda-based installation of Python source provides a simple, platform-independent installation and update procedure. 
+SCReadCounts is available as a self-contained binary package for 64-bit Intel-based Linux and as Python Source. The self-contained binary packages are appropriate for most users. The pythonic version requires pysam, numpy and scipy along with other packages (See the install instructions for more details). Conda-based installation of Python source provides a simple, platform-independent installation and update procedure. 
 
 * [Binary Package Installation](#binary-package-installation)
   * [64-bit Linux](#64-bit-linux)
-  * [Intel-based MacOS](#intel-based-macos)
 * [Conda-based Installation](#conda-based-installation)
 * [Python Source Installation](#python-source-installation)
 
@@ -18,26 +17,6 @@ SCReadCounts is available as a self-contained binary package for 64-bit Intel-ba
     ```
     % tar xzf SCReadCounts-*.Linux-x86_64.tgz
     % cd SCReadCounts-*.Linux-x86_64
-    ```
-2. See the graphical user interface.
-    ```
-    % bin/scReadCounts
-    ```
-3. Command-line help.
-    ```
-    % bin/scReadCounts -h
-    ```
-4. Run the examples.
-    ```
-    % cd data
-    % ./example.sh
-    ```
-
-### Intel-based MacOS ###
-1. Unpack the download.
-    ```
-    % tar xzf SCReadCounts-*.Darwin-x86_64.tgz
-    % cd SCReadCounts-*.Darwin-x86_64.tgz
     ```
 2. See the graphical user interface.
     ```
