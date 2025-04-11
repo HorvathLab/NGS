@@ -15,5 +15,6 @@ else
     exec ${PYTHON3:-python3} "$DIR/../src/${PROG}.py" "$@"
   else
     echo "Please add python3 to your path or set environment variable PYTHON3 to its location." | fmt 
+    exit 1
   fi
 fi
