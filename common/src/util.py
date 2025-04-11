@@ -3,7 +3,7 @@ import sys, os, os.path, textwrap, hashlib
 from pysamimport import pysam
 import re
 import inspect
-from configparser import SafeConfigParser
+from configparser import ConfigParser as SafeConfigParser
 from collections import defaultdict
 
 
