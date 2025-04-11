@@ -1,3 +1,10 @@
+---
+title: "scSNViz R package"
+description: "A dedicated tool for visualization and analysis of cell-specific expressed SNVs in scRNA-seq data."
+canonical: "https://horvathlab.github.io/NGS/scSNViz-R-package/"
+---
+
+
 # scSNViz: visualization and analysis of Cell-Specific Expressed SNVs
 Understanding expressed genetic variation at the single-cell level is crucial for insights into
 transcriptional heterogeneity and gene expression regulation, but there is a scarcity of tools for visualizing
