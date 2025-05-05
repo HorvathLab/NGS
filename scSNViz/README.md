@@ -37,6 +37,7 @@ sapply(load.lib,require,character=TRUE)
 #CopyKat is an optional tool in analysis and must be installed separately
 library(devtools)
 install_github("navinlabcode/copykat")
+library(copykat)
 
 snv_file <- 'input/sample1_SNVs.tsv'
 srt_obj_file <- 'input/sample1_Seurat_object.rds'
