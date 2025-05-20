@@ -82,6 +82,17 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
     if (slingshot==TRUE){print('Turning off the slingshot option - this is not available for integrated objects')}
     if (include_copykat==TRUE){print('Turning off the copykat option - this is not available for integrated objects')}
   }
+  #os checking
+  sys <- Sys.info()[['sysname']]
+  if (sys == "Linux" || sys == "Darwin"){
+    cores <- readline("How many cores would you like to use?")
+    cores <- as.numeric(cores)
+    if (cores > detectCores()){
+      stop(paste0("Invalid amount of cores, you have "), detectCores(), " cores.")
+    }
+  } else {
+    cores <- 1
+  }
 
   valid_reductions <- c("umap", "pca", "tsne")
   dimensionality_reduction <- tolower(dimensionality_reduction)
@@ -278,35 +289,43 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
 
   #plots <- list()
 
-  for (metric in names(plot_titles)) {
-    if (!metric %in% colnames(plot_data))
-      next
+generate_and_save_plot <- function(metric) {
+  if (!metric %in% colnames(plot_data))
+    return(NULL)
 
-    plot <- generate_plot(
-      metric = metric,
-      plot_data = plot_data,
-      dim_plotting = dim_plotting,
-      color_scale = color_scale,
-      reversescale_option = reversescale_option,
-      cell_border = cell_border,
-      color_undetected = color_undetected,
-      curves = curves,
-      disable_3d_axis = disable_3d_axis,
-      title = plot_titles[[metric]] #(duplicate title fix)
-    )
+  plot <- generate_plot(
+    metric = metric,
+    plot_data = plot_data,
+    dim_plotting = dim_plotting,
+    color_scale = color_scale,
+    reversescale_option = reversescale_option,
+    cell_border = cell_border,
+    color_undetected = color_undetected,
+    curves = curves,
+    disable_3d_axis = disable_3d_axis,
+    title = plot_titles[[metric]]
+  )
 
-    plot_name <- plot_titles[[metric]]
-    plots[[plot_name]] <- plot
-    #plots[[metric]] <- plot (changed naming of the plots in the output for easier matching in generate_report)
+  plot_name <- plot_titles[[metric]]
+  file_title <- gsub("[^a-zA-Z0-9]", "_", plot_name)
 
-    file_title <- gsub("[^a-zA-Z0-9]", "_", plot_titles[[metric]])
-
-    if (save_each_plot && !is.null(output_dir)) {
-      saveWidget(as_widget(plot), file = file.path(
-        output_dir, "SNV_data_plots", paste0(file_title, ".html")),
-        selfcontained = F, libdir = "lib")
-    }
+  if (save_each_plot && !is.null(output_dir)) {
+    saveWidget(as_widget(plot), file = file.path(
+      output_dir, "SNV_data_plots", paste0(file_title, ".html")),
+      selfcontained = FALSE, libdir = "lib")
   }
+
+  return(list(name = plot_name, plot = plot))
+}
+
+# Parallel here
+results <- mclapply(names(plot_titles), generate_and_save_plot, mc.cores = cores)
+filtered_results <- Filter(Negate(is.null), results)
+new_plots <- setNames(
+  lapply(filtered_results, `[[`, "plot"),
+  sapply(filtered_results, `[[`, "name")
+)
+plots <- c(plots, new_plots)
 
   # INTEGRATED ORIG IDENT PLOT
 
@@ -544,7 +563,7 @@ plot_snv_data <- function(seurat_object, processed_snv, aggregated_snv, plot_dat
     options(bitmapType = "cairo")
     cat("Running CopyKat. This may take a while...\n")
     cts <- GetAssayData(seurat_object, layer = "counts", assay = "SCT")
-    ckt <- copykat(cts, sam.name = "sample_name")
+    ckt <- copykat(cts, sam.name = "sample_name", n.cores = cores)
     options(bitmapType = "C_X11")
     seurat_object[["karyotype"]] <- "Unknown"
     seurat_object[["karyotype"]][rownames(ckt$pred), ] <- ckt$pred[, 2]

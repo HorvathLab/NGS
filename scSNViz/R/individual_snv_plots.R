@@ -43,6 +43,18 @@
 individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL, slingshot = T,
                                  dimensionality_reduction = "UMAP", dynamic_cell_size = F, save_each_plot = F, enable_integrated = F) {
 
+
+  #OS checking
+  sys <- Sys.info()[['sysname']]
+  if (sys == "Linux" || sys == "Darwin"){
+    cores <- readline("How many cores would you like to use?: ")
+    cores <- as.numeric(cores)
+    if (cores > detectCores()){
+      stop(paste0("Invalid amount of cores, you have "), detectCores(), " cores.")
+    }
+  } else {
+    cores <- 1
+  }
   cat("\nGenerating individual SNV plots...\n")
 
   valid_reductions <- c("umap", "pca", "tsne")
@@ -279,7 +291,7 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
 
   counter = 0
   # function to save plots' json
-  plots_json <- lapply(snv_options, function(snv) {
+  plots_json <- mclapply(snv_options, function(snv) {
     plots <- generate_snv_plots(snv, title_color = 'blue')
     list(
       VAF = list(
@@ -294,7 +306,7 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
         id = paste0("plot_N_REF_", gsub(":", "_", snv)),
         json = plotly::plotly_json(plots[['N_REF']], jsonedit = F)
       )
-    )}
+    )}, mc.cores = cores
   )
 
   plots_json <- unlist(plots_json, recursive = F)
@@ -320,12 +332,13 @@ individual_snv_plots <- function(seurat_object, processed_snv, output_dir = NULL
       saveWidget(as_widget(plot), file = file_path, selfcontained = F, libdir = "lib")
     }
 
-    for (snv in snv_options) {
-      plots <- generate_snv_plots(snv, title_color = "black")
-      save_snv_plot(plots[["VAF"]], snv, "VAF")
-      save_snv_plot(plots[['N_VAR']], snv, "N_VAR")
-      save_snv_plot(plots[['N_REF']], snv, "N_REF")
-    }
+    mclapply(snv_options, function(snv) {
+    plots <- generate_snv_plots(snv, title_color = "black")
+    save_snv_plot(plots[["VAF"]], snv, "VAF")
+    save_snv_plot(plots[["N_VAR"]], snv, "N_VAR")
+    save_snv_plot(plots[["N_REF"]], snv, "N_REF")
+    }, mc.cores = cores)
+
   }
 
   ind_snv_out <- list()
